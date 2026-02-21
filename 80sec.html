@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>80秒スピーチ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="top">
+  <h1>🎤 80秒スピーチ（おすすめシリーズ）</h1>
+  <p class="sub">おすすめを語る練習：理由→具体例→ひと言まとめ</p>
+  <p><a href="index.html">← ホームへ戻る</a></p>
+</header>
+
+<main class="menu">
+
+  <div class="card" style="display:block;">
+    <div class="title">お題</div>
+    <div class="desc">
+      <p id="topic" style="font-size:20px; font-weight:bold;">
+        スタートを押してください
+      </p>
+      <p style="opacity:0.75; margin-top:8px;">
+        型：①結論（おすすめはこれ）→②理由（なぜ）→③具体例（いつ/どこで/何が）→④一言まとめ
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="display:block;">
+    <div class="title">タイマー</div>
+    <div class="desc">
+      <p id="timer" style="font-size:32px;">80</p>
+
+      <div style="display:flex; gap:10px; justify-content:center;">
+        <button onclick="start()">▶ スタート</button>
+        <button onclick="stop()">⏹ ストップ</button>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+const topics = [
+"観て良かった映画（理由とワンシーン）",
+"最近ハマったドラマ（おすすめポイント）",
+"心に残ったアニメ（学び/感動）",
+"おすすめのYouTubeチャンネル（誰に刺さる？）",
+"お気に入りのポッドキャスト（聞くタイミング）",
+
+"おすすめの本（人生が変わった/役に立った）",
+"初心者におすすめの学習本（読みやすさ重視）",
+"何度も読み返す記事/ブログ（理由）",
+"おすすめのマンガ（魅力を一言で）",
+"おすすめの言葉・名言（なぜ刺さった？）",
+
+"おすすめの食べ物（必ず頼むやつ）",
+"おすすめの飲み物（気分が上がる）",
+"おすすめのお菓子（作業のお供）",
+"おすすめの朝ごはん（習慣化のコツ）",
+"おすすめの外食メニュー（最強の一品）",
+
+"おすすめのレストラン/お店（雰囲気と推しメニュー）",
+"おすすめのカフェ（作業が捗る理由）",
+"おすすめのラーメン屋（味の特徴）",
+"おすすめの定食屋（満足度ポイント）",
+"おすすめのテイクアウト（失敗しにくい選び方）",
+
+"おすすめの場所（落ち着くスポット）",
+"おすすめの散歩コース（季節の楽しみ）",
+"おすすめの旅行先（初心者向けプラン）",
+"おすすめの温泉/銭湯（回復ポイント）",
+"おすすめの景色（見どころを言語化）",
+
+"おすすめのアプリ（生活がラクになった）",
+"おすすめの習慣（続けるコツ付き）",
+"おすすめの健康法（体感の変化）",
+"おすすめの仕事道具（時短になるポイント）",
+"フリートーク：最近の『推し』を語る（何でもOK）"
+];
+
+let time = 80;
+let interval = null;
+
+function newTopic(){
+  const t = topics[Math.floor(Math.random() * topics.length)];
+  document.getElementById("topic").textContent = t;
+}
+
+function start(){
+  if(interval) return; // 二重起動防止
+
+  newTopic();
+
+  time = 80;
+  document.getElementById("timer").textContent = time;
+
+  interval = setInterval(() => {
+    time--;
+    document.getElementById("timer").textContent = time;
+
+    if(time <= 0){
+      stop();
+      alert("終了！お疲れさまでした😊");
+    }
+  }, 1000);
+}
+
+function stop(){
+  if(interval){
+    clearInterval(interval);
+    interval = null;
+  }
+}
+</script>
+
+</body>
+</html>
