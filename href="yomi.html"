@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>読み練習（外郎売）</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header class="top">
+    <h1>📖 読み練習（外郎売）</h1>
+    <p class="sub">滑舌・発声・息継ぎの練習に</p>
+    <p><a href="index.html">← ホームへ戻る</a></p>
+  </header>
+
+  <main class="menu">
+    <div class="card" style="display:block;">
+      <div class="title">外郎売（全文）</div>
+      <div class="desc">
+        <pre style="white-space: pre-wrap; font-family: inherit;">
+
+ここに本文を貼ります（次のメッセージで全文を送ります）
+※貼るときは「https://」などをファイル名にしないよう注意！
+
+        </pre>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
