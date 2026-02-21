@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -8,25 +8,29 @@
 </head>
 
 <body>
+
 <header class="top">
   <h1>🎤 40秒スピーチ</h1>
-  <p class="sub">40秒で伝える練習</p>
+  <p class="sub">ランダムお題 × 40秒タイマー</p>
   <p><a href="index.html">← ホームへ戻る</a></p>
 </header>
 
 <main class="menu">
 
-<div class="card" style="display:block;">
-  <div class="title">お題</div>
-  <p id="topic" style="font-weight:bold;"></p>
-  <button onclick="newTopic()">お題を出す</button>
-</div>
+  <div class="card" style="display:block;">
+    <div class="title">お題</div>
+    <div class="desc">
+      <p id="topic" style="font-size:20px; font-weight:bold;">スタートを押してください</p>
+    </div>
+  </div>
 
-<div class="card" style="display:block;">
-  <div class="title">タイマー</div>
-  <p id="timer" style="font-size:24px;">40</p>
-  <button onclick="start()">スタート</button>
-</div>
+  <div class="card" style="display:block;">
+    <div class="title">タイマー</div>
+    <div class="desc">
+      <p id="timer" style="font-size:30px;">40</p>
+      <button onclick="start()">スタート</button>
+    </div>
+  </div>
 
 </main>
 
@@ -87,16 +91,17 @@ let time = 40;
 let interval;
 
 function newTopic(){
-  const t = topics[Math.floor(Math.random()*topics.length)];
+  const t = topics[Math.floor(Math.random() * topics.length)];
   document.getElementById("topic").textContent = t;
 }
 
 function start(){
+  newTopic();
   clearInterval(interval);
   time = 40;
   document.getElementById("timer").textContent = time;
 
-  interval = setInterval(()=>{
+  interval = setInterval(() => {
     time--;
     document.getElementById("timer").textContent = time;
 
@@ -104,35 +109,10 @@ function start(){
       clearInterval(interval);
       alert("終了！お疲れさまでした😊");
     }
-  },1000);
-}
-</script>
-];
-
-let time = 40;
-let interval;
-
-function newTopic(){
-  const t = topics[Math.floor(Math.random()*topics.length)];
-  document.getElementById("topic").textContent = t;
-}
-
-function start(){
-  clearInterval(interval);
-  time = 40;
-  document.getElementById("timer").textContent = time;
-
-  interval = setInterval(()=>{
-    time--;
-    document.getElementById("timer").textContent = time;
-
-    if(time <= 0){
-      clearInterval(interval);
-      alert("終了！お疲れさまでした😊");
-    }
-  },1000);
+  }, 1000);
 }
 </script>
 
 </body>
 </html>
+
