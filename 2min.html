@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2分スピーチ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="top">
+  <h1>🎤 2分スピーチ</h1>
+  <p class="sub">専用お題 × 120秒タイマー</p>
+  <p><a href="index.html">← ホームへ戻る</a></p>
+</header>
+
+<main class="menu">
+
+  <div class="card" style="display:block;">
+    <div class="title">お題</div>
+    <div class="desc">
+      <p id="topic" style="font-size:20px; font-weight:bold;">
+        スタートを押してください
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="display:block;">
+    <div class="title">タイマー</div>
+    <div class="desc">
+
+      <p id="timer" style="font-size:32px;">120</p>
+
+      <div style="display:flex; gap:10px; justify-content:center;">
+
+        <button onclick="start()">▶ スタート</button>
+        <button onclick="stop()">⏹ ストップ</button>
+
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+const topics = [
+"人生で一番つらかった経験と、そこから学んだこと",
+"大きな失敗から立ち直った方法",
+"今の仕事を選んだ理由",
+"家族から学んだこと",
+"子育てで大切にしていること",
+"これまでで一番誇れること",
+"人生の価値観が変わった出来事",
+"影響を受けた本や言葉",
+"何かを継続できた理由",
+"挫折した時の考え方",
+
+"自分が変われたきっかけ",
+"これまでで一番努力した期間",
+"人間関係で学んだこと",
+"失敗をどう次に活かしているか",
+"理想の人生とは何か",
+"これから身につけたい力",
+"今の自分に足りないもの",
+"人生で大切にしている選択基準",
+"尊敬する人から学んだこと",
+"過去の自分に伝えたい言葉",
+
+"仕事で一番やりがいを感じた瞬間",
+"困難を乗り越えた体験",
+"なぜ挑戦し続けたいのか",
+"人生で後悔していることと対処法",
+"自分の原動力になっているもの",
+"10年後の理想像",
+"これから変えたい習慣",
+"人に感謝していること",
+"自分の人生のテーマ",
+"これからの目標と覚悟"
+];
+
+let time = 120;
+let interval = null;
+
+function newTopic(){
+  const t = topics[Math.floor(Math.random() * topics.length)];
+  document.getElementById("topic").textContent = t;
+}
+
+function start(){
+  if(interval) return; // 二重防止
+
+  newTopic();
+
+  time = 120;
+  document.getElementById("timer").textContent = time;
+
+  interval = setInterval(() => {
+    time--;
+    document.getElementById("timer").textContent = time;
+
+    if(time <= 0){
+      stop();
+      alert("終了！お疲れさまでした😊");
+    }
+  }, 1000);
+}
+
+function stop(){
+  if(interval){
+    clearInterval(interval);
+    interval = null;
+  }
+}
+</script>
+
+</body>
+</html>
