@@ -20,15 +20,25 @@
   <div class="card" style="display:block;">
     <div class="title">お題</div>
     <div class="desc">
-      <p id="topic" style="font-size:20px; font-weight:bold;">スタートを押してください</p>
+      <p id="topic" style="font-size:20px; font-weight:bold;">
+        スタートを押してください
+      </p>
     </div>
   </div>
 
   <div class="card" style="display:block;">
     <div class="title">タイマー</div>
     <div class="desc">
-      <p id="timer" style="font-size:30px;">40</p>
-      <button onclick="start()">スタート</button>
+
+      <p id="timer" style="font-size:32px;">40</p>
+
+      <div style="display:flex; gap:10px; justify-content:center;">
+
+        <button onclick="start()">▶ スタート</button>
+        <button onclick="stop()">⏹ ストップ</button>
+
+      </div>
+
     </div>
   </div>
 
@@ -88,7 +98,7 @@ const topics = [
 ];
 
 let time = 40;
-let interval;
+let interval = null;
 
 function newTopic(){
   const t = topics[Math.floor(Math.random() * topics.length)];
@@ -96,8 +106,10 @@ function newTopic(){
 }
 
 function start(){
+  if(interval) return; // 二重起動防止
+
   newTopic();
-  clearInterval(interval);
+
   time = 40;
   document.getElementById("timer").textContent = time;
 
@@ -106,13 +118,21 @@ function start(){
     document.getElementById("timer").textContent = time;
 
     if(time <= 0){
-      clearInterval(interval);
+      stop();
       alert("終了！お疲れさまでした😊");
     }
   }, 1000);
+}
+
+function stop(){
+  if(interval){
+    clearInterval(interval);
+    interval = null;
+  }
 }
 </script>
 
 </body>
 </html>
+      
 
