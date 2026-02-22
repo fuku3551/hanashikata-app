@@ -1,229 +1,65 @@
-<!doctype html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI評価（簡易）</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .row { display:flex; gap:10px; flex-wrap:wrap; }
-    .btn { padding:10px 14px; border-radius:10px; border:1px solid #ddd; background:#fff; }
-    .btn.primary { border-color:#555; font-weight:700; }
-    textarea { width:100%; min-height:180px; padding:12px; border-radius:12px; border:1px solid #ddd; }
-    .out { white-space:pre-wrap; background:#fff; border:1px solid #ddd; border-radius:12px; padding:12px; }
-    .muted { opacity:0.7; font-size:0.95em; }
-    .tab { display:none; }
-    .tab.active { display:block; }
-  </style>
-</head>
+function gentleEvaluate(text){
 
-<body>
-  <header class="top">
-    <h1>🧠 AI評価（簡易）</h1>
-    <p class="sub">テキスト貼り付け / 録音→文字起こし→評価（※簡易）</p>
-    <p><a href="index.html">← ホームへ戻る</a></p>
-  </header>
+  let score = 60;
 
-  <main class="menu">
+  const goodPoints = [];
+  const advice = [];
 
-    <div class="card" style="display:block;">
-      <div class="title">モード選択</div>
-      <div class="desc">
-        <div class="row">
-          <button class="btn primary" id="btnTabText">① テキスト評価</button>
-          <button class="btn" id="btnTabVoice">② 録音→文字起こし</button>
-        </div>
-        <p class="muted">※“ChatGPT採点”を入れるには別途サーバー（APIキー保護）が必要です。まずは簡易評価でOK。</p>
-      </div>
-    </div>
+  const conclusion = ["私は","僕は","結論","大事なのは","重要なのは"];
+  const reason = ["なぜなら","理由","背景","なぜかというと"];
+  const example = ["例えば","実際に","この前","以前"];
+  const summary = ["だから","つまり","まとめると","なので"];
 
-    <!-- ① テキスト評価 -->
-    <div class="card tab active" id="tabText" style="display:block;">
-      <div class="title">① テキスト評価（貼り付け）</div>
-      <div class="desc">
-        <textarea id="textInput" placeholder="ここにスピーチ内容を貼り付け（または入力）"></textarea>
-        <div class="row" style="margin-top:10px;">
-          <button class="btn primary" id="btnEvalText">評価する</button>
-          <button class="btn" id="btnClearText">消去</button>
-        </div>
-        <div class="out" id="resultText" style="margin-top:10px;">ここに評価結果が出ます。</div>
-      </div>
-    </div>
-
-    <!-- ② 音声→文字起こし -->
-    <div class="card tab" id="tabVoice" style="display:block;">
-      <div class="title">② 録音→文字起こし（端末対応時のみ）</div>
-      <div class="desc">
-        <p class="muted">
-          iPhone/Safariは環境によって「自動文字起こし」が動かないことがあります。<br>
-          その場合は、iPhoneの音声入力（キーボードの🎤）で文章化して、上の①に貼り付けてOKです。
-        </p>
-
-        <div class="row" style="margin:10px 0;">
-          <button class="btn primary" id="btnStart">▶ 文字起こし開始</button>
-          <button class="btn" id="btnStop">■ 停止</button>
-          <button class="btn" id="btnUseTranscript">→ この文章で評価</button>
-        </div>
-
-        <textarea id="transcript" placeholder="ここに文字起こし結果が入ります（手入力/貼り付けもOK）"></textarea>
-
-        <div class="out" id="resultVoice" style="margin-top:10px;">ここに評価結果が出ます。</div>
-      </div>
-    </div>
-
-  </main>
-
-<script>
-  // --- Tabs ---
-  const btnTabText = document.getElementById("btnTabText");
-  const btnTabVoice = document.getElementById("btnTabVoice");
-  const tabText = document.getElementById("tabText");
-  const tabVoice = document.getElementById("tabVoice");
-
-  function setTab(which){
-    if(which === "text"){
-      tabText.classList.add("active");
-      tabVoice.classList.remove("active");
-      btnTabText.classList.add("primary");
-      btnTabVoice.classList.remove("primary");
-    }else{
-      tabVoice.classList.add("active");
-      tabText.classList.remove("active");
-      btnTabVoice.classList.add("primary");
-      btnTabText.classList.remove("primary");
-    }
-  }
-  btnTabText.onclick = () => setTab("text");
-  btnTabVoice.onclick = () => setTab("voice");
-
-  // --- Simple evaluator (offline) ---
-  function evaluate(text){
-    const t = (text || "").trim();
-    if(!t) return "文章が空です。まずは内容を入れてください。";
-
-    const chars = t.replace(/\s/g, "").length;
-    const sentences = t.split(/。|！|!|？|\?/).filter(s => s.trim().length>0).length;
-
-    // フィラー検出（簡易）
-    const fillers = ["えー","えっと","あの","そのー","まあ","なんか","えと"];
-    let fillerCount = 0;
-    fillers.forEach(f => {
-      const m = t.match(new RegExp(f, "g"));
-      if(m) fillerCount += m.length;
-    });
-
-    // 構成ヒント（簡易）
-    const hasConclusion = /(結論|つまり|要するに|一言で言うと)/.test(t);
-    const hasReason = /(理由|なぜなら|というのは)/.test(t);
-    const hasExample = /(例えば|たとえば|具体的に|エピソード)/.test(t);
-
-    let score = 70;
-    if(chars < 120) score -= 10;
-    if(chars > 900) score -= 5;
-    if(sentences < 3) score -= 10;
-    if(fillerCount >= 5) score -= 8;
-    if(hasConclusion) score += 5;
-    if(hasReason) score += 5;
-    if(hasExample) score += 5;
-    score = Math.max(0, Math.min(100, score));
-
-    const tips = [];
-    tips.push(`文字数: ${chars} / 文の数(目安): ${sentences}`);
-    tips.push(`フィラー（えー/あの等）: ${fillerCount} 回（※簡易カウント）`);
-
-    const structure = [];
-    structure.push(`結論ワード: ${hasConclusion ? "◯" : "△（冒頭に“結論”を一言入れると強い）"}`);
-    structure.push(`理由ワード: ${hasReason ? "◯" : "△（“なぜなら”で理由を1つ入れる）"}`);
-    structure.push(`具体例ワード: ${hasExample ? "◯" : "△（“例えば”で1エピソード入れる）"}`);
-
-    const improve = [];
-    if(!hasConclusion) improve.push("最初の1文を『結論：〜です。』にしてみる");
-    if(!hasReason) improve.push("中盤で『なぜなら〜』を1回入れる");
-    if(!hasExample) improve.push("最後の前に短い具体例（1〜2文）を入れる");
-    if(fillerCount >= 5) improve.push("『えー/あの』が出そうになったら一呼吸して“間”を作る");
-    if(chars < 120) improve.push("短いので、理由か具体例を追加して40秒分に近づける");
-
-    return [
-      `【簡易スコア】${score}/100`,
-      "",
-      "【チェック】",
-      ...tips,
-      "",
-      "【構成】（結論→理由→具体例 が基本）",
-      ...structure,
-      "",
-      "【改善案】",
-      ...(improve.length ? improve.map(x => "・" + x) : ["・このままでOK。次は“間”と“強調”を意識するとさらに良いです。"])
-    ].join("\n");
+  if(conclusion.some(w=>text.includes(w))) {
+    score += 10;
+    goodPoints.push("テーマがはっきりしていました");
   }
 
-  // --- Text tab handlers ---
-  const textInput = document.getElementById("textInput");
-  const resultText = document.getElementById("resultText");
-  document.getElementById("btnEvalText").onclick = () => {
-    resultText.textContent = evaluate(textInput.value);
-  };
-  document.getElementById("btnClearText").onclick = () => {
-    textInput.value = "";
-    resultText.textContent = "ここに評価結果が出ます。";
-  };
-
-  // --- Voice (SpeechRecognition) ---
-  const transcript = document.getElementById("transcript");
-  const resultVoice = document.getElementById("resultVoice");
-  let rec = null;
-
-  function setupRecognition(){
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if(!SR) return null;
-    const r = new SR();
-    r.lang = "ja-JP";
-    r.interimResults = true;
-    r.continuous = true;
-
-    r.onresult = (event) => {
-      let finalText = "";
-      for(let i=0; i<event.results.length; i++){
-        const res = event.results[i];
-        if(res.isFinal) finalText += res[0].transcript;
-      }
-      // interimも含めて表示（雑に上書き）
-      const latest = event.results[event.results.length - 1][0].transcript;
-      transcript.value = (finalText + latest).trim();
-    };
-
-    r.onerror = (e) => {
-      resultVoice.textContent = "文字起こしでエラーになりました。iPhoneの音声入力で文章化して①に貼り付ける方法が確実です。\n\nError: " + e.error;
-    };
-    return r;
+  if(reason.some(w=>text.includes(w))){
+    score += 10;
+    goodPoints.push("理由がわかりやすかったです");
   }
 
-  document.getElementById("btnStart").onclick = () => {
-    if(!rec) rec = setupRecognition();
-    if(!rec){
-      resultVoice.textContent = "このブラウザは自動文字起こし（SpeechRecognition）に未対応の可能性があります。\n\n代替：iPhoneキーボードの🎤で本文を入力 → ①テキスト評価へ貼り付け、でOKです。";
-      return;
-    }
-    try{
-      rec.start();
-      resultVoice.textContent = "文字起こし中… 話してください（うまく動かない時は音声入力でOK）";
-    }catch(err){
-      // start連打で例外になることがある
-      resultVoice.textContent = "開始できませんでした。少し待ってからもう一度押してください。";
-    }
-  };
+  if(example.some(w=>text.includes(w))){
+    score += 10;
+    goodPoints.push("具体例があってイメージしやすかったです");
+  }
 
-  document.getElementById("btnStop").onclick = () => {
-    if(rec){
-      rec.stop();
-      resultVoice.textContent = "停止しました。必要なら『→この文章で評価』を押してください。";
-    }
-  };
+  if(summary.some(w=>text.includes(w))){
+    score += 10;
+    goodPoints.push("最後のまとめが良かったです");
+  }
 
-  document.getElementById("btnUseTranscript").onclick = () => {
-    const t = transcript.value;
-    resultVoice.textContent = evaluate(t);
+  if(text.length > 120){
+    score += 5;
+    goodPoints.push("しっかり内容を考えて話しています");
+  }
+
+  if(!example.some(w=>text.includes(w))){
+    advice.push("具体例を1つ入れるとさらに伝わります");
+  } else if(!summary.some(w=>text.includes(w))){
+    advice.push("最後に一言まとめがあるとより良くなります");
+  }
+
+  const praise = goodPoints.length
+    ? goodPoints[Math.floor(Math.random()*goodPoints.length)]
+    : "とても前向きに話せていました";
+
+  const improve = advice.length
+    ? advice[0]
+    : "今の調子で続けていきましょう";
+
+  return {
+    score: Math.min(score,100),
+    message:
+`🌟 総合評価：${Math.min(score,100)}点
+
+とても良いスピーチでした。
+
+特に「${praise}」点が素晴らしいです。
+
+${improve}
+
+これからも自信を持って話して大丈夫です😊`
   };
-</script>
-</body>
-</html>
+}
