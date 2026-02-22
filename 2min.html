@@ -117,3 +117,289 @@ function stop(){
 
 </body>
 </html>
+
+<!-- =========================
+  🎙 録音＋AI評価（1画面完結）
+  貼り付け場所：</main> の直前 推奨
+========================= -->
+<section class="card" style="display:block;">
+  <div class="title">🎙 録音 & AI評価（1画面完結）</div>
+  <div class="desc">
+
+    <div style="border:1px solid #eee; border-radius:14px; padding:12px;">
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button id="hxRecBtn" onclick="hxToggleRecording()"
+          style="padding:12px 14px; border-radius:12px; border:none; background:#22c55e; color:#fff;">
+          録音開始
+        </button>
+
+        <button onclick="hxResetRecording()"
+          style="padding:12px 14px; border-radius:12px; border:none; background:#ef4444; color:#fff;">
+          録音リセット
+        </button>
+
+        <span id="hxRecStatus" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">
+          待機中
+        </span>
+      </div>
+
+      <audio id="hxPlayer" controls style="display:none; width:100%; margin-top:10px;"></audio>
+
+      <div style="margin-top:10px; font-size:14px; opacity:0.9; line-height:1.7;">
+        ✅ 録音→再生できます（端末内）<br>
+        💡 録音を聞きながら下の欄にメモして「AI評価」がおすすめ
+      </div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div style="font-weight:700; margin-bottom:6px;">📝 スピーチ本文（評価対象）</div>
+      <textarea id="hxSpeechText"
+        placeholder="ここにスピーチを書いてください（録音を聞きながらメモでもOK）"
+        style="width:100%; min-height:160px; padding:12px; border-radius:12px; border:1px solid #ddd;"></textarea>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+        <button onclick="hxRunEvaluation()"
+          style="padding:12px 14px; border-radius:12px; border:none; background:#0ea5e9; color:#fff;">
+          AI評価する
+        </button>
+
+        <button onclick="hxClearText()"
+          style="padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff;">
+          クリア
+        </button>
+
+        <button onclick="hxInsertTemplate()"
+          style="padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff;">
+          テンプレ挿入
+        </button>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div id="hxBadges"></div>
+      <div id="hxResult"
+        style="white-space:pre-wrap; line-height:1.9; margin-top:10px;">
+        ここに評価結果が表示されます。
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* =========================
+   ① 録音（MediaRecorder）
+   ※ iPhone SafariでもOK
+========================= */
+let hxMediaRecorder = null;
+let hxRecordedChunks = [];
+let hxRecordedBlobUrl = null;
+
+async function hxToggleRecording(){
+  const btn = document.getElementById("hxRecBtn");
+  const status = document.getElementById("hxRecStatus");
+  const player = document.getElementById("hxPlayer");
+
+  // 録音中なら停止
+  if(hxMediaRecorder && hxMediaRecorder.state === "recording"){
+    hxMediaRecorder.stop();
+    btn.textContent = "録音開始";
+    status.textContent = "停止しました（音声生成中…）";
+    return;
+  }
+
+  // 開始
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    hxRecordedChunks = [];
+    hxMediaRecorder = new MediaRecorder(stream);
+
+    hxMediaRecorder.ondataavailable = (e) => {
+      if(e.data && e.data.size > 0) hxRecordedChunks.push(e.data);
+    };
+
+    hxMediaRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+
+      const blob = new Blob(hxRecordedChunks, { type: "audio/webm" });
+      if(hxRecordedBlobUrl) URL.revokeObjectURL(hxRecordedBlobUrl);
+      hxRecordedBlobUrl = URL.createObjectURL(blob);
+
+      player.src = hxRecordedBlobUrl;
+      player.style.display = "block";
+      status.textContent = "録音データ準備OK（再生できます）";
+    };
+
+    hxMediaRecorder.start();
+    btn.textContent = "録音停止";
+    status.textContent = "録音中…";
+  }catch(err){
+    status.textContent = "録音できませんでした（マイク許可を確認）";
+    alert("録音に失敗しました。iPhoneの設定/サイト設定でマイク許可を確認してください。");
+  }
+}
+
+function hxResetRecording(){
+  const status = document.getElementById("hxRecStatus");
+  const player = document.getElementById("hxPlayer");
+
+  if(hxMediaRecorder && hxMediaRecorder.state === "recording"){
+    hxMediaRecorder.stop();
+  }
+  hxRecordedChunks = [];
+  if(hxRecordedBlobUrl) URL.revokeObjectURL(hxRecordedBlobUrl);
+  hxRecordedBlobUrl = null;
+
+  player.pause();
+  player.removeAttribute("src");
+  player.style.display = "none";
+  status.textContent = "待機中";
+
+  // ボタン文言も戻す
+  const btn = document.getElementById("hxRecBtn");
+  btn.textContent = "録音開始";
+}
+
+/* =========================
+   ② やさしい総合評価（柔軟版）
+   - PREP専用ではなくトータル評価
+   - 単語の言い換えもOK
+========================= */
+function hxGentleEvaluate(text){
+  const raw = (text || "").trim();
+  const t = raw.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+
+  if(t.length < 10){
+    return {
+      score: 60,
+      badges: ["入力が短め"],
+      message:
+`🌟 総合評価：60点
+
+短いながらも、話そうとする姿勢がとても良いです。
+
+もう1〜2文だけ足して、
+「一番言いたいこと」か「印象に残った体験」を入れると、
+ぐっと伝わりやすくなります😊`
+    };
+  }
+
+  let score = 60;
+  const goodPoints = [];
+  const badges = [];
+  const advice = [];
+
+  // 柔軟ワード判定（言い換え許容）
+  const conclusion = ["結論","要するに","つまり","一言でいうと","私の考えは","僕の考えは","私は","僕は","大事なのは","重要なのは","ポイントは","結局","一番言いたいのは"];
+  const reason = ["なぜなら","理由","背景","というのも","なぜかというと","だからこそ","なので","から","ため","があって"];
+  const example = ["例えば","たとえば","実際に","この前","以前","先日","具体的に","体験として","たとえると","こんなことがあって","のとき"];
+  const summary = ["まとめると","結論として","最後に","だから","つまり","なので","というわけで","要は","今後は","次は","これから"];
+
+  if(conclusion.some(w => t.includes(w))){
+    score += 10; goodPoints.push("テーマ（主張）がはっきりしていました"); badges.push("テーマ明確");
+  }
+  if(reason.some(w => t.includes(w))){
+    score += 10; goodPoints.push("理由や背景が伝わって納得しやすかったです"); badges.push("納得感");
+  }
+  if(example.some(w => t.includes(w))){
+    score += 10; goodPoints.push("具体例があり、イメージしやすかったです"); badges.push("具体性");
+  }
+  if(summary.some(w => t.includes(w))){
+    score += 10; goodPoints.push("最後の締め・まとめが良く、余韻が残りました"); badges.push("締めが良い");
+  }
+
+  if(t.length > 120){
+    score += 5; goodPoints.push("内容をしっかり考えて話しているのが伝わりました"); badges.push("内容充実");
+  }
+
+  const emotionWords = ["嬉しい","楽しい","悔しい","悲しい","怖い","感動","驚いた","ワクワク","モヤモヤ","腹が立った","ほっとした"];
+  if(emotionWords.some(w => t.includes(w))){
+    score += 5; goodPoints.push("感情が入っていて、聞き手の心に届きやすい話し方でした"); badges.push("感情が伝わる");
+  }
+
+  const listenerWords = ["あなた","みなさん","皆さん","相手","聞く人","伝えたい","おすすめ","共有"];
+  if(listenerWords.some(w => t.includes(w))){
+    score += 5; goodPoints.push("聞き手を意識した言葉選びができていました"); badges.push("聞き手目線");
+  }
+
+  const hasReason = reason.some(w => t.includes(w));
+  const hasExample = example.some(w => t.includes(w));
+  const hasSummary = summary.some(w => t.includes(w));
+  const hasConclusion = conclusion.some(w => t.includes(w));
+
+  // 改善は1つだけ（優しく）
+  if(!hasExample){
+    advice.push("具体例を「1つだけ」入れると、さらにグッと伝わります（例：その時の場面／出来事）");
+  } else if(!hasSummary){
+    advice.push("最後に一言だけ「まとめ」を置くと、聞き手の記憶に残りやすくなります");
+  } else if(!hasReason){
+    advice.push("理由を一言足すと説得力が増します（例：なぜそう感じたか）");
+  } else if(!hasConclusion){
+    advice.push("冒頭か最後に「一番伝えたい結論」を一言置くと、さらに分かりやすくなります");
+  }
+
+  const praise = goodPoints.length
+    ? goodPoints[Math.floor(Math.random() * goodPoints.length)]
+    : "前向きに話そうとしている姿勢がとても良いです";
+
+  const improve = advice.length ? advice[0] : "今の調子で続けていきましょう";
+  score = Math.min(score, 100);
+
+  const finalBadges = badges.length ? badges : ["前向き"];
+
+  return {
+    score,
+    badges: finalBadges,
+    message:
+`🌟 総合評価：${score}点
+
+とても良いスピーチでした。
+
+特に「${praise}」点が素晴らしいです。
+
+💡 さらに良くするなら：
+${improve}
+
+これからも自信を持って話して大丈夫です😊`
+  };
+}
+
+/* =========================
+   ③ UI操作
+========================= */
+function hxRunEvaluation(){
+  const text = document.getElementById("hxSpeechText").value;
+  const res = hxGentleEvaluate(text);
+
+  const badgesEl = document.getElementById("hxBadges");
+  badgesEl.innerHTML = "";
+  (res.badges || []).forEach(b => {
+    const span = document.createElement("span");
+    span.textContent = b;
+    span.style.display = "inline-block";
+    span.style.padding = "6px 10px";
+    span.style.borderRadius = "999px";
+    span.style.border = "1px solid #ddd";
+    span.style.fontSize = "14px";
+    span.style.margin = "4px 6px 0 0";
+    badgesEl.appendChild(span);
+  });
+
+  document.getElementById("hxResult").textContent = res.message;
+}
+
+function hxClearText(){
+  document.getElementById("hxSpeechText").value = "";
+  document.getElementById("hxBadges").innerHTML = "";
+  document.getElementById("hxResult").textContent = "ここに評価結果が表示されます。";
+}
+
+function hxInsertTemplate(){
+  document.getElementById("hxSpeechText").value =
+`（例）私が伝えたいことは〇〇です。
+というのも、△△という背景があって…
+例えば、□□という出来事がありました。
+だから、今後は◇◇を意識したいです。`;
+  hxRunEvaluation();
+}
+</script>
