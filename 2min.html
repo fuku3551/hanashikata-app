@@ -1,86 +1,156 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>2分スピーチ</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
 <header class="top">
   <h1>🎤 2分スピーチ</h1>
-  <p class="sub">専用お題 × 120秒タイマー</p>
+  <p class="sub">専用お題 × 120秒タイマー（録音＆AI評価つき）</p>
   <p><a href="index.html">← ホームへ戻る</a></p>
 </header>
 
 <main class="menu">
 
+  <!-- お題 -->
   <div class="card" style="display:block;">
     <div class="title">お題</div>
     <div class="desc">
-      <p id="topic" style="font-size:20px; font-weight:bold;">
-        スタートを押してください
+      <p id="topic" style="font-size:20px; font-weight:bold;">スタートを押してください</p>
+      <p style="margin-top:8px; opacity:0.85; line-height:1.7;">
+        💡 2分は「背景 → 出来事 → 学び → 今後」で話すとまとまりやすいです
       </p>
     </div>
   </div>
 
+  <!-- タイマー -->
   <div class="card" style="display:block;">
     <div class="title">タイマー</div>
     <div class="desc">
-
       <p id="timer" style="font-size:32px;">120</p>
-
-      <div style="display:flex; gap:10px; justify-content:center;">
-
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
         <button onclick="start()">▶ スタート</button>
         <button onclick="stop()">⏹ ストップ</button>
+        <button onclick="newTopic()">🎲 お題だけ更新</button>
+      </div>
+    </div>
+  </div>
 
+  <!-- =========================
+    🎙 録音＋AI評価（1画面完結）
+  ========================= -->
+  <section class="card" style="display:block;">
+    <div class="title">🎙 録音 & AI評価（1画面完結）</div>
+    <div class="desc">
+
+      <div style="border:1px solid #eee; border-radius:14px; padding:12px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <button id="hxRecBtn" onclick="hxToggleRecording()"
+            style="padding:12px 14px; border-radius:12px; border:none; background:#22c55e; color:#fff;">
+            録音開始
+          </button>
+
+          <button onclick="hxResetRecording()"
+            style="padding:12px 14px; border-radius:12px; border:none; background:#ef4444; color:#fff;">
+            録音リセット
+          </button>
+
+          <span id="hxRecStatus" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">
+            待機中
+          </span>
+        </div>
+
+        <audio id="hxPlayer" controls style="display:none; width:100%; margin-top:10px;"></audio>
+
+        <div style="margin-top:10px; font-size:14px; opacity:0.9; line-height:1.7;">
+          ✅ 録音→再生できます（端末内）<br>
+          💡 録音を聞きながら下の欄に原稿メモ → 「AI評価」がおすすめ
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div style="font-weight:700; margin-bottom:6px;">📝 スピーチ本文（評価対象）</div>
+        <textarea id="hxSpeechText"
+          placeholder="ここにスピーチを書いてください（録音を聞きながらメモでもOK）"
+          style="width:100%; min-height:180px; padding:12px; border-radius:12px; border:1px solid #ddd;"></textarea>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+          <button onclick="hxRunEvaluation()"
+            style="padding:12px 14px; border-radius:12px; border:none; background:#0ea5e9; color:#fff;">
+            AI評価する
+          </button>
+
+          <button onclick="hxClearText()"
+            style="padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff;">
+            クリア
+          </button>
+
+          <button onclick="hxInsertTemplate()"
+            style="padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff;">
+            テンプレ挿入
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div id="hxBadges"></div>
+        <div id="hxResult" style="white-space:pre-wrap; line-height:1.9; margin-top:10px;">
+          ここに評価結果が表示されます。
+        </div>
       </div>
 
     </div>
-  </div>
+  </section>
 
 </main>
 
 <script>
+/* =========================
+   2分スピーチ設定
+========================= */
+const TARGET_SECONDS = 120;
+
 const topics = [
-"人生で一番つらかった経験と、そこから学んだこと",
-"大きな失敗から立ち直った方法",
-"今の仕事を選んだ理由",
-"家族から学んだこと",
-"子育てで大切にしていること",
-"これまでで一番誇れること",
-"人生の価値観が変わった出来事",
-"影響を受けた本や言葉",
-"何かを継続できた理由",
-"挫折した時の考え方",
+  "人生で一番つらかった経験と、そこから学んだこと",
+  "大きな失敗から立ち直った方法",
+  "今の仕事を選んだ理由",
+  "家族から学んだこと",
+  "子育てで大切にしていること",
+  "これまでで一番誇れること",
+  "人生の価値観が変わった出来事",
+  "影響を受けた本や言葉",
+  "何かを継続できた理由",
+  "挫折した時の考え方",
 
-"自分が変われたきっかけ",
-"これまでで一番努力した期間",
-"人間関係で学んだこと",
-"失敗をどう次に活かしているか",
-"理想の人生とは何か",
-"これから身につけたい力",
-"今の自分に足りないもの",
-"人生で大切にしている選択基準",
-"尊敬する人から学んだこと",
-"過去の自分に伝えたい言葉",
+  "自分が変われたきっかけ",
+  "これまでで一番努力した期間",
+  "人間関係で学んだこと",
+  "失敗をどう次に活かしているか",
+  "理想の人生とは何か",
+  "これから身につけたい力",
+  "今の自分に足りないもの",
+  "人生で大切にしている選択基準",
+  "尊敬する人から学んだこと",
+  "過去の自分に伝えたい言葉",
 
-"仕事で一番やりがいを感じた瞬間",
-"困難を乗り越えた体験",
-"なぜ挑戦し続けたいのか",
-"人生で後悔していることと対処法",
-"自分の原動力になっているもの",
-"10年後の理想像",
-"これから変えたい習慣",
-"人に感謝していること",
-"自分の人生のテーマ",
-"これからの目標と覚悟"
+  "仕事で一番やりがいを感じた瞬間",
+  "困難を乗り越えた体験",
+  "なぜ挑戦し続けたいのか",
+  "人生で後悔していることと対処法",
+  "自分の原動力になっているもの",
+  "10年後の理想像",
+  "これから変えたい習慣",
+  "人に感謝していること",
+  "自分の人生のテーマ",
+  "これからの目標と覚悟"
 ];
 
-let time = 120;
+let time = TARGET_SECONDS;
 let interval = null;
 
 function newTopic(){
@@ -93,7 +163,7 @@ function start(){
 
   newTopic();
 
-  time = 120;
+  time = TARGET_SECONDS;
   document.getElementById("timer").textContent = time;
 
   interval = setInterval(() => {
@@ -102,7 +172,7 @@ function start(){
 
     if(time <= 0){
       stop();
-      alert("終了！お疲れさまでした😊");
+      alert("終了！2分話しきりました。お疲れさまでした😊");
     }
   }, 1000);
 }
@@ -113,83 +183,9 @@ function stop(){
     interval = null;
   }
 }
-</script>
 
-</body>
-</html>
-
-<!-- =========================
-  🎙 録音＋AI評価（1画面完結）
-  貼り付け場所：</main> の直前 推奨
-========================= -->
-<section class="card" style="display:block;">
-  <div class="title">🎙 録音 & AI評価（1画面完結）</div>
-  <div class="desc">
-
-    <div style="border:1px solid #eee; border-radius:14px; padding:12px;">
-      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-        <button id="hxRecBtn" onclick="hxToggleRecording()"
-          style="padding:12px 14px; border-radius:12px; border:none; background:#22c55e; color:#fff;">
-          録音開始
-        </button>
-
-        <button onclick="hxResetRecording()"
-          style="padding:12px 14px; border-radius:12px; border:none; background:#ef4444; color:#fff;">
-          録音リセット
-        </button>
-
-        <span id="hxRecStatus" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">
-          待機中
-        </span>
-      </div>
-
-      <audio id="hxPlayer" controls style="display:none; width:100%; margin-top:10px;"></audio>
-
-      <div style="margin-top:10px; font-size:14px; opacity:0.9; line-height:1.7;">
-        ✅ 録音→再生できます（端末内）<br>
-        💡 録音を聞きながら下の欄にメモして「AI評価」がおすすめ
-      </div>
-    </div>
-
-    <div style="margin-top:12px;">
-      <div style="font-weight:700; margin-bottom:6px;">📝 スピーチ本文（評価対象）</div>
-      <textarea id="hxSpeechText"
-        placeholder="ここにスピーチを書いてください（録音を聞きながらメモでもOK）"
-        style="width:100%; min-height:160px; padding:12px; border-radius:12px; border:1px solid #ddd;"></textarea>
-
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-        <button onclick="hxRunEvaluation()"
-          style="padding:12px 14px; border-radius:12px; border:none; background:#0ea5e9; color:#fff;">
-          AI評価する
-        </button>
-
-        <button onclick="hxClearText()"
-          style="padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff;">
-          クリア
-        </button>
-
-        <button onclick="hxInsertTemplate()"
-          style="padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff;">
-          テンプレ挿入
-        </button>
-      </div>
-    </div>
-
-    <div style="margin-top:12px;">
-      <div id="hxBadges"></div>
-      <div id="hxResult"
-        style="white-space:pre-wrap; line-height:1.9; margin-top:10px;">
-        ここに評価結果が表示されます。
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<script>
 /* =========================
-   ① 録音（MediaRecorder）
-   ※ iPhone SafariでもOK
+   録音（MediaRecorder）
 ========================= */
 let hxMediaRecorder = null;
 let hxRecordedChunks = [];
@@ -200,7 +196,6 @@ async function hxToggleRecording(){
   const status = document.getElementById("hxRecStatus");
   const player = document.getElementById("hxPlayer");
 
-  // 録音中なら停止
   if(hxMediaRecorder && hxMediaRecorder.state === "recording"){
     hxMediaRecorder.stop();
     btn.textContent = "録音開始";
@@ -208,7 +203,6 @@ async function hxToggleRecording(){
     return;
   }
 
-  // 開始
   try{
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     hxRecordedChunks = [];
@@ -232,7 +226,7 @@ async function hxToggleRecording(){
 
     hxMediaRecorder.start();
     btn.textContent = "録音停止";
-    status.textContent = "録音中…";
+    status.textContent = "録音中…（2分は長いので、深呼吸しながらでOK）";
   }catch(err){
     status.textContent = "録音できませんでした（マイク許可を確認）";
     alert("録音に失敗しました。iPhoneの設定/サイト設定でマイク許可を確認してください。");
@@ -255,19 +249,37 @@ function hxResetRecording(){
   player.style.display = "none";
   status.textContent = "待機中";
 
-  // ボタン文言も戻す
   const btn = document.getElementById("hxRecBtn");
   btn.textContent = "録音開始";
 }
 
 /* =========================
-   ② やさしい総合評価（柔軟版）
-   - PREP専用ではなくトータル評価
-   - 単語の言い換えもOK
+   長さ推定（120秒）
+   - 目安：1秒=6文字（必要なら調整）
+========================= */
+function hxEstimateSeconds(text){
+  const t = (text || "")
+    .replace(/\s/g, "")
+    .replace(/[、。,.!?！？]/g,"");
+
+  const chars = t.length;
+  const CHARS_PER_SEC = 6;
+
+  const sec = chars / CHARS_PER_SEC;
+  return { sec, chars, charsPerSec: CHARS_PER_SEC };
+}
+
+/* =========================
+   2分用：やさしい総合評価（労い強め＋長さチェック＋改善2つまで）
 ========================= */
 function hxGentleEvaluate(text){
   const raw = (text || "").trim();
   const t = raw.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+
+  let score = 60;
+  const goodPoints = [];
+  const badges = [];
+  const advice = [];
 
   if(t.length < 10){
     return {
@@ -276,74 +288,132 @@ function hxGentleEvaluate(text){
       message:
 `🌟 総合評価：60点
 
-短いながらも、話そうとする姿勢がとても良いです。
+まず「2分に挑戦しよう」とした時点で素晴らしいです👏
+短いながらも、話そうとする姿勢が伝わりました。
 
-もう1〜2文だけ足して、
-「一番言いたいこと」か「印象に残った体験」を入れると、
-ぐっと伝わりやすくなります😊`
+💡 2分に近づけるコツ：
+・背景（いつ/どんな状況）を1〜2文
+・出来事（何が起きたか）を2〜3文
+・学び（何を得たか）を1文
+・今後（どうしたいか）を1文
+
+この型に沿うだけで、自然に2分が埋まります😊`
     };
   }
 
-  let score = 60;
-  const goodPoints = [];
-  const badges = [];
-  const advice = [];
+  // テーマ別の“雰囲気”を少し変える（重いテーマが多いので）
+  const heavyHints = ["つらかった","失敗","挫折","後悔","困難","立ち直った"];
+  const isHeavy = heavyHints.some(w => t.includes(w));
 
-  // 柔軟ワード判定（言い換え許容）
-  const conclusion = ["結論","要するに","つまり","一言でいうと","私の考えは","僕の考えは","私は","僕は","大事なのは","重要なのは","ポイントは","結局","一番言いたいのは"];
-  const reason = ["なぜなら","理由","背景","というのも","なぜかというと","だからこそ","なので","から","ため","があって"];
-  const example = ["例えば","たとえば","実際に","この前","以前","先日","具体的に","体験として","たとえると","こんなことがあって","のとき"];
-  const summary = ["まとめると","結論として","最後に","だから","つまり","なので","というわけで","要は","今後は","次は","これから"];
+  // 柔軟ワード判定
+  const conclusion = ["結論","要するに","つまり","一言でいうと","私の考えは","僕の考えは","私は","僕は","大事なのは","重要なのは","ポイントは","結局","一番言いたいのは","私が学んだのは","私が大切にしたいのは"];
+  const reason = ["なぜなら","理由","背景","というのも","なぜかというと","だからこそ","なので","から","ため","があって","背景として"];
+  const example = ["例えば","たとえば","実際に","この前","以前","先日","具体的に","体験として","たとえると","こんなことがあって","のとき","当時","その時"];
+  const summary = ["まとめると","結論として","最後に","だから","つまり","なので","というわけで","要は","今後は","次は","これから","これを大事にしたい","今は"];
 
-  if(conclusion.some(w => t.includes(w))){
-    score += 10; goodPoints.push("テーマ（主張）がはっきりしていました"); badges.push("テーマ明確");
-  }
-  if(reason.some(w => t.includes(w))){
-    score += 10; goodPoints.push("理由や背景が伝わって納得しやすかったです"); badges.push("納得感");
-  }
-  if(example.some(w => t.includes(w))){
-    score += 10; goodPoints.push("具体例があり、イメージしやすかったです"); badges.push("具体性");
-  }
-  if(summary.some(w => t.includes(w))){
-    score += 10; goodPoints.push("最後の締め・まとめが良く、余韻が残りました"); badges.push("締めが良い");
-  }
-
-  if(t.length > 120){
-    score += 5; goodPoints.push("内容をしっかり考えて話しているのが伝わりました"); badges.push("内容充実");
-  }
-
-  const emotionWords = ["嬉しい","楽しい","悔しい","悲しい","怖い","感動","驚いた","ワクワク","モヤモヤ","腹が立った","ほっとした"];
-  if(emotionWords.some(w => t.includes(w))){
-    score += 5; goodPoints.push("感情が入っていて、聞き手の心に届きやすい話し方でした"); badges.push("感情が伝わる");
-  }
-
-  const listenerWords = ["あなた","みなさん","皆さん","相手","聞く人","伝えたい","おすすめ","共有"];
-  if(listenerWords.some(w => t.includes(w))){
-    score += 5; goodPoints.push("聞き手を意識した言葉選びができていました"); badges.push("聞き手目線");
-  }
-
+  const hasConclusion = conclusion.some(w => t.includes(w));
   const hasReason = reason.some(w => t.includes(w));
   const hasExample = example.some(w => t.includes(w));
   const hasSummary = summary.some(w => t.includes(w));
-  const hasConclusion = conclusion.some(w => t.includes(w));
 
-  // 改善は1つだけ（優しく）
-  if(!hasExample){
-    advice.push("具体例を「1つだけ」入れると、さらにグッと伝わります（例：その時の場面／出来事）");
-  } else if(!hasSummary){
-    advice.push("最後に一言だけ「まとめ」を置くと、聞き手の記憶に残りやすくなります");
-  } else if(!hasReason){
-    advice.push("理由を一言足すと説得力が増します（例：なぜそう感じたか）");
-  } else if(!hasConclusion){
-    advice.push("冒頭か最後に「一番伝えたい結論」を一言置くと、さらに分かりやすくなります");
+  if(hasConclusion){ score += 10; goodPoints.push("テーマ（主張）がはっきりしていました"); badges.push("テーマ明確"); }
+  if(hasReason){ score += 10; goodPoints.push("理由や背景が伝わって納得しやすかったです"); badges.push("納得感"); }
+  if(hasExample){ score += 10; goodPoints.push("具体例があり、情景が浮かびました"); badges.push("具体性"); }
+  if(hasSummary){ score += 10; goodPoints.push("最後の締めがあり、話がまとまりました"); badges.push("締めが良い"); }
+
+  // 2分は“厚み”を見る
+  if(t.length > 320){
+    score += 5;
+    goodPoints.push("2分スピーチに必要な情報量がしっかりありました");
+    badges.push("内容充実");
   }
+
+  // 感情・内省（2分向き）
+  const reflectionWords = ["学んだ","気づいた","反省","価値観","大切","成長","変わった","覚悟","原動力","選択"];
+  if(reflectionWords.some(w => t.includes(w))){
+    score += 5;
+    goodPoints.push("内省が入っていて、2分らしい深みがありました");
+    badges.push("深み");
+  }
+
+  // 聞き手目線
+  const listenerWords = ["みなさん","皆さん","相手","聞く人","伝えたい","共有","もしよければ","おすすめ","参考"];
+  if(listenerWords.some(w => t.includes(w))){
+    score += 5;
+    goodPoints.push("聞き手を意識した言葉選びができていました");
+    badges.push("聞き手目線");
+  }
+
+  // 長さチェック（120秒）
+  const est = hxEstimateSeconds(t);
+  const target = TARGET_SECONDS;
+  const low = target * 0.85;
+  const high = target * 1.15;
+
+  let lengthComment = "";
+  if(est.sec < low){
+    badges.push("短め");
+    lengthComment =
+`⏱ 長さチェック：
+推定 ${est.sec.toFixed(0)}秒（目標 ${target}秒） → 少し短め
+
+💡 伸ばすコツ（2分向け）：
+・「背景（当時の状況）」を2文足す
+・「出来事の流れ」を1段階だけ具体化
+・「学び」を1文→2文にして深める`;
+    advice.push("2分は“背景→出来事→学び→今後”を入れると自然に伸びます");
+  }else if(est.sec > high){
+    badges.push("長め");
+    lengthComment =
+`⏱ 長さチェック：
+推定 ${est.sec.toFixed(0)}秒（目標 ${target}秒） → 少し長め
+
+💡 短くするコツ：
+・具体例を1つに絞る
+・同じ意味の文を削る
+・締めを1文にまとめる`;
+    advice.push("2分に収めるなら、具体例を1つに絞って締めを短くすると綺麗です");
+  }else{
+    badges.push("長さOK");
+    score += 5;
+    lengthComment =
+`⏱ 長さチェック：
+推定 ${est.sec.toFixed(0)}秒（目標 ${target}秒） → ちょうど良い長さです ✅`;
+    goodPoints.push("2分に合う長さで、聞き手が集中しやすいテンポでした");
+  }
+
+  // 改善：最大2つ（2分は頑張りが大きいので）
+  const improveList = [];
+
+  if(!hasExample) improveList.push("具体例（当時の場面）を1つ入れると、説得力と臨場感が増します");
+  if(!hasSummary) improveList.push("最後に「今の自分はこうしたい」を一言置くと締まります");
+  if(!hasReason) improveList.push("背景・理由を一言足すと、聞き手が迷子になりません");
+  if(!hasConclusion) improveList.push("冒頭か最後に「一番伝えたい結論」を一言置くと軸が通ります");
+
+  // 2つまで
+  const merged = [];
+  (advice.concat(improveList)).forEach(a => {
+    if(!a) return;
+    if(merged.includes(a)) return;
+    if(merged.length >= 2) return;
+    merged.push(a);
+  });
 
   const praise = goodPoints.length
     ? goodPoints[Math.floor(Math.random() * goodPoints.length)]
-    : "前向きに話そうとしている姿勢がとても良いです";
+    : "2分という長い時間に挑戦したこと自体が素晴らしいです";
 
-  const improve = advice.length ? advice[0] : "今の調子で続けていきましょう";
   score = Math.min(score, 100);
+
+  const improveText = merged.length
+    ? "💡 さらに良くするなら：\n・" + merged.join("\n・")
+    : "💡 この調子で続けていきましょう";
+
+  // 労い（2分専用）
+  const warm =
+isHeavy
+? "2分で“しんどいテーマ”を扱えるのは本当に強いです。丁寧に話せています👏"
+: "2分話しきるのは体力を使いますが、最後までよく頑張りました👏";
 
   const finalBadges = badges.length ? badges : ["前向き"];
 
@@ -353,19 +423,20 @@ function hxGentleEvaluate(text){
     message:
 `🌟 総合評価：${score}点
 
-とても良いスピーチでした。
+${warm}
 
 特に「${praise}」点が素晴らしいです。
 
-💡 さらに良くするなら：
-${improve}
+${lengthComment}
 
-これからも自信を持って話して大丈夫です😊`
+${improveText}
+
+2分スピーチは難易度が高いです。今の積み上げは確実に力になっています😊`
   };
 }
 
 /* =========================
-   ③ UI操作
+   UI操作
 ========================= */
 function hxRunEvaluation(){
   const text = document.getElementById("hxSpeechText").value;
@@ -396,10 +467,14 @@ function hxClearText(){
 
 function hxInsertTemplate(){
   document.getElementById("hxSpeechText").value =
-`（例）私が伝えたいことは〇〇です。
-というのも、△△という背景があって…
-例えば、□□という出来事がありました。
-だから、今後は◇◇を意識したいです。`;
+`（例）私が今日話したいのは「〇〇」です。
+背景として、△△という状況がありました。
+当時は□□が起きて、とても印象に残っています。
+そこから学んだのは◇◇です。
+今後は、この学びを活かして××していきたいです。`;
   hxRunEvaluation();
 }
 </script>
+
+</body>
+</html>
