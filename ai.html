@@ -3,32 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI評価（やさしい総合評価）</title>
+  <title>AI評価（録音つき）</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* 既存のstyle.cssを壊さないための最低限の補助 */
     .btnRow { display:flex; gap:10px; flex-wrap:wrap; }
     textarea { width:100%; min-height:160px; padding:12px; border-radius:12px; border:1px solid #ddd; }
     .resultBox { white-space: pre-wrap; line-height: 1.9; }
     .pill { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid #ddd; font-size:14px; margin:4px 6px 0 0; }
     .small { font-size: 14px; opacity: 0.9; }
     button { padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff; }
-    button.primary { border: none; background: #0ea5e9; color: #fff; }
+    button.primary { border:none; background:#0ea5e9; color:#fff; }
+    button.danger { border:none; background:#ef4444; color:#fff; }
+    button.good { border:none; background:#22c55e; color:#fff; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    audio { width:100%; margin-top:10px; }
+    .box { border:1px solid #eee; border-radius:14px; padding:12px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
   </style>
 </head>
 
 <body>
   <header class="top">
-    <h1>🧠 AI評価（やさしい総合評価）</h1>
-    <p class="sub">PREPに縛られず、自然な言い回しも評価します</p>
+    <h1>🧠 AI評価（録音つき）</h1>
+    <p class="sub">録音→再生→（可能なら文字起こし）→やさしく総合評価</p>
     <p><a href="index.html">← ホームへ戻る</a></p>
   </header>
 
   <main class="menu">
+
+    <!-- 録音 -->
     <div class="card" style="display:block;">
-      <div class="title">スピーチ本文を入力</div>
+      <div class="title">🎙 録音</div>
       <div class="desc">
-        <textarea id="speechText" placeholder="ここにスピーチを書いてください（話した内容のメモでもOK）"></textarea>
+        <div class="box">
+          <div class="row">
+            <button id="recBtn" class="good" onclick="toggleRecording()">録音開始</button>
+            <button class="danger" onclick="resetRecording()">録音リセット</button>
+            <span id="recStatus" class="mono">待機中</span>
+          </div>
+
+          <audio id="player" controls style="display:none;"></audio>
+
+          <div class="small" style="margin-top:10px;">
+            ✅ 録音した音声はこの端末内で再生できます。<br>
+            ⚠️ iPhoneのSafariは「自動文字起こし」が環境によって動かない場合があります（下のボタンが出ない/反応しない等）。
+          </div>
+
+          <div class="row" style="margin-top:10px;">
+            <button id="speechBtn" onclick="toggleSpeechToText()" style="display:none;">📝 録音しながら文字起こし（試験）</button>
+            <span id="sttStatus" class="mono"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 入力 -->
+    <div class="card" style="display:block;">
+      <div class="title">スピーチ本文（評価対象）</div>
+      <div class="desc">
+        <textarea id="speechText" placeholder="ここにスピーチを書いてください（録音を聴きながらメモでもOK）"></textarea>
 
         <div class="btnRow" style="margin-top:10px;">
           <button class="primary" onclick="runEvaluation()">AI評価する</button>
@@ -43,6 +76,7 @@
       </div>
     </div>
 
+    <!-- 結果 -->
     <div class="card" style="display:block;">
       <div class="title">評価結果</div>
       <div class="desc">
@@ -55,21 +89,155 @@
 
 <script>
 /* =========================================================
-   やさしい総合評価（柔軟版）
-   - PREP必須ではなく、ニュアンスでも加点
-   - 良い点を優先して提示
-   - 改善点は最大1つ（優しく）
+   ① 録音（MediaRecorder）
    ========================================================= */
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordedBlobUrl = null;
 
+async function toggleRecording(){
+  const btn = document.getElementById("recBtn");
+  const status = document.getElementById("recStatus");
+  const player = document.getElementById("player");
+
+  // 録音中なら停止
+  if(mediaRecorder && mediaRecorder.state === "recording"){
+    mediaRecorder.stop();
+    btn.textContent = "録音開始";
+    status.textContent = "停止しました（音声生成中…）";
+    return;
+  }
+
+  // 開始
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = (e) => {
+      if(e.data && e.data.size > 0) recordedChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      // マイク停止
+      stream.getTracks().forEach(t => t.stop());
+
+      const blob = new Blob(recordedChunks, { type: "audio/webm" });
+      if(recordedBlobUrl) URL.revokeObjectURL(recordedBlobUrl);
+      recordedBlobUrl = URL.createObjectURL(blob);
+
+      player.src = recordedBlobUrl;
+      player.style.display = "block";
+      status.textContent = "録音データ準備OK（再生できます）";
+    };
+
+    mediaRecorder.start();
+    btn.textContent = "録音停止";
+    status.textContent = "録音中…";
+  }catch(err){
+    status.textContent = "録音できませんでした（マイク許可を確認してください）";
+    alert("録音に失敗しました。iPhoneの設定でSafariのマイク許可を確認してください。");
+  }
+}
+
+function resetRecording(){
+  const status = document.getElementById("recStatus");
+  const player = document.getElementById("player");
+
+  if(mediaRecorder && mediaRecorder.state === "recording"){
+    mediaRecorder.stop();
+  }
+  recordedChunks = [];
+  if(recordedBlobUrl) URL.revokeObjectURL(recordedBlobUrl);
+  recordedBlobUrl = null;
+
+  player.pause();
+  player.removeAttribute("src");
+  player.style.display = "none";
+  status.textContent = "待機中";
+}
+
+/* =========================================================
+   ②（任意）音声→文字（Web Speech API）
+   - iPhone Safariでは動かないことがあります
+   ========================================================= */
+let recognition = null;
+let sttRunning = false;
+
+function canUseSpeechRecognition(){
+  return (window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+
+function setupSpeechButton(){
+  const sttBtn = document.getElementById("speechBtn");
+  if(canUseSpeechRecognition()){
+    sttBtn.style.display = "inline-block";
+  }
+}
+setupSpeechButton();
+
+function toggleSpeechToText(){
+  const STT = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const sttStatus = document.getElementById("sttStatus");
+  const sttBtn = document.getElementById("speechBtn");
+  const textarea = document.getElementById("speechText");
+
+  if(!STT){
+    alert("このブラウザは音声の文字起こしに対応していない可能性があります。");
+    return;
+  }
+
+  if(sttRunning){
+    recognition.stop();
+    return;
+  }
+
+  recognition = new STT();
+  recognition.lang = "ja-JP";
+  recognition.interimResults = true;
+  recognition.continuous = true;
+
+  let finalText = "";
+
+  recognition.onstart = () => {
+    sttRunning = true;
+    sttBtn.textContent = "🛑 文字起こし停止";
+    sttStatus.textContent = "文字起こし中…（話してOK）";
+  };
+
+  recognition.onerror = (e) => {
+    sttStatus.textContent = "エラー：" + (e.error || "不明");
+  };
+
+  recognition.onend = () => {
+    sttRunning = false;
+    sttBtn.textContent = "📝 録音しながら文字起こし（試験）";
+    sttStatus.textContent = "停止しました";
+  };
+
+  recognition.onresult = (event) => {
+    let interim = "";
+    for(let i = event.resultIndex; i < event.results.length; i++){
+      const transcript = event.results[i][0].transcript;
+      if(event.results[i].isFinal){
+        finalText += transcript + "\n";
+      } else {
+        interim += transcript;
+      }
+    }
+    textarea.value = (finalText + interim).trim();
+  };
+
+  recognition.start();
+}
+
+/* =========================================================
+   ③ 総合評価
+   ========================================================= */
 function gentleEvaluate(text){
-  // 正規化
   const raw = (text || "").trim();
-  const t = raw
-    .replace(/\r\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  const t = raw.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
 
-  // 文字が少なすぎる場合
   if(t.length < 10){
     return {
       score: 60,
@@ -85,87 +253,48 @@ function gentleEvaluate(text){
     };
   }
 
-  let score = 60; // 最低保証点
+  let score = 60;
   const goodPoints = [];
   const badges = [];
   const advice = [];
 
-  // 柔軟判定用キーワード（PREP固定ではなく、ニュアンスでも拾う）
-  const conclusion = [
-    "結論","要するに","つまり","一言でいうと","私の考えは","僕の考えは","私は","僕は",
-    "大事なのは","重要なのは","ポイントは","結局","一番言いたいのは"
-  ];
+  const conclusion = ["結論","要するに","つまり","一言でいうと","私の考えは","僕の考えは","私は","僕は","大事なのは","重要なのは","ポイントは","結局","一番言いたいのは"];
+  const reason = ["なぜなら","理由","背景","というのも","なぜかというと","だからこそ","なので","から","ため","があって"];
+  const example = ["例えば","たとえば","実際に","この前","以前","先日","具体的に","体験として","たとえると","こんなことがあって","のとき"];
+  const summary = ["まとめると","結論として","最後に","だから","つまり","なので","というわけで","要は","今後は","次は","これから"];
 
-  const reason = [
-    "なぜなら","理由","背景","というのも","なぜかというと","だからこそ","なので",
-    "〜から","〜ため","〜があって"
-  ];
-
-  const example = [
-    "例えば","たとえば","実際に","この前","以前","先日","具体的に","体験として","たとえると",
-    "こんなことがあって","〜のとき"
-  ];
-
-  const summary = [
-    "まとめると","結論として","最後に","だから","つまり","なので","というわけで","要は",
-    "今後は","次は","これから"
-  ];
-
-  // 文章構造チェック（あくまで加点）
   if(conclusion.some(w => t.includes(w))){
-    score += 10;
-    goodPoints.push("テーマ（主張）がはっきりしていました");
-    badges.push("テーマ明確");
+    score += 10; goodPoints.push("テーマ（主張）がはっきりしていました"); badges.push("テーマ明確");
   }
-
   if(reason.some(w => t.includes(w))){
-    score += 10;
-    goodPoints.push("理由や背景が伝わって納得しやすかったです");
-    badges.push("納得感");
+    score += 10; goodPoints.push("理由や背景が伝わって納得しやすかったです"); badges.push("納得感");
   }
-
   if(example.some(w => t.includes(w))){
-    score += 10;
-    goodPoints.push("具体例があり、イメージしやすかったです");
-    badges.push("具体性");
+    score += 10; goodPoints.push("具体例があり、イメージしやすかったです"); badges.push("具体性");
   }
-
   if(summary.some(w => t.includes(w))){
-    score += 10;
-    goodPoints.push("最後の締め・まとめが良く、余韻が残りました");
-    badges.push("締めが良い");
+    score += 10; goodPoints.push("最後の締め・まとめが良く、余韻が残りました"); badges.push("締めが良い");
   }
 
-  // 分量（多いほど必ず良いではないが、一定以上は努力として加点）
   if(t.length > 120){
-    score += 5;
-    goodPoints.push("内容をしっかり考えて話しているのが伝わりました");
-    badges.push("内容充実");
+    score += 5; goodPoints.push("内容をしっかり考えて話しているのが伝わりました"); badges.push("内容充実");
   }
 
-  // 感情・熱量（自己肯定感を上げるポイント）
   const emotionWords = ["嬉しい","楽しい","悔しい","悲しい","怖い","感動","驚いた","ワクワク","モヤモヤ","腹が立った","ほっとした"];
   if(emotionWords.some(w => t.includes(w))){
-    score += 5;
-    goodPoints.push("感情が入っていて、聞き手の心に届きやすい話し方でした");
-    badges.push("感情が伝わる");
+    score += 5; goodPoints.push("感情が入っていて、聞き手の心に届きやすい話し方でした"); badges.push("感情が伝わる");
   }
 
-  // 聞き手への配慮
   const listenerWords = ["あなた","みなさん","皆さん","相手","聞く人","伝えたい","おすすめ","共有"];
   if(listenerWords.some(w => t.includes(w))){
-    score += 5;
-    goodPoints.push("聞き手を意識した言葉選びができていました");
-    badges.push("聞き手目線");
+    score += 5; goodPoints.push("聞き手を意識した言葉選びができていました"); badges.push("聞き手目線");
   }
 
-  // 改善提案は最大1つ：足りない要素を優先度で
   const hasConclusion = conclusion.some(w => t.includes(w));
   const hasReason = reason.some(w => t.includes(w));
   const hasExample = example.some(w => t.includes(w));
   const hasSummary = summary.some(w => t.includes(w));
 
-  // 優先度：具体例 → まとめ → 理由 → 結論
   if(!hasExample){
     advice.push("具体例を「1つだけ」入れると、さらにグッと伝わります（例：その時の場面／出来事）");
   } else if(!hasSummary){
@@ -176,17 +305,13 @@ function gentleEvaluate(text){
     advice.push("冒頭か最後に「一番伝えたい結論」を一言置くと、さらに分かりやすくなります");
   }
 
-  // ランダム褒め（良い点が複数あればランダムで1つ抜く）
   const praise = goodPoints.length
     ? goodPoints[Math.floor(Math.random() * goodPoints.length)]
     : "前向きに話そうとしている姿勢がとても良いです";
 
   const improve = advice.length ? advice[0] : "今の調子で続けていきましょう";
-
-  // スコア上限
   score = Math.min(score, 100);
 
-  // バッジが空なら最低1つ
   const finalBadges = badges.length ? badges : ["前向き"];
 
   return {
@@ -206,12 +331,13 @@ ${improve}
   };
 }
 
-// UI用
+/* =========================================================
+   UI
+   ========================================================= */
 function runEvaluation(){
   const text = document.getElementById("speechText").value;
   const res = gentleEvaluate(text);
 
-  // バッジ表示
   const badgesEl = document.getElementById("badges");
   badgesEl.innerHTML = "";
   (res.badges || []).forEach(b => {
@@ -233,7 +359,7 @@ function clearText(){
 function insertSample(){
   document.getElementById("speechText").value =
 `最近うれしかったことを話します。
-この前、仕事で新人さんが「福田さんの説明わかりやすいです」と言ってくれました。
+この前、仕事で新人さんが「説明がわかりやすいです」と言ってくれました。
 というのも、私は最初に相手の状況を聞いてから説明するようにしているからです。
 例えば、手順を一気に言うのではなく、今の不安を一つずつ解消する形にしました。
 なので、これからも相手目線で伝えることを大事にしたいです。`;
@@ -243,3 +369,5 @@ function insertSample(){
 
 </body>
 </html>
+        
+  
