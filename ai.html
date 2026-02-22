@@ -1,65 +1,245 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI評価（やさしい総合評価）</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* 既存のstyle.cssを壊さないための最低限の補助 */
+    .btnRow { display:flex; gap:10px; flex-wrap:wrap; }
+    textarea { width:100%; min-height:160px; padding:12px; border-radius:12px; border:1px solid #ddd; }
+    .resultBox { white-space: pre-wrap; line-height: 1.9; }
+    .pill { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid #ddd; font-size:14px; margin:4px 6px 0 0; }
+    .small { font-size: 14px; opacity: 0.9; }
+    button { padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff; }
+    button.primary { border: none; background: #0ea5e9; color: #fff; }
+  </style>
+</head>
+
+<body>
+  <header class="top">
+    <h1>🧠 AI評価（やさしい総合評価）</h1>
+    <p class="sub">PREPに縛られず、自然な言い回しも評価します</p>
+    <p><a href="index.html">← ホームへ戻る</a></p>
+  </header>
+
+  <main class="menu">
+    <div class="card" style="display:block;">
+      <div class="title">スピーチ本文を入力</div>
+      <div class="desc">
+        <textarea id="speechText" placeholder="ここにスピーチを書いてください（話した内容のメモでもOK）"></textarea>
+
+        <div class="btnRow" style="margin-top:10px;">
+          <button class="primary" onclick="runEvaluation()">AI評価する</button>
+          <button onclick="insertSample()">サンプル挿入</button>
+          <button onclick="clearText()">クリア</button>
+        </div>
+
+        <div class="small" style="margin-top:10px;">
+          ※評価は「減点方式」ではなく、良い点を見つけて伸ばす方式です。<br>
+          ※「結論・理由・例えば」などの単語がそのまま入っていなくても、似た表現ならOKにしています。
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="display:block;">
+      <div class="title">評価結果</div>
+      <div class="desc">
+        <div id="badges"></div>
+        <div id="result" class="resultBox" style="margin-top:10px;">ここに結果が表示されます。</div>
+      </div>
+    </div>
+
+  </main>
+
+<script>
+/* =========================================================
+   やさしい総合評価（柔軟版）
+   - PREP必須ではなく、ニュアンスでも加点
+   - 良い点を優先して提示
+   - 改善点は最大1つ（優しく）
+   ========================================================= */
+
 function gentleEvaluate(text){
+  // 正規化
+  const raw = (text || "").trim();
+  const t = raw
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 
-  let score = 60;
+  // 文字が少なすぎる場合
+  if(t.length < 10){
+    return {
+      score: 60,
+      badges: ["入力が短め"],
+      message:
+`🌟 総合評価：60点
 
+短いながらも、話そうとする姿勢がとても良いです。
+
+もう1〜2文だけ足して、
+「何を伝えたいか（結論）」か「一番印象に残ったこと」を入れると、
+ぐっと伝わりやすくなります😊`
+    };
+  }
+
+  let score = 60; // 最低保証点
   const goodPoints = [];
+  const badges = [];
   const advice = [];
 
-  const conclusion = ["私は","僕は","結論","大事なのは","重要なのは"];
-  const reason = ["なぜなら","理由","背景","なぜかというと"];
-  const example = ["例えば","実際に","この前","以前"];
-  const summary = ["だから","つまり","まとめると","なので"];
+  // 柔軟判定用キーワード（PREP固定ではなく、ニュアンスでも拾う）
+  const conclusion = [
+    "結論","要するに","つまり","一言でいうと","私の考えは","僕の考えは","私は","僕は",
+    "大事なのは","重要なのは","ポイントは","結局","一番言いたいのは"
+  ];
 
-  if(conclusion.some(w=>text.includes(w))) {
+  const reason = [
+    "なぜなら","理由","背景","というのも","なぜかというと","だからこそ","なので",
+    "〜から","〜ため","〜があって"
+  ];
+
+  const example = [
+    "例えば","たとえば","実際に","この前","以前","先日","具体的に","体験として","たとえると",
+    "こんなことがあって","〜のとき"
+  ];
+
+  const summary = [
+    "まとめると","結論として","最後に","だから","つまり","なので","というわけで","要は",
+    "今後は","次は","これから"
+  ];
+
+  // 文章構造チェック（あくまで加点）
+  if(conclusion.some(w => t.includes(w))){
     score += 10;
-    goodPoints.push("テーマがはっきりしていました");
+    goodPoints.push("テーマ（主張）がはっきりしていました");
+    badges.push("テーマ明確");
   }
 
-  if(reason.some(w=>text.includes(w))){
+  if(reason.some(w => t.includes(w))){
     score += 10;
-    goodPoints.push("理由がわかりやすかったです");
+    goodPoints.push("理由や背景が伝わって納得しやすかったです");
+    badges.push("納得感");
   }
 
-  if(example.some(w=>text.includes(w))){
+  if(example.some(w => t.includes(w))){
     score += 10;
-    goodPoints.push("具体例があってイメージしやすかったです");
+    goodPoints.push("具体例があり、イメージしやすかったです");
+    badges.push("具体性");
   }
 
-  if(summary.some(w=>text.includes(w))){
+  if(summary.some(w => t.includes(w))){
     score += 10;
-    goodPoints.push("最後のまとめが良かったです");
+    goodPoints.push("最後の締め・まとめが良く、余韻が残りました");
+    badges.push("締めが良い");
   }
 
-  if(text.length > 120){
+  // 分量（多いほど必ず良いではないが、一定以上は努力として加点）
+  if(t.length > 120){
     score += 5;
-    goodPoints.push("しっかり内容を考えて話しています");
+    goodPoints.push("内容をしっかり考えて話しているのが伝わりました");
+    badges.push("内容充実");
   }
 
-  if(!example.some(w=>text.includes(w))){
-    advice.push("具体例を1つ入れるとさらに伝わります");
-  } else if(!summary.some(w=>text.includes(w))){
-    advice.push("最後に一言まとめがあるとより良くなります");
+  // 感情・熱量（自己肯定感を上げるポイント）
+  const emotionWords = ["嬉しい","楽しい","悔しい","悲しい","怖い","感動","驚いた","ワクワク","モヤモヤ","腹が立った","ほっとした"];
+  if(emotionWords.some(w => t.includes(w))){
+    score += 5;
+    goodPoints.push("感情が入っていて、聞き手の心に届きやすい話し方でした");
+    badges.push("感情が伝わる");
   }
 
+  // 聞き手への配慮
+  const listenerWords = ["あなた","みなさん","皆さん","相手","聞く人","伝えたい","おすすめ","共有"];
+  if(listenerWords.some(w => t.includes(w))){
+    score += 5;
+    goodPoints.push("聞き手を意識した言葉選びができていました");
+    badges.push("聞き手目線");
+  }
+
+  // 改善提案は最大1つ：足りない要素を優先度で
+  const hasConclusion = conclusion.some(w => t.includes(w));
+  const hasReason = reason.some(w => t.includes(w));
+  const hasExample = example.some(w => t.includes(w));
+  const hasSummary = summary.some(w => t.includes(w));
+
+  // 優先度：具体例 → まとめ → 理由 → 結論
+  if(!hasExample){
+    advice.push("具体例を「1つだけ」入れると、さらにグッと伝わります（例：その時の場面／出来事）");
+  } else if(!hasSummary){
+    advice.push("最後に一言だけ「まとめ」を置くと、聞き手の記憶に残りやすくなります");
+  } else if(!hasReason){
+    advice.push("理由を一言足すと説得力が増します（例：なぜそう感じたか）");
+  } else if(!hasConclusion){
+    advice.push("冒頭か最後に「一番伝えたい結論」を一言置くと、さらに分かりやすくなります");
+  }
+
+  // ランダム褒め（良い点が複数あればランダムで1つ抜く）
   const praise = goodPoints.length
-    ? goodPoints[Math.floor(Math.random()*goodPoints.length)]
-    : "とても前向きに話せていました";
+    ? goodPoints[Math.floor(Math.random() * goodPoints.length)]
+    : "前向きに話そうとしている姿勢がとても良いです";
 
-  const improve = advice.length
-    ? advice[0]
-    : "今の調子で続けていきましょう";
+  const improve = advice.length ? advice[0] : "今の調子で続けていきましょう";
+
+  // スコア上限
+  score = Math.min(score, 100);
+
+  // バッジが空なら最低1つ
+  const finalBadges = badges.length ? badges : ["前向き"];
 
   return {
-    score: Math.min(score,100),
+    score,
+    badges: finalBadges,
     message:
-`🌟 総合評価：${Math.min(score,100)}点
+`🌟 総合評価：${score}点
 
 とても良いスピーチでした。
 
 特に「${praise}」点が素晴らしいです。
 
+💡 さらに良くするなら：
 ${improve}
 
 これからも自信を持って話して大丈夫です😊`
   };
 }
+
+// UI用
+function runEvaluation(){
+  const text = document.getElementById("speechText").value;
+  const res = gentleEvaluate(text);
+
+  // バッジ表示
+  const badgesEl = document.getElementById("badges");
+  badgesEl.innerHTML = "";
+  (res.badges || []).forEach(b => {
+    const span = document.createElement("span");
+    span.className = "pill";
+    span.textContent = b;
+    badgesEl.appendChild(span);
+  });
+
+  document.getElementById("result").textContent = res.message;
+}
+
+function clearText(){
+  document.getElementById("speechText").value = "";
+  document.getElementById("badges").innerHTML = "";
+  document.getElementById("result").textContent = "ここに結果が表示されます。";
+}
+
+function insertSample(){
+  document.getElementById("speechText").value =
+`最近うれしかったことを話します。
+この前、仕事で新人さんが「福田さんの説明わかりやすいです」と言ってくれました。
+というのも、私は最初に相手の状況を聞いてから説明するようにしているからです。
+例えば、手順を一気に言うのではなく、今の不安を一つずつ解消する形にしました。
+なので、これからも相手目線で伝えることを大事にしたいです。`;
+  runEvaluation();
+}
+</script>
+
+</body>
+</html>
