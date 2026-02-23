@@ -54,6 +54,164 @@
       </div>
     </div>
 
+    <!-- =====================================================
+      ✅ ガイド（言葉表示＋カウントダウン）
+    ====================================================== -->
+    <div class="card" style="display:block;">
+      <div class="title">▶ ガイドつき実践（表示＋カウント）</div>
+      <div class="desc">
+
+        <div style="margin-bottom:10px; font-size:14px; opacity:0.9; line-height:1.7;">
+          画面の指示に合わせて呼吸するだけでOKです😊<br>
+          🔰おすすめ所要時間：<b>約3分</b>（4-4-8×3セット＋息→声＋実戦1呼吸）
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <button onclick="breathStart('4-4-8')">▶ 4-4-8を開始</button>
+          <button onclick="breathStart('3-3-6')">▶ 3-3-6（やさしめ）</button>
+          <button onclick="breathStop()">⏹ ストップ</button>
+          <button onclick="breathReset()">🔁 リセット</button>
+          <button onclick="breathToggleVibe()" id="vibeBtn" style="opacity:0.85;">📳 バイブ：OFF</button>
+        </div>
+
+        <div style="margin-top:12px; text-align:center;">
+          <div id="breathPhase" style="font-size:22px; font-weight:800;">
+            スタートを押してください
+          </div>
+
+          <div id="breathCount" style="font-size:64px; font-weight:900; margin-top:6px; line-height:1;">
+            --
+          </div>
+
+          <div id="breathSub" style="margin-top:10px; opacity:0.9; line-height:1.7;">
+            例）吸う4秒 → 止める4秒 → 吐く8秒（3セット）
+          </div>
+
+          <!-- 進捗（迷わない工夫） -->
+          <div id="breathProgress" style="margin-top:10px; font-size:14px; opacity:0.85;">
+            進捗：0 / 0
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </main>
+
+  <script>
+  /* =========================
+     呼吸ガイド：表示＋カウント
+     - 自動で次へ
+     - 3-3-6 も選べる
+     - バイブON/OFF
+  ========================= */
+  let breathTimer = null;
+  let breathPlan = [];
+  let breathIndex = 0;
+  let breathRemaining = 0;
+  let vibeOn = false;
+
+  function setBreathUI(phase, count, sub){
+    document.getElementById("breathPhase").textContent = phase || "";
+    document.getElementById("breathCount").textContent = (count === null || count === undefined) ? "--" : count;
+    document.getElementById("breathSub").textContent = sub || "";
+    document.getElementById("breathProgress").textContent = `進捗：${Math.min(breathIndex + 1, breathPlan.length)} / ${breathPlan.length}`;
+  }
+
+  function buzz(ms=60){
+    if(!vibeOn) return;
+    if(navigator.vibrate) navigator.vibrate(ms);
+  }
+
+  function breathToggleVibe(){
+    vibeOn = !vibeOn;
+    const btn = document.getElementById("vibeBtn");
+    btn.textContent = vibeOn ? "📳 バイブ：ON" : "📳 バイブ：OFF";
+  }
+
+  function buildBreathPlan(type){
+    const inhale = (type === "3-3-6") ? 3 : 4;
+    const hold   = (type === "3-3-6") ? 3 : 4;
+    const exhale = (type === "3-3-6") ? 6 : 8;
+    const sets = 3;
+
+    const plan = [];
+
+    // 4-4-8（3セット）
+    for(let i=1; i<=sets; i++){
+      plan.push({ phase:`はい吸ってー（${i}/${sets}）`, sec: inhale, sub:"鼻からゆっくり。お腹がふくらむイメージ" });
+      plan.push({ phase:`ここで止めて（${i}/${sets}）`, sec: hold,   sub:"肩の力を抜いて、そのままキープ" });
+      plan.push({ phase:`はい今から吐いてー（${i}/${sets}）`, sec: exhale, sub:"口から細く長く。ロウソクを揺らさない感じ" });
+    }
+
+    // 息→声（30秒を 10秒×3 に分割してガイド）
+    plan.push({ phase:"つぎは息→声（準備）", sec: 2, sub:"吐きながら「すーー」or「はーー」を出します" });
+    plan.push({ phase:"すーー（一定に）", sec: 10, sub:"息を一直線に。喉は力を抜く" });
+    plan.push({ phase:"はーー（一定に）", sec: 10, sub:"同じ強さで、ゆらぎを減らす" });
+    plan.push({ phase:"すーー（最後もう一回）", sec: 10, sub:"お腹で支えるイメージ" });
+
+    // 実戦：話す前の1呼吸（吸う4/吐く6）
+    plan.push({ phase:"実戦：話す前の1呼吸", sec: 2, sub:"人前で話す直前は深呼吸1回だけでOK" });
+    plan.push({ phase:"吸って（4秒）", sec: 4, sub:"鼻から。背すじは伸ばす" });
+    plan.push({ phase:"吐いて（6秒）", sec: 6, sub:"長めに吐くと声が安定しやすい" });
+
+    return plan;
+  }
+
+  function breathStart(type){
+    if(breathTimer) return; // 二重起動防止
+
+    breathPlan = buildBreathPlan(type);
+    breathIndex = 0;
+
+    // 進捗表示初期化
+    document.getElementById("breathProgress").textContent = `進捗：1 / ${breathPlan.length}`;
+
+    runBreathStep();
+  }
+
+  function runBreathStep(){
+    if(breathIndex >= breathPlan.length){
+      breathStop();
+      setBreathUI("終了！お疲れさまでした😊", "--", "呼吸が整うと、声の安定感が上がります。");
+      return;
+    }
+
+    const step = breathPlan[breathIndex];
+    breathRemaining = step.sec;
+
+    buzz(50);
+    setBreathUI(step.phase, breathRemaining, step.sub);
+
+    breathTimer = setInterval(() => {
+      breathRemaining--;
+      setBreathUI(step.phase, breathRemaining, step.sub);
+
+      if(breathRemaining <= 0){
+        clearInterval(breathTimer);
+        breathTimer = null;
+        breathIndex++;
+        runBreathStep();
+      }
+    }, 1000);
+  }
+
+  function breathStop(){
+    if(breathTimer){
+      clearInterval(breathTimer);
+      breathTimer = null;
+    }
+  }
+
+  function breathReset(){
+    breathStop();
+    breathPlan = [];
+    breathIndex = 0;
+    breathRemaining = 0;
+    document.getElementById("breathProgress").textContent = "進捗：0 / 0";
+    setBreathUI("スタートを押してください", "--", "例）吸う4秒 → 止める4秒 → 吐く8秒（3セット）");
+  }
+  </script>
+
 </body>
 </html>
