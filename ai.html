@@ -10,7 +10,7 @@
     textarea { width:100%; min-height:160px; padding:12px; border-radius:12px; border:1px solid #ddd; }
     .resultBox { white-space: pre-wrap; line-height: 1.9; }
     .pill { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid #ddd; font-size:14px; margin:4px 6px 0 0; }
-    .small { font-size: 14px; opacity: 0.9; }
+    .small { font-size: 14px; opacity: 0.9; line-height: 1.7; }
     button { padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff; }
     button.primary { border:none; background:#0ea5e9; color:#fff; }
     button.danger { border:none; background:#ef4444; color:#fff; }
@@ -19,17 +19,50 @@
     audio { width:100%; margin-top:10px; }
     .box { border:1px solid #eee; border-radius:14px; padding:12px; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .hr { height:1px; background:#eee; margin:12px 0; }
+    details { border:1px solid #eee; border-radius:14px; padding:12px; background:#fff; }
+    summary { cursor:pointer; font-weight:700; }
+    .grid2 { display:grid; gap:10px; grid-template-columns: 1fr; }
+    @media (min-width: 720px){
+      .grid2 { grid-template-columns: 1fr 1fr; }
+    }
+    .kv { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .kv .pill { background:#fff; }
+    .notice { padding:10px 12px; border-radius:12px; border:1px dashed #ddd; }
   </style>
 </head>
 
 <body>
   <header class="top">
     <h1>🧠 AI評価（録音つき）</h1>
-    <p class="sub">録音→再生→（可能なら文字起こし）→やさしく総合評価</p>
+    <p class="sub">録音→再生→（任意でメモ/文字起こし）→やさしく総合評価</p>
     <p><a href="index.html">← ホームへ戻る</a></p>
   </header>
 
   <main class="menu">
+
+    <!-- ✅ 迷わない導線（ミニ手順 + 継続ログ） -->
+    <div class="card" style="display:block;">
+      <div class="title">✅ 今日のやり方（迷ったらこれ）</div>
+      <div class="desc">
+        <div class="notice small">
+          ① まず <b>録音</b> → ② <b>本文にメモ</b> → ③ <b>AI評価</b><br>
+          ※「文字起こし」は上級者向け（任意）。動かなくてもOKです。
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="kv">
+          <span class="pill">📌 合計練習回数：<b id="statTotal">0</b></span>
+          <span class="pill">🔥 連続日数：<b id="statStreak">0</b></span>
+          <span class="pill">🕒 最終練習：<b id="statLast">--</b></span>
+        </div>
+
+        <div class="small" style="margin-top:8px;">
+          💡 続けるコツ：<b>「良かった1つ」＋「次は1つ」</b>だけ書けば伸びます。
+        </div>
+      </div>
+    </div>
 
     <!-- 録音 -->
     <div class="card" style="display:block;">
@@ -46,20 +79,37 @@
 
           <div class="small" style="margin-top:10px;">
             ✅ 録音した音声はこの端末内で再生できます。<br>
-            ⚠️ iPhoneのSafariは「自動文字起こし」が環境によって動かない場合があります（下のボタンが出ない/反応しない等）。
+            💡 再生を聴きながら下の本文欄にメモ → AI評価が一番おすすめです。
           </div>
 
-          <div class="row" style="margin-top:10px;">
-            <button id="speechBtn" onclick="toggleSpeechToText()" style="display:none;">📝 録音しながら文字起こし（試験）</button>
-            <span id="sttStatus" class="mono"></span>
-          </div>
+          <div class="hr"></div>
+
+          <!-- ✅ 浮かないように「上級（任意）」へ格上げして折りたたみ -->
+          <details>
+            <summary>上級（任意）：セルフ文字起こし（試験）</summary>
+            <div class="small" style="margin-top:10px;">
+              これは<b>任意</b>です。動かない環境も多いので、使えなくても全く問題ありません。<br>
+              目的：自分の「口ぐせ」「言い直し」「ムダ語」を見つけるための練習です。
+            </div>
+
+            <div class="row" style="margin-top:10px;">
+              <button id="speechBtn" onclick="toggleSpeechToText()" style="display:none;">📝 文字起こしを開始</button>
+              <span id="sttStatus" class="mono"></span>
+            </div>
+
+            <div class="small" style="margin-top:10px;">
+              ⚠️ iPhone Safariでは動かない場合があります（ボタンが出ない/反応しない等）。<br>
+              その場合は「録音→再生→手入力メモ」でOKです。
+            </div>
+          </details>
+
         </div>
       </div>
     </div>
 
     <!-- 入力 -->
     <div class="card" style="display:block;">
-      <div class="title">スピーチ本文（評価対象）</div>
+      <div class="title">📝 スピーチ本文（評価対象）</div>
       <div class="desc">
         <textarea id="speechText" placeholder="ここにスピーチを書いてください（録音を聴きながらメモでもOK）"></textarea>
 
@@ -76,18 +126,113 @@
       </div>
     </div>
 
+    <!-- ✅ 振り返りノート（別視点のサポート：ここが“文字起こし”の代替にもなる） -->
+    <div class="card" style="display:block;">
+      <div class="title">📓 振り返りノート（成長が速くなる）</div>
+      <div class="desc">
+        <div class="grid2">
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">🌟 良かった点（1つだけ）</div>
+            <textarea id="reflectGood" style="min-height:90px;" placeholder="例：結論を最初に言えた / 声がはっきりしていた など"></textarea>
+          </div>
+          <div>
+            <div style="font-weight:700; margin-bottom:6px;">🎯 次に直す点（1つだけ）</div>
+            <textarea id="reflectNext" style="min-height:90px;" placeholder="例：具体例を1つ入れる / 締めを1文にする など"></textarea>
+          </div>
+        </div>
+
+        <div class="btnRow" style="margin-top:10px;">
+          <button onclick="saveReflection()">保存</button>
+          <button onclick="loadReflection()">前回の振り返りを表示</button>
+          <button onclick="clearReflection()">振り返りクリア</button>
+        </div>
+
+        <div class="small" style="margin-top:10px;">
+          💡 コツ：毎回「良かった1つ＋次は1つ」だけでOK。これが一人練習の最短ルートです。
+        </div>
+      </div>
+    </div>
+
     <!-- 結果 -->
     <div class="card" style="display:block;">
-      <div class="title">評価結果</div>
+      <div class="title">📊 評価結果</div>
       <div class="desc">
         <div id="badges"></div>
         <div id="result" class="resultBox" style="margin-top:10px;">ここに結果が表示されます。</div>
+
+        <div class="btnRow" style="margin-top:10px;">
+          <button onclick="copyResult()">📋 結果をコピー</button>
+          <button onclick="setNextFromAdvice()">🎯 次に直す点へ反映</button>
+        </div>
+
+        <div class="small" style="margin-top:10px;">
+          ✅ おすすめ：結果を見たら「次に直す点」に1行だけ書いて終わり。これで確実に伸びます。
+        </div>
       </div>
     </div>
 
   </main>
 
 <script>
+/* =========================================================
+   0) ログ（localStorage）
+   ========================================================= */
+const LS = {
+  total: "hx_ai_total",
+  last: "hx_ai_lastDate",
+  streak: "hx_ai_streak",
+  lastAdvice: "hx_ai_lastAdvice",
+  reflectGood: "hx_ai_reflect_good",
+  reflectNext: "hx_ai_reflect_next"
+};
+
+function todayKey(){
+  // ローカル日付（JST想定）
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function formatDate(key){
+  if(!key) return "--";
+  return key;
+}
+
+function updateStatsUI(){
+  document.getElementById("statTotal").textContent = Number(localStorage.getItem(LS.total) || 0);
+  document.getElementById("statStreak").textContent = Number(localStorage.getItem(LS.streak) || 0);
+  document.getElementById("statLast").textContent = formatDate(localStorage.getItem(LS.last));
+}
+
+function bumpPracticeCount(){
+  const total = Number(localStorage.getItem(LS.total) || 0) + 1;
+  localStorage.setItem(LS.total, String(total));
+
+  const today = todayKey();
+  const last = localStorage.getItem(LS.last);
+
+  // streak計算（ざっくり：前回が昨日なら+1、それ以外は1）
+  const streakNow = (() => {
+    if(!last) return 1;
+    // lastKey -> Date
+    const [ly,lm,ld] = last.split("-").map(Number);
+    const lastDate = new Date(ly, lm-1, ld);
+    const now = new Date();
+    const diffDays = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - new Date(lastDate.getFullYear(),lastDate.getMonth(),lastDate.getDate())) / 86400000);
+    if(diffDays === 0) return Number(localStorage.getItem(LS.streak) || 1); // 同日
+    if(diffDays === 1) return Number(localStorage.getItem(LS.streak) || 0) + 1; // 連続
+    return 1; // リセット
+  })();
+
+  localStorage.setItem(LS.last, today);
+  localStorage.setItem(LS.streak, String(streakNow));
+  updateStatsUI();
+}
+
+updateStatsUI();
+
 /* =========================================================
    ① 録音（MediaRecorder）
    ========================================================= */
@@ -100,7 +245,6 @@ async function toggleRecording(){
   const status = document.getElementById("recStatus");
   const player = document.getElementById("player");
 
-  // 録音中なら停止
   if(mediaRecorder && mediaRecorder.state === "recording"){
     mediaRecorder.stop();
     btn.textContent = "録音開始";
@@ -108,7 +252,6 @@ async function toggleRecording(){
     return;
   }
 
-  // 開始
   try{
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recordedChunks = [];
@@ -119,7 +262,6 @@ async function toggleRecording(){
     };
 
     mediaRecorder.onstop = () => {
-      // マイク停止
       stream.getTracks().forEach(t => t.stop());
 
       const blob = new Blob(recordedChunks, { type: "audio/webm" });
@@ -159,7 +301,6 @@ function resetRecording(){
 
 /* =========================================================
    ②（任意）音声→文字（Web Speech API）
-   - iPhone Safariでは動かないことがあります
    ========================================================= */
 let recognition = null;
 let sttRunning = false;
@@ -170,8 +311,14 @@ function canUseSpeechRecognition(){
 
 function setupSpeechButton(){
   const sttBtn = document.getElementById("speechBtn");
+  const sttStatus = document.getElementById("sttStatus");
+
   if(canUseSpeechRecognition()){
     sttBtn.style.display = "inline-block";
+    sttStatus.textContent = "対応ブラウザです（任意で使えます）";
+  }else{
+    sttBtn.style.display = "none";
+    sttStatus.textContent = "この環境では非対応の可能性があります（問題ありません）";
   }
 }
 setupSpeechButton();
@@ -211,8 +358,8 @@ function toggleSpeechToText(){
 
   recognition.onend = () => {
     sttRunning = false;
-    sttBtn.textContent = "📝 録音しながら文字起こし（試験）";
-    sttStatus.textContent = "停止しました";
+    sttBtn.textContent = "📝 文字起こしを開始";
+    sttStatus.textContent = "停止しました（任意機能）";
   };
 
   recognition.onresult = (event) => {
@@ -317,6 +464,7 @@ function gentleEvaluate(text){
   return {
     score,
     badges: finalBadges,
+    adviceOne: improve,
     message:
 `🌟 総合評価：${score}点
 
@@ -348,6 +496,14 @@ function runEvaluation(){
   });
 
   document.getElementById("result").textContent = res.message;
+
+  // ✅ 練習ログ更新
+  bumpPracticeCount();
+
+  // ✅ 「次に直す点」候補として保存（ボタンで反映もできる）
+  if(res.adviceOne){
+    localStorage.setItem(LS.lastAdvice, res.adviceOne);
+  }
 }
 
 function clearText(){
@@ -365,9 +521,62 @@ function insertSample(){
 なので、これからも相手目線で伝えることを大事にしたいです。`;
   runEvaluation();
 }
+
+/* =========================================================
+   振り返りノート
+   ========================================================= */
+function saveReflection(){
+  localStorage.setItem(LS.reflectGood, (document.getElementById("reflectGood").value || "").trim());
+  localStorage.setItem(LS.reflectNext, (document.getElementById("reflectNext").value || "").trim());
+  alert("保存しました😊");
+}
+
+function loadReflection(){
+  document.getElementById("reflectGood").value = localStorage.getItem(LS.reflectGood) || "";
+  document.getElementById("reflectNext").value = localStorage.getItem(LS.reflectNext) || "";
+  alert("前回の振り返りを読み込みました😊");
+}
+
+function clearReflection(){
+  document.getElementById("reflectGood").value = "";
+  document.getElementById("reflectNext").value = "";
+}
+
+function setNextFromAdvice(){
+  const adv = localStorage.getItem(LS.lastAdvice);
+  if(!adv){
+    alert("まずAI評価を実行してください😊");
+    return;
+  }
+  const next = document.getElementById("reflectNext");
+  next.value = adv;
+  next.focus();
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+}
+
+/* =========================================================
+   結果コピー
+   ========================================================= */
+async function copyResult(){
+  const txt = document.getElementById("result").textContent || "";
+  try{
+    await navigator.clipboard.writeText(txt);
+    alert("コピーしました😊");
+  }catch(e){
+    // クリップボードが使えない環境向け
+    prompt("コピーできない場合は、ここから手動でコピーしてください👇", txt);
+  }
+}
+
+/* 初期：前回の振り返りを軽く復元（任意） */
+(function init(){
+  // 何も入っていない時だけ、前回分を薄く残しておく（邪魔なら消してOK）
+  const g = localStorage.getItem(LS.reflectGood) || "";
+  const n = localStorage.getItem(LS.reflectNext) || "";
+  if(g) document.getElementById("reflectGood").value = g;
+  if(n) document.getElementById("reflectNext").value = n;
+})();
 </script>
 
 </body>
 </html>
-        
-  
