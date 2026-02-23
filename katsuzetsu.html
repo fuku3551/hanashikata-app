@@ -335,15 +335,49 @@ function renderKaraokeText(text){
 /* =========================
    カラオケ進行
 ========================= */
-function stopKaraoke(){
-  if(karaTimer){
-    clearInterval(karaTimer);
-    karaTimer = null;
+// 拗音など「発音のまとまり」で分割する
+function splitIntoUnits(text){
+  const chars = Array.from(text);
+
+  // 拗音や外来語用の小書き
+  const smallKana = new Set(["ゃ","ゅ","ょ","ぁ","ぃ","ぅ","ぇ","ぉ","ゎ"]);
+
+  const units = [];
+  for(let i = 0; i < chars.length; i++){
+    const ch = chars[i];
+    const next = chars[i + 1];
+
+    // スペースはそのまま（色付けしたくないなら別扱いでもOK）
+    if(ch === " " || ch === "　"){
+      units.push(ch);
+      continue;
+    }
+
+    // 「き」+「ゃ」みたいに次が小書きなら、2文字セットにする
+    if(next && smallKana.has(next)){
+      units.push(ch + next);
+      i++; // next を消費
+      continue;
+    }
+
+    // 通常は1文字
+    units.push(ch);
   }
-  // 見た目リセット
-  document.querySelectorAll(".karaChar").forEach(s=>{
-    s.classList.remove("active");
-    s.classList.remove("done");
+  return units;
+}
+
+function renderKaraokeText(text){
+  const box = document.getElementById("phraseBody");
+  box.innerHTML = "";
+
+  // ★ ここがポイント：1文字ではなく、まとまりで分割
+  const units = splitIntoUnits(text);
+
+  units.forEach(u => {
+    const span = document.createElement("span");
+    span.className = "karaChar";
+    span.textContent = u;
+    box.appendChild(span);
   });
 }
 
@@ -364,12 +398,20 @@ function startKaraoke(){
       clearInterval(karaTimer);
       karaTimer = null;
 
-      // 文章が終わったら（自動ONなら）次へ
+      // 自動ONなら次へ
       if(autoOn){
         autoTimer = setTimeout(()=> nextPhrase(), 700);
       }
       return;
     }
+
+    // スペースは色付け無しでスキップ（自然に見える）
+    if(spans[i].textContent === " " || spans[i].textContent === "　"){
+      spans[i].classList.add("done");
+      i++;
+      return;
+    }
+
     spans[i].classList.add("active");
     i++;
   }, speedMs);
