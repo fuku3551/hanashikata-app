@@ -1,643 +1,437 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>滑舌練習（フレーズ式）</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    /* ===== 見やすさ：フレーズを大きく ===== */
-    #phraseBody {
-      font-size: 32px !important;
-      font-weight: 800;
-      text-align: center;
-      line-height: 1.8;
-      letter-spacing: 0.02em;
-    }
-    #phraseCounter { font-size: 14px; opacity: 0.75; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    /* ===== カラオケ風ハイライト ===== */
-    .karaChar{
-      display:inline-block;
-      padding: 2px 2px;
-      border-radius: 6px;
-    }
-    .karaChar.active{
-      background: rgba(239,68,68,0.18);
-      color: #ef4444;
-    }
-    .karaChar.done{
-      opacity: 0.55;
-    }
+<title>滑舌練習（フレーズ式）</title>
+<link rel="stylesheet" href="style.css">
 
-    /* ===== コントロールUI ===== */
-    .ctrlCard { display:block; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center; }
-    .mini { font-size: 14px; opacity: 0.85; line-height: 1.7; }
-    .pill {
-      display:inline-block; padding:6px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,0.15); font-size:14px; opacity:0.9;
-    }
-    input[type="range"]{ width: 240px; }
-    .modeBtnOn{
-      border: 2px solid #333 !important;
-      opacity: 1 !important;
-    }
-  </style>
+<style>
+#phraseBody{
+  font-size:32px;
+  font-weight:800;
+  text-align:center;
+  line-height:1.9;
+}
+
+.karaChar{
+  display:inline-block;
+  padding:2px 3px;
+  border-radius:6px;
+}
+
+.karaChar.active{
+  background:#ffdddd;
+  color:#d60000;
+}
+
+.karaChar.done{
+  opacity:0.5;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+input[type=range]{
+  width:220px;
+}
+
+.modeOn{
+  border:2px solid #333;
+}
+
+.mini{
+  font-size:14px;
+  opacity:0.8;
+}
+</style>
 </head>
 
 <body>
 
 <header class="top">
-  <h1>👄 滑舌練習（フレーズ式）</h1>
-  <p class="sub">「次へ」で1フレーズずつ進みます（自動・読み上げもOK）</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
+<h1>👄 滑舌練習</h1>
+<p class="sub">カラオケ式で練習できます</p>
+<p><a href="index.html">← ホームへ</a></p>
 </header>
 
 <main class="menu">
 
-  <!-- 大きめタイトル -->
-  <div class="card" style="display:block;">
-    <div class="title" style="font-size:28px;">滑舌練習</div>
-    <div class="desc" style="margin-top:6px; opacity:0.8;">
-      セクション（①〜⑥）を選んで、1フレーズずつ練習できます
-    </div>
-  </div>
+<!-- 今日のミッション -->
+<div class="card">
+<div class="title">🔰 今日のミッション</div>
 
-  <!-- ✅ 今日の滑舌ミッション -->
-  <div class="card" style="display:block;">
-    <div class="title">🔰 今日の滑舌ミッション（約2〜3分）</div>
-    <div class="desc">
-      <div class="mini" id="dailyText">読み込み中…</div>
-      <div class="row" style="margin-top:10px;">
-        <button onclick="startDaily()">▶ 今日のミッションを開始</button>
-        <button onclick="shuffleDaily()">🎲 変更</button>
-      </div>
-      <div class="mini" style="margin-top:8px;">
-        💡 迷ったらこれだけやればOK（短時間で“毎日続く”設計）
-      </div>
-    </div>
-  </div>
+<div class="desc">
+<div id="dailyText" class="mini">読み込み中…</div>
 
-  <!-- セクション選択 -->
-  <div class="card" style="display:block;">
-    <div class="title">セクション選択</div>
-    <div class="desc" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
-      <button onclick="setSection(0)">① 母音</button>
-      <button onclick="setSection(1)">② 行別基本</button>
-      <button onclick="setSection(2)">③ 濁音/半濁音</button>
-      <button onclick="setSection(3)">④ 拗音</button>
-      <button onclick="setSection(4)">⑤ リズム</button>
-      <button onclick="setSection(5)">⑥ 言いにくい言葉</button>
-    </div>
-  </div>
+<div class="row" style="margin-top:10px;">
+<button onclick="startDaily()">▶ 開始</button>
+<button onclick="shuffleDaily()">🎲 変更</button>
+</div>
+</div>
+</div>
 
-  <!-- ✅ 練習コントロール（再生・自動・速度・モード） -->
-  <div class="card ctrlCard">
-    <div class="title">⚙️ 練習コントロール</div>
-    <div class="desc">
-      <div class="row">
-        <button id="btnPlay" onclick="togglePlay()">🔊 再生</button>
-        <button id="btnAuto" onclick="toggleAuto()" style="opacity:0.85;">⏭ 自動：OFF</button>
-        <button id="btnKara" onclick="toggleKaraoke()" style="opacity:0.85;">🌈 カラオケ：ON</button>
-      </div>
 
-      <div class="row" style="margin-top:10px;">
-        <span class="pill">速度</span>
-        <input type="range" min="200" max="900" value="450" oninput="setSpeed(this.value)">
-        <span class="pill" id="speedLabel">450ms</span>
-      </div>
+<!-- セクション -->
+<div class="card">
+<div class="title">セクション</div>
 
-      <div class="row" style="margin-top:10px;">
-        <button id="btnBeginner" class="modeBtnOn" onclick="setLevel('beginner')">🔰 初心者</button>
-        <button id="btnAdvanced" onclick="setLevel('advanced')" style="opacity:0.7;">🔥 上級</button>
-      </div>
+<div class="desc row">
+<button onclick="setSection(0)">①母音</button>
+<button onclick="setSection(1)">②基本</button>
+<button onclick="setSection(2)">③濁音</button>
+<button onclick="setSection(3)">④拗音</button>
+<button onclick="setSection(4)">⑤リズム</button>
+<button onclick="setSection(5)">⑥難語</button>
+</div>
+</div>
 
-      <div class="mini" style="margin-top:10px;">
-        ・初心者：ゆっくり＆正確（ハイライト強め）<br>
-        ・上級：テンポUP（自動ON推奨）<br>
-        ※ iPhoneは読み上げ開始時に「再生」を1回タップが必要です（仕様）
-      </div>
-    </div>
-  </div>
 
-  <!-- 表示エリア -->
-  <div class="card" style="display:block;">
-    <div class="title" id="sectionTitle">（① 母音）</div>
-    <div class="desc">
-      <div style="margin: 6px 0; opacity: 0.75; text-align:center;">
-        <span id="phraseCounter">0/0</span>
-      </div>
+<!-- 操作 -->
+<div class="card">
 
-      <div style="border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:14px;">
-        <div id="phraseBody" style="white-space: pre-wrap;">
-          ここに表示されます
-        </div>
-      </div>
+<div class="title">操作</div>
 
-      <div style="display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
-        <button onclick="prevPhrase()">◀ 前へ</button>
-        <button onclick="nextPhrase()">次へ ▶</button>
-        <button onclick="randomPhrase()">🎲 ランダム</button>
-        <button onclick="resetPhrase()">⟲ 最初へ</button>
-      </div>
+<div class="desc">
 
-      <div style="text-align:center; margin-top:10px; opacity:0.75; font-size:14px;">
-        ※ まず「ゆっくり正確に」→ 慣れたら少しテンポアップ
-      </div>
-    </div>
-  </div>
+<div class="row">
+<button onclick="togglePlay()">🔊再生</button>
+<button id="autoBtn" onclick="toggleAuto()">自動OFF</button>
+<button id="karaBtn" onclick="toggleKara()">🌈ON</button>
+</div>
+
+<div class="row" style="margin-top:8px;">
+速度
+<input type="range" min="200" max="900" value="450" oninput="setSpeed(this.value)">
+<span id="speedLabel">450ms</span>
+</div>
+
+<div class="row" style="margin-top:8px;">
+<button id="bBtn" class="modeOn" onclick="setLevel('b')">初心者</button>
+<button id="aBtn" onclick="setLevel('a')">上級</button>
+</div>
+
+</div>
+</div>
+
+
+<!-- 表示 -->
+<div class="card">
+
+<div class="title" id="sectionTitle"></div>
+
+<div class="desc">
+
+<div style="text-align:center;">
+<span id="counter"></span>
+</div>
+
+<div style="border:1px solid #ccc;border-radius:12px;padding:12px;">
+<div id="phraseBody"></div>
+</div>
+
+<div class="row" style="margin-top:10px;">
+<button onclick="prev()">◀</button>
+<button onclick="next()">▶</button>
+<button onclick="rand()">🎲</button>
+<button onclick="reset()">⟲</button>
+</div>
+
+</div>
+</div>
 
 </main>
 
+
 <script>
-/* =========================
-   データ：①〜⑥
-========================= */
-// ① 母音
-const phrases1 = [
-  "あえいうえお　あお",
-  "あいうえお　あお",
-  "あえいうえお　あお",
-  "あいうえお　あお",
-  "あえいうえお　あお",
-  "あいうえお　あお"
+
+/* ===== データ ===== */
+
+const p1=["あいうえお","あえいうえお"];
+const p2=["かきくけこ","さしすせそ","たちつてと"];
+const p3=["がぎぐげご","ばびぶべぼ"];
+const p4=["ちゃちゅちょ","きゃきゅきょ","しゃしゅしょ"];
+const p5=["たたた","かかか","さささ"];
+const p6=["バスガス爆発","東京特許許可局"];
+
+const sections=[
+{t:"①母音",d:p1},
+{t:"②基本",d:p2},
+{t:"③濁音",d:p3},
+{t:"④拗音",d:p4},
+{t:"⑤リズム",d:p5},
+{t:"⑥難語",d:p6},
 ];
 
-// ② 行別基本
-const phrases2 = [
-  "（あ行） あ　い　う　え　お",
-  "あえい　うえお　あお",
-  "（か行） か　き　く　け　こ",
-  "かきくけこ　かけこ　きくけ",
-  "（さ行） さ　し　す　せ　そ",
-  "さしすせそ　させそ　しすせ",
-  "（た行） た　ち　つ　て　と",
-  "たちつてと　たてと　ちつて",
-  "（な行） な　に　ぬ　ね　の",
-  "なにぬねの　なねの　にぬね",
-  "（は行） は　ひ　ふ　へ　ほ",
-  "はひふへほ　はへほ　ひふへ",
-  "（ま行） ま　み　む　め　も",
-  "まみむめも　まめも　みむめ",
-  "（や行） や　ゆ　よ",
-  "やゆよ　ゆよや　よやゆ",
-  "（ら行） ら　り　る　れ　ろ",
-  "らりるれろ　られろ　りるれ",
-  "（わ行） わ　を　ん",
-  "わをん　わんを　をわん"
-];
+let sec=0;
+let idx=0;
 
-// ③ 濁音・半濁音
-const phrases3 = [
-  "がぎぐげご　がげご　ぎぐげ",
-  "ざじずぜぞ　ざぜぞ　じずぜ",
-  "だぢづでど　だでど　ぢづで",
-  "ばびぶべぼ　ばべぼ　びぶべ",
-  "ぱぴぷぺぽ　ぱぺぽ　ぴぷぺ"
-];
+/* ===== 設定 ===== */
 
-// ④ 拗音
-const phrases4 = [
-  "きゃきゅきょ　きゃくきょ　きゅきょきゃ",
-  "しゃしゅしょ　しゃくしょ　しゅしょしゃ",
-  "ちゃちゅちょ　ちゃくちょ　ちゅちょちゃ",
-  "にゃにゅにょ　にゃくにょ　にゅにょにゃ",
-  "ひゃひゅひょ　ひゃくひょ　ひゅひょひゃ",
-  "みゃみゅみょ　みゃくみょ　みゅみょみゃ",
-  "りゃりゅりょ　りゃくりょ　りゅりょりゃ"
-];
+let auto=false;
+let kara=true;
+let speed=450;
+let level="b";
 
-// ⑤ リズム
-const phrases5 = [
-  "たたた　ててて　ととと",
-  "かかか　ききき　くくく",
-  "さささ　ししし　すすす",
-  "ららら　りりり　るるる"
-];
+let timer=null;
 
-// ⑥ 言いにくい言葉
-const phrases6 = [
-  "あめんぼあかいな　あいうえお　うきもにこえびもおよいでる",
-  "生麦（なまむぎ）　生米（なまごめ）　生卵（なまたまご）",
-  "赤巻紙（あかまきがみ）　青巻紙（あおまきがみ）　黄巻紙（きまきがみ）",
-  "東京特許許可局（とうきょうとっきょきょかきょく）",
-  "隣（となり）の客（きゃく）はよく柿（かき）食う客だ",
-  "この竹垣（たけがき）に竹立（たけた）てかけたのは竹立（たけた）てかけたかったから",
-  "老若男女（ろうにゃくなんにょ）",
-  "旅客機（りょかっき）　旅客船（りょかくせん）　旅館（りょかん）",
-  "業務上過失致死傷（ぎょうむじょうかしつちししょう）",
-  "打者走者勝者（だしゃそうしゃしょうしゃ）",
-  "魔術師手術中（まじゅつししゅじゅつちゅう）",
-  "貧乏人（びんぼうにん）　敏腕弁護士（びんわんべんごし）",
-  "バスガス爆発（ばすがすばくはつ）",
-  "貨客船（かきゃくせん）　旅客船（りょかくせん）　客船（きゃくせん）",
-  "究極（きゅうきょく）　供給（きょうきゅう）　要求（ようきゅう）",
-  "きゃりーきゅりーきょろきょろ（※拗音練習）",
-  "しゃしゅしょで　しゅしゅしゅっと　しょしょしょ",
-  "ちゃちゅちょで　ちょちょちょっと　ちゅちゅちゅっと",
-  "新設（しんせつ）施設（しせつ）視察（しさつ）",
-  "早朝（そうちょう）早退（そうたい）相対（そうたい）",
-  "初出場（しょしゅつじょう）　出場者（しゅつじょうしゃ）　主張（しゅちょう）",
-  "肩叩き機（かたたたきき）　ただ叩き機（ただたたきき）",
-  "取捨選択（しゅしゃせんたく）　試写室（ししゃしつ）　支社視察（ししゃしさつ）",
-  "左折車（させつしゃ）　右折車（うせつしゃ）　徐行車（じょこうしゃ）",
-  "最終手段（さいしゅうしゅだん）　収集（しゅうしゅう）　集中（しゅうちゅう）",
-  "特急列車（とっきゅうれっしゃ）　普通列車（ふつうれっしゃ）",
-  "再再再（さいさいさい）確認（かくにん）　最終（さいしゅう）確認（かくにん）"
-];
 
-const sectionDefs = [
-  { title: "【① 母音】", data: phrases1 },
-  { title: "【② 行別基本】", data: phrases2 },
-  { title: "【③ 濁音/半濁音】", data: phrases3 },
-  { title: "【④ 拗音】", data: phrases4 },
-  { title: "【⑤ リズム】", data: phrases5 },
-  { title: "【⑥ 言いにくい言葉】", data: phrases6 }
-];
+/* ===== 拗音処理 ===== */
 
-let sectionIndex = 0;
-let phraseIndex = 0;
+function splitText(txt){
 
-/* =========================
-   設定：カラオケ/自動/速度/モード
-========================= */
-let karaokeOn = true;
-let autoOn = false;
-let speedMs = 450;        // 1文字ごとの表示速度
-let level = "beginner";   // beginner / advanced
+const small="ゃゅょぁぃぅぇぉ";
 
-let karaTimer = null;
-let autoTimer = null;
+let arr=[];
+let buf="";
 
-/* =========================
-   読み上げ（Web Speech API）
-========================= */
-let ttsSpeaking = false;
-function canTTS(){
-  return ("speechSynthesis" in window);
+for(let c of txt){
+
+if(small.includes(c)){
+buf+=c;
+}else{
+if(buf) arr.push(buf);
+buf=c;
 }
-function speak(text){
-  if(!canTTS()) return;
-
-  // 途中停止
-  window.speechSynthesis.cancel();
-
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "ja-JP";
-  // モードで少し変える
-  u.rate = (level === "advanced") ? 1.08 : 0.95;
-  u.pitch = 1.0;
-
-  ttsSpeaking = true;
-  u.onend = () => { ttsSpeaking = false; };
-  u.onerror = () => { ttsSpeaking = false; };
-
-  window.speechSynthesis.speak(u);
 }
 
-/* =========================
-   レンダリング
-========================= */
+if(buf) arr.push(buf);
+
+return arr;
+}
+
+
+/* ===== 表示 ===== */
+
 function render(){
-  const sec = sectionDefs[sectionIndex];
-  const total = sec.data.length;
 
-  document.getElementById("sectionTitle").textContent = sec.title;
-  document.getElementById("phraseCounter").textContent = `${phraseIndex + 1}/${total}`;
+const s=sections[sec];
 
-  // 表示（カラオケONなら1文字span化）
-  const phrase = sec.data[phraseIndex];
-  if(karaokeOn){
-    renderKaraokeText(phrase);
-  }else{
-    document.getElementById("phraseBody").textContent = phrase;
-  }
+sectionTitle.textContent=s.t;
+counter.textContent=(idx+1)+"/"+s.d.length;
 
-  // 再生ボタン表示
-  const btnPlay = document.getElementById("btnPlay");
-  btnPlay.textContent = "🔊 再生";
+const text=s.d[idx];
+
+if(kara){
+renderKara(text);
+}else{
+phraseBody.textContent=text;
+}
 }
 
-function renderKaraokeText(text){
-  const box = document.getElementById("phraseBody");
-  box.innerHTML = "";
-  const chars = Array.from(text);
+function renderKara(text){
 
-  chars.forEach(ch => {
-    const span = document.createElement("span");
-    span.className = "karaChar";
-    span.textContent = ch;
-    box.appendChild(span);
-  });
+phraseBody.innerHTML="";
+
+const units=splitText(text);
+
+units.forEach(u=>{
+const sp=document.createElement("span");
+sp.className="karaChar";
+sp.textContent=u;
+phraseBody.appendChild(sp);
+});
 }
 
-/* =========================
-   カラオケ進行
-========================= */
-// 拗音など「発音のまとまり」で分割する
-function splitIntoUnits(text){
-  const chars = Array.from(text);
 
-  // 拗音や外来語用の小書き
-  const smallKana = new Set(["ゃ","ゅ","ょ","ぁ","ぃ","ぅ","ぇ","ぉ","ゎ"]);
+/* ===== カラオケ ===== */
 
-  const units = [];
-  for(let i = 0; i < chars.length; i++){
-    const ch = chars[i];
-    const next = chars[i + 1];
+function stopKara(){
 
-    // スペースはそのまま（色付けしたくないなら別扱いでもOK）
-    if(ch === " " || ch === "　"){
-      units.push(ch);
-      continue;
-    }
-
-    // 「き」+「ゃ」みたいに次が小書きなら、2文字セットにする
-    if(next && smallKana.has(next)){
-      units.push(ch + next);
-      i++; // next を消費
-      continue;
-    }
-
-    // 通常は1文字
-    units.push(ch);
-  }
-  return units;
+if(timer){
+clearInterval(timer);
+timer=null;
 }
 
-function renderKaraokeText(text){
-  const box = document.getElementById("phraseBody");
-  box.innerHTML = "";
-
-  // ★ ここがポイント：1文字ではなく、まとまりで分割
-  const units = splitIntoUnits(text);
-
-  units.forEach(u => {
-    const span = document.createElement("span");
-    span.className = "karaChar";
-    span.textContent = u;
-    box.appendChild(span);
-  });
+document.querySelectorAll(".karaChar").forEach(s=>{
+s.classList.remove("active","done");
+});
 }
 
-function startKaraoke(){
-  if(!karaokeOn) return;
+function startKara(){
 
-  stopKaraoke();
+if(!kara) return;
 
-  const spans = document.querySelectorAll(".karaChar");
-  let i = 0;
+stopKara();
 
-  karaTimer = setInterval(()=>{
-    if(i > 0){
-      spans[i-1].classList.remove("active");
-      spans[i-1].classList.add("done");
-    }
-    if(i >= spans.length){
-      clearInterval(karaTimer);
-      karaTimer = null;
+const spans=document.querySelectorAll(".karaChar");
 
-      // 自動ONなら次へ
-      if(autoOn){
-        autoTimer = setTimeout(()=> nextPhrase(), 700);
-      }
-      return;
-    }
+let i=0;
 
-    // スペースは色付け無しでスキップ（自然に見える）
-    if(spans[i].textContent === " " || spans[i].textContent === "　"){
-      spans[i].classList.add("done");
-      i++;
-      return;
-    }
+timer=setInterval(()=>{
 
-    spans[i].classList.add("active");
-    i++;
-  }, speedMs);
+if(i>0){
+spans[i-1].classList.remove("active");
+spans[i-1].classList.add("done");
 }
 
-/* =========================
-   操作：次へ/前へ/ランダム/最初へ
-========================= */
-function setSection(i){
-  sectionIndex = i;
-  phraseIndex = 0;
-  stopAll();
-  render();
+if(i>=spans.length){
+clearInterval(timer);
+timer=null;
+
+if(auto) setTimeout(next,600);
+
+return;
 }
 
-function nextPhrase(){
-  const sec = sectionDefs[sectionIndex];
-  phraseIndex = (phraseIndex + 1) % sec.data.length;
-  stopAll();
-  render();
+spans[i].classList.add("active");
+i++;
 
-  if(autoOn || ttsSpeaking){
-    // 自動再生の時は続けて動く
-    playFlow();
-  }
+},speed);
 }
 
-function prevPhrase(){
-  const sec = sectionDefs[sectionIndex];
-  phraseIndex = (phraseIndex - 1 + sec.data.length) % sec.data.length;
-  stopAll();
-  render();
+
+/* ===== 操作 ===== */
+
+function setSection(n){
+sec=n;
+idx=0;
+stop();
+render();
 }
 
-function resetPhrase(){
-  phraseIndex = 0;
-  stopAll();
-  render();
+function next(){
+idx=(idx+1)%sections[sec].d.length;
+stop();
+render();
+if(auto) startKara();
 }
 
-function randomPhrase(){
-  const sec = sectionDefs[sectionIndex];
-  phraseIndex = Math.floor(Math.random() * sec.data.length);
-  stopAll();
-  render();
+function prev(){
+idx=(idx-1+sections[sec].d.length)%sections[sec].d.length;
+stop();
+render();
 }
 
-/* =========================
-   再生（TTS）＋カラオケ＋自動の連携
-========================= */
-function stopAll(){
-  stopKaraoke();
-  if(autoTimer){ clearTimeout(autoTimer); autoTimer = null; }
-  if(canTTS()) window.speechSynthesis.cancel();
-  ttsSpeaking = false;
+function rand(){
+idx=Math.floor(Math.random()*sections[sec].d.length);
+stop();
+render();
 }
 
-function playFlow(){
-  // 現在の文
-  const sec = sectionDefs[sectionIndex];
-  const phrase = sec.data[phraseIndex];
+function reset(){
+idx=0;
+stop();
+render();
+}
 
-  // カラオケ開始
-  if(karaokeOn) startKaraoke();
 
-  // 読み上げ（任意）
-  // iPhoneはユーザー操作の直後だけ音が出やすいので、再生ボタン経由を推奨
-  if(ttsSpeaking || autoOn){
-    speak(phrase);
-  }
+/* ===== 制御 ===== */
+
+function stop(){
+stopKara();
 }
 
 function togglePlay(){
-  // 再生：この瞬間に音声が出る（iPhone対策）
-  stopAll();
-  ttsSpeaking = true; // playFlow内で speak が走るように
-  playFlow();
+stop();
+startKara();
 }
 
-/* =========================
-   自動ON/OFF
-========================= */
 function toggleAuto(){
-  autoOn = !autoOn;
-  const b = document.getElementById("btnAuto");
-  b.textContent = autoOn ? "⏭ 自動：ON" : "⏭ 自動：OFF";
-  b.style.opacity = autoOn ? "1" : "0.85";
-
-  // 自動ONにした直後は、再生/ハイライトが欲しければ再生ボタンで開始するのが安定
+auto=!auto;
+autoBtn.textContent=auto?"自動ON":"自動OFF";
 }
 
-/* =========================
-   カラオケON/OFF
-========================= */
-function toggleKaraoke(){
-  karaokeOn = !karaokeOn;
-  const b = document.getElementById("btnKara");
-  b.textContent = karaokeOn ? "🌈 カラオケ：ON" : "🌈 カラオケ：OFF";
-  b.style.opacity = karaokeOn ? "1" : "0.85";
-
-  stopAll();
-  render();
+function toggleKara(){
+kara=!kara;
+karaBtn.textContent=kara?"🌈ON":"🌈OFF";
+stop();
+render();
 }
 
-/* =========================
-   速度
-========================= */
 function setSpeed(v){
-  speedMs = Number(v);
-  document.getElementById("speedLabel").textContent = `${speedMs}ms`;
+speed=Number(v);
+speedLabel.textContent=speed+"ms";
 }
 
-/* =========================
-   初心者/上級
-========================= */
-function setLevel(lv){
-  level = lv;
+function setLevel(l){
 
-  const b = document.getElementById("btnBeginner");
-  const a = document.getElementById("btnAdvanced");
+level=l;
 
-  if(level === "beginner"){
-    b.classList.add("modeBtnOn");
-    a.classList.remove("modeBtnOn");
-    a.style.opacity = "0.7";
-    // 初心者は少しゆっくり寄せ
-    speedMs = Math.max(speedMs, 420);
-  }else{
-    a.classList.add("modeBtnOn");
-    b.classList.remove("modeBtnOn");
-    b.style.opacity = "0.7";
-    // 上級は少し速め寄せ
-    speedMs = Math.min(speedMs, 420);
-  }
-  document.getElementById("speedLabel").textContent = `${speedMs}ms`;
+bBtn.classList.remove("modeOn");
+aBtn.classList.remove("modeOn");
+
+if(l==="b"){
+bBtn.classList.add("modeOn");
+speed=Math.max(speed,450);
+}else{
+aBtn.classList.add("modeOn");
+speed=Math.min(speed,350);
 }
 
-/* =========================
-   今日のミッション
-========================= */
-let dailyPlan = null;
+speedLabel.textContent=speed+"ms";
+}
+
+
+/* ===== 今日のミッション ===== */
+
+let daily=null;
 
 function pickDaily(){
-  // ①母音 → ④拗音 → ③濁音 の順が効率良い（口の形→舌→破裂/摩擦）
-  const plan = [
-    { sec: 0, label: "母音", phrase: randomFrom(phrases1) },
-    { sec: 4, label: "リズム", phrase: randomFrom(phrases5) },
-    { sec: 3, label: "拗音", phrase: randomFrom(phrases4) }
-  ];
-  // たまに濁音を混ぜる（刺激）
-  if(Math.random() < 0.5){
-    plan.push({ sec: 2, label: "濁音/半濁音", phrase: randomFrom(phrases3) });
-  }
-  return plan;
+
+return[
+{sec:0,p:r(p1)},
+{sec:3,p:r(p4)},
+{sec:2,p:r(p3)}
+];
 }
 
-function randomFrom(arr){
-  return arr[Math.floor(Math.random() * arr.length)];
+function r(a){
+return a[Math.floor(Math.random()*a.length)];
 }
 
 function showDaily(){
-  if(!dailyPlan) dailyPlan = pickDaily();
-  const text = dailyPlan.map((p,i)=>`(${i+1}) ${p.label}：${p.phrase}`).join("\n");
-  document.getElementById("dailyText").textContent = text;
+
+if(!daily) daily=pickDaily();
+
+dailyText.textContent=
+daily.map((x,i)=>`(${i+1}) ${sections[x.sec].t}：${x.p}`).join("\n");
 }
 
 function shuffleDaily(){
-  dailyPlan = pickDaily();
-  showDaily();
+daily=pickDaily();
+showDaily();
 }
 
 function startDaily(){
-  if(!dailyPlan) dailyPlan = pickDaily();
 
-  // 1つ目をセットして開始
-  const first = dailyPlan[0];
-  setSection(first.sec);
+if(!daily) daily=pickDaily();
 
-  // 該当フレーズに合わせたいので index 探す
-  jumpToPhrase(first.phrase);
+auto=true;
+toggleAuto();
 
-  // 自動ON推奨（ただし、音声はiPhoneで出ない場合があるのでカラオケだけでもOK）
-  autoOn = true;
-  document.getElementById("btnAuto").textContent = "⏭ 自動：ON";
-  document.getElementById("btnAuto").style.opacity = "1";
-
-  // ミッションは「次へ」ではなく、決めた順で進む
-  runDailySequence(0);
+runDaily(0);
 }
 
-function jumpToPhrase(phraseText){
-  const sec = sectionDefs[sectionIndex];
-  const idx = sec.data.indexOf(phraseText);
-  phraseIndex = (idx >= 0) ? idx : 0;
-  render();
+function runDaily(i){
+
+if(!daily[i]) return;
+
+sec=daily[i].sec;
+idx=sections[sec].d.indexOf(daily[i].p);
+
+render();
+startKara();
+
+const len=splitText(daily[i].p).length;
+
+setTimeout(()=>{
+runDaily(i+1);
+},len*speed+800);
 }
 
-function runDailySequence(i){
-  const item = dailyPlan[i];
-  if(!item) return;
 
-  setSection(item.sec);
-  jumpToPhrase(item.phrase);
+/* ===== 初期 ===== */
 
-  // 自動送りは「文字ハイライト完了」トリガーだとズレが出るので、ここは時間で区切る
-  stopAll();
-  render();
-  if(karaokeOn) startKaraoke();
-
-  // 文章を読んだら次へ（目安：文字数×speed + 600ms）
-  const approx = Array.from(item.phrase).length * speedMs + 600;
-
-  // 余裕があれば読み上げ（ユーザー操作が必要な端末もある）
-  // 強制はしない：再生ボタンで音声ONにしてもOK
-  // speak(item.phrase);
-
-  setTimeout(()=>{
-    runDailySequence(i+1);
-  }, approx);
-}
-
-/* 初期表示 */
 render();
 showDaily();
+
 </script>
 
 </body>
 </html>
-
