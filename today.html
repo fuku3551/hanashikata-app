@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🔰 今日のおすすめ（神ルート）</title>
+<link rel="stylesheet" href="style.css" />
+
+<style>
+  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;}
+  .mini{font-size:14px;opacity:.85;line-height:1.7;}
+  .pill{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.12);font-size:14px;}
+  .bigTimer{font-size:46px;font-weight:900;text-align:center;margin:10px 0;letter-spacing:0.04em;}
+  .phase{font-size:18px;font-weight:900;text-align:center;margin:6px 0;}
+  .softBox{background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.12);padding:12px;border-radius:14px;}
+  .goodBox{background:#eafff0;border:1px solid #86efac;}
+  .warnBox{background:#fff7ed;border:1px solid #fdba74;}
+  .title2{font-weight:900;margin:2px 0 8px;}
+  .badge{font-weight:900;color:#16a34a;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .grid1{display:grid;grid-template-columns:1fr;gap:10px;}
+  .btnWide{width:100%;padding:12px 14px;border-radius:14px;border:1px solid rgba(0,0,0,.12);background:#fff;}
+  .btnPrimary{background:#0ea5e9;color:#fff;border:none;}
+  .btnGood{background:#22c55e;color:#fff;border:none;}
+  .btnDanger{background:#ef4444;color:#fff;border:none;}
+  .sep{height:1px;background:rgba(0,0,0,.1);margin:12px 0;}
+  .logRow{display:flex;gap:8px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:#ddd;vertical-align:middle;}
+  .dot.ok{background:#22c55e;}
+  .dot.ng{background:#ef4444;}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, monospace;}
+  .toggle{display:flex;gap:8px;align-items:center;justify-content:center;}
+  .smallBtn{padding:10px 12px;border-radius:12px;border:1px solid rgba(0,0,0,.12);background:#fff;}
+  .kpi{font-size:22px;font-weight:900;}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <h1>🔰 今日のおすすめ（神ルート）</h1>
+  <p class="sub">迷ったらこれだけ。毎日3分で“習慣化→上達”</p>
+  <p><a href="index.html">← ホームへ</a></p>
+</header>
+
+<main class="menu">
+
+  <!-- KPI -->
+  <div class="card" style="display:block;">
+    <div class="title">📈 継続データ</div>
+    <div class="desc">
+      <div class="grid">
+        <div class="softBox">
+          <div class="mini">連続達成（ストリーク）</div>
+          <div class="kpi"><span id="streak" class="badge">0</span>日</div>
+          <div id="rank" class="mini">称号：—</div>
+        </div>
+        <div class="softBox">
+          <div class="mini">今月の達成率</div>
+          <div class="kpi"><span id="monthRate">0</span>%</div>
+          <div class="mini"><span id="monthDone">0</span>/<span id="monthTotal">0</span>日</div>
+        </div>
+      </div>
+
+      <div class="softBox warnBox" style="margin-top:10px;">
+        <div class="title2">🧠 今日の一言</div>
+        <div id="coachMsg" class="mini">読み込み中…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 今日の内容（自動抽選） -->
+  <div class="card" style="display:block;">
+    <div class="title">🎯 今日のミッション（約3分）</div>
+    <div class="desc">
+      <div class="softBox">
+        <div class="mini">
+          (1) 💨 呼吸 40秒 → (2) 👅 舌 60秒 → (3) 👄 滑舌 40秒 → (4) 🎤 40秒スピーチ 40秒
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid1">
+          <div class="softBox">
+            <div class="title2">👄 今日の滑舌フレーズ</div>
+            <div id="todayPhrase" style="font-weight:900;font-size:18px;line-height:1.8;">読み込み中…</div>
+            <div class="mini" style="margin-top:6px;">※「ゆっくり正確に」→慣れたらテンポUP</div>
+          </div>
+
+          <div class="softBox">
+            <div class="title2">🎤 今日のスピーチお題</div>
+            <div id="todayTopic" style="font-weight:900;font-size:18px;line-height:1.8;">読み込み中…</div>
+            <div class="mini" style="margin-top:6px;">型：結論→理由→具体→まとめ（40秒）</div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+          <button class="btnPrimary btnWide" onclick="startRoute()">▶ 今日のおすすめを開始</button>
+        </div>
+
+        <div class="row" style="margin-top:8px;">
+          <button class="smallBtn" onclick="reroll()">🎲 今日の内容を変える</button>
+          <button class="smallBtn" onclick="resetUI()">⟲ リセット</button>
+        </div>
+
+        <div class="toggle" style="margin-top:10px;">
+          <span class="pill">完了音</span>
+          <button id="soundBtn" class="smallBtn" onclick="toggleSound()">ON</button>
+        </div>
+
+        <div class="mini" style="margin-top:10px;text-align:center;">
+          💡 まず「毎日3分」だけ。伸びる人は、必ずここを守っています。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ガイドタイマー -->
+  <div class="card" style="display:block;">
+    <div class="title">⏱ ガイド（自動）</div>
+    <div class="desc">
+      <div class="phase" id="phase">準備OK</div>
+      <div class="bigTimer mono" id="timer">00:00</div>
+
+      <div class="row">
+        <span class="pill" id="stepLabel">STEP 0/4</span>
+        <span class="pill" id="status">待機中</span>
+      </div>
+
+      <div class="softBox" style="margin-top:10px;">
+        <div class="title2">やること</div>
+        <div id="guide" class="mini">開始ボタンを押すと、順番に案内します。</div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btnWide" onclick="openBreath()">💨 呼吸ページへ</button>
+        <button class="btnWide" onclick="openTongue()">👅 舌トレページへ</button>
+        <button class="btnWide" onclick="openKatsuzetsu()">👄 滑舌ページへ</button>
+        <button class="btnWide" onclick="open40()">🎤 40秒スピーチへ</button>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btnDanger btnWide" onclick="stopRoute()">⏹ 停止</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 完了 -->
+  <div class="card" id="completeCard" style="display:none;">
+    <div class="title">✅ 今日の達成</div>
+    <div class="desc softBox goodBox">
+      <div style="font-weight:900;font-size:18px;">完了！今日の自分、えらい。</div>
+      <div class="mini" style="margin-top:6px;">
+        自信は「才能」じゃなくて「実行回数」で増えます。
+      </div>
+    </div>
+  </div>
+
+  <!-- ログ -->
+  <div class="card" style="display:block;">
+    <div class="title">🗓 達成ログ（今月）</div>
+    <div class="desc">
+      <div class="mini">緑＝達成 / 赤＝未達</div>
+      <div id="monthLog" class="logRow" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- 完了音（簡易） -->
+<audio id="doneSound" preload="auto">
+  <!-- 無音でもOK。音声ファイルがない場合はビープにするためWebAudioを使う -->
+</audio>
+
+<script>
+/* =========================
+   ✅ ページリンク（あなたのファイル名に合わせて変更OK）
+========================= */
+function openBreath(){ location.href="breathing.html"; }     // 呼吸ページ
+function openTongue(){ location.href="shitatore.html"; }     // 舌トレ
+function openKatsuzetsu(){ location.href="katsuzetsu_phrase.html"; } // 滑舌（このページ名は実際のファイル名に合わせて）
+function open40(){ location.href="40.html"; }                // 40秒スピーチ（実際のファイル名に合わせて）
+
+/* =========================
+   ✅ 今日の抽選データ
+========================= */
+// 滑舌フレーズ（好きに増やしてOK）
+const katsuzetsuPhrases = [
+  "ちゃちゅちょ　ちゃくちょ　ちゅちょちゃ",
+  "きゃきゅきょ　きゃくきょ　きゅきょきゃ",
+  "しゃしゅしょ　しゃくしょ　しゅしょしゃ",
+  "がぎぐげご　がげご　ぎぐげ",
+  "だぢづでど　だでど　ぢづで",
+  "ばびぶべぼ　ばべぼ　びぶべ",
+  "ぱぴぷぺぽ　ぱぺぽ　ぴぷぺ",
+  "バスガス爆発（ばすがすばくはつ）",
+  "東京特許許可局（とうきょうとっきょきょかきょく）",
+  "隣の客はよく柿食う客だ",
+  "生麦 生米 生卵（なまむぎ なまごめ なまたまご）",
+  "赤巻紙 青巻紙 黄巻紙（あかまきがみ あおまきがみ きまきがみ）",
+];
+
+// スピーチお題
+const speechTopics = [
+  "最近うれしかったこと（結論→理由→具体→まとめ）",
+  "最近学んだことを1つ共有してみる",
+  "今日の自分を褒めたいポイント",
+  "苦手だったけど少し前進したこと",
+  "人におすすめしたい習慣",
+  "仕事で大事にしていること",
+  "失敗から学んだこと",
+  "子どもの頃好きだったもの",
+  "最近ハマっているもの",
+  "将来やってみたいこと",
+];
+
+function randFrom(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+/* =========================
+   ✅ ルート（3分）
+========================= */
+const route = [
+  { title:"💨 呼吸（4-4-8）", sec:40, guide:"4秒吸う→4秒止める→8秒吐く。苦しければ 3-3-6 でもOK。" },
+  { title:"👅 舌トレ（基本）", sec:60, guide:"スポットタッチ（上の前歯の裏に舌先）→タ・テ・トを丁寧に。" },
+  { title:"👄 滑舌（今日のフレーズ）", sec:40, guide:"ゆっくり正確に。口を大きく、舌先を意識。" },
+  { title:"🎤 40秒スピーチ", sec:40, guide:"結論→理由→具体→まとめ。言葉が詰まってもOK、止まらない練習。" },
+];
+
+let stepIndex=-1;
+let remain=0;
+let timerId=null;
+let running=false;
+
+/* =========================
+   ✅ 音（ON/OFF）
+========================= */
+let soundOn = true;
+function toggleSound(){
+  soundOn = !soundOn;
+  document.getElementById("soundBtn").textContent = soundOn ? "ON" : "OFF";
+}
+function beep(){
+  if(!soundOn) return;
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    gain.gain.value = 0.07;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    setTimeout(()=>{osc.stop(); ctx.close();}, 200);
+  }catch(e){}
+}
+
+/* =========================
+   ✅ 日付・保存（LocalStorage）
+========================= */
+function todayKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+function monthKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}`;
+}
+function daysInMonth(){
+  const d=new Date();
+  return new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+}
+
+function getMonthLog(){
+  const key="log_"+monthKey();
+  const raw=localStorage.getItem(key);
+  return raw ? JSON.parse(raw) : {};
+}
+function setMonthLog(obj){
+  const key="log_"+monthKey();
+  localStorage.setItem(key, JSON.stringify(obj));
+}
+
+/* =========================
+   ✅ ストリーク計算
+========================= */
+function calcStreak(){
+  const lastDone = localStorage.getItem("lastDone");
+  let streak = Number(localStorage.getItem("streak")||0);
+
+  if(!lastDone){
+    localStorage.setItem("streak","0");
+    return 0;
+  }
+
+  const now=new Date();
+  const y=new Date(); y.setDate(now.getDate()-1);
+  const yKey = `${y.getFullYear()}-${y.getMonth()+1}-${y.getDate()}`;
+
+  if(lastDone === todayKey()){
+    return streak;
+  }
+  if(lastDone === yKey){
+    return streak; // まだ今日やってないが、途切れてはいない（やれば伸びる）
+  }
+  // 途切れた
+  localStorage.setItem("streak","0");
+  return 0;
+}
+
+function saveDone(){
+  const lastDone = localStorage.getItem("lastDone");
+  let streak = Number(localStorage.getItem("streak")||0);
+
+  if(lastDone === todayKey()) return; // 二重保存防止
+
+  const now=new Date();
+  const y=new Date(); y.setDate(now.getDate()-1);
+  const yKey = `${y.getFullYear()}-${y.getMonth()+1}-${y.getDate()}`;
+
+  if(lastDone === yKey){
+    streak = streak + 1;
+  }else{
+    streak = 1;
+  }
+
+  localStorage.setItem("streak", String(streak));
+  localStorage.setItem("lastDone", todayKey());
+
+  // 月ログ保存
+  const log=getMonthLog();
+  const day = new Date().getDate();
+  log[String(day)] = true;
+  setMonthLog(log);
+}
+
+/* =========================
+   ✅ 称号（7/14/30）
+========================= */
+function rankByStreak(s){
+  if(s>=30) return "🏆 習慣化マスター（30日）";
+  if(s>=14) return "🔥 継続上級者（14日）";
+  if(s>=7)  return "🌱 続ける力がついた（7日）";
+  if(s>=3)  return "✅ いい流れ（3日）";
+  if(s>=1)  return "🎉 はじめの一歩";
+  return "—";
+}
+
+/* =========================
+   ✅ 今日の一言（段階で変化）
+========================= */
+function coachMessage(s){
+  if(s>=30) return "もう“できる人”側です。次は「質」を上げて伸ばしましょう。";
+  if(s>=14) return "継続が形になってきました。練習は裏切りません。";
+  if(s>=7)  return "7日続いたら、脳が“当たり前”に変わります。ここが勝負所。";
+  if(s>=3)  return "3日続いたら才能です。今日は“短くてもOK”で続けよう。";
+  if(s>=1)  return "今日は“やった事実”がすべて。完璧より継続。";
+  return "迷ったら3分だけ。自信はここから作れます。";
+}
+
+/* =========================
+   ✅ 今月KPI表示
+========================= */
+function renderMonth(){
+  const log=getMonthLog();
+  const total=daysInMonth();
+  let done=0;
+  for(const k in log){ if(log[k]) done++; }
+
+  const rate = Math.round((done/total)*100);
+  document.getElementById("monthRate").textContent = isFinite(rate)?rate:0;
+  document.getElementById("monthDone").textContent = done;
+  document.getElementById("monthTotal").textContent = total;
+
+  // ログ表示（1〜月末）
+  const box=document.getElementById("monthLog");
+  box.innerHTML="";
+  for(let d=1; d<=total; d++){
+    const ok=!!log[String(d)];
+    const span=document.createElement("span");
+    span.className="pill";
+    span.innerHTML = `<span class="dot ${ok?'ok':'ng'}"></span> ${d}`;
+    box.appendChild(span);
+  }
+}
+
+/* =========================
+   ✅ 今日の抽選（固定化＝同じ日なら同じ内容）
+========================= */
+function seedRand(str){
+  // 簡易ハッシュ→擬似乱数
+  let h=2166136261;
+  for(let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return ()=>{
+    h += 0x6D2B79F5;
+    let t = Math.imul(h ^ (h>>>15), 1 | h);
+    t ^= t + Math.imul(t ^ (t>>>7), 61 | t);
+    return ((t ^ (t>>>14)) >>> 0) / 4294967296;
+  };
+}
+
+let todayPhrase="";
+let todayTopic="";
+
+function rollToday(force=false){
+  const key="todayPack_"+todayKey();
+  if(!force){
+    const saved=localStorage.getItem(key);
+    if(saved){
+      const obj=JSON.parse(saved);
+      todayPhrase=obj.phrase;
+      todayTopic=obj.topic;
+      return;
+    }
+  }
+
+  const rnd = seedRand(todayKey());
+  todayPhrase = katsuzetsuPhrases[Math.floor(rnd()*katsuzetsuPhrases.length)];
+  todayTopic  = speechTopics[Math.floor(rnd()*speechTopics.length)];
+
+  localStorage.setItem(key, JSON.stringify({phrase:todayPhrase, topic:todayTopic}));
+}
+
+function renderToday(){
+  document.getElementById("todayPhrase").textContent = todayPhrase;
+  document.getElementById("todayTopic").textContent  = todayTopic;
+}
+
+function reroll(){
+  rollToday(true);
+  renderToday();
+}
+
+/* =========================
+   ✅ タイマー
+========================= */
+function fmt(sec){
+  const m=String(Math.floor(sec/60)).padStart(2,"0");
+  const s=String(sec%60).padStart(2,"0");
+  return `${m}:${s}`;
+}
+
+function resetUI(){
+  stopRoute();
+  document.getElementById("phase").textContent="準備OK";
+  document.getElementById("timer").textContent="00:00";
+  document.getElementById("stepLabel").textContent="STEP 0/4";
+  document.getElementById("status").textContent="待機中";
+  document.getElementById("guide").textContent="開始ボタンを押すと、順番に案内します。";
+  document.getElementById("completeCard").style.display="none";
+}
+
+function startRoute(){
+  if(running) return;
+  running=true;
+  stepIndex=-1;
+  document.getElementById("status").textContent="進行中";
+  nextStep();
+}
+
+function stopRoute(){
+  running=false;
+  clearInterval(timerId);
+  timerId=null;
+  document.getElementById("status").textContent="停止";
+}
+
+function nextStep(){
+  stepIndex++;
+  if(stepIndex>=route.length){
+    finishRoute();
+    return;
+  }
+
+  const st=route[stepIndex];
+  remain=st.sec;
+
+  document.getElementById("phase").textContent = st.title;
+  document.getElementById("timer").textContent = fmt(remain);
+  document.getElementById("stepLabel").textContent = `STEP ${stepIndex+1}/4`;
+
+  // STEP3/4は今日の内容をガイドに反映
+  let g = st.guide;
+  if(stepIndex===2){
+    g = `今日のフレーズ：${todayPhrase}\n` + st.guide;
+  }
+  if(stepIndex===3){
+    g = `今日のお題：${todayTopic}\n` + st.guide;
+  }
+  document.getElementById("guide").textContent = g;
+
+  beep();
+
+  clearInterval(timerId);
+  timerId=setInterval(()=>{
+    if(!running) return;
+    remain--;
+    document.getElementById("timer").textContent = fmt(remain);
+    if(remain<=0){
+      clearInterval(timerId);
+      timerId=null;
+      beep();
+      setTimeout(()=>{ if(running) nextStep(); }, 600);
+    }
+  },1000);
+}
+
+function finishRoute(){
+  running=false;
+  document.getElementById("status").textContent="完了";
+  document.getElementById("completeCard").style.display="block";
+
+  // ✅ 保存（ストリーク＋月ログ）
+  saveDone();
+
+  // 表示更新
+  renderStats();
+  renderMonth();
+
+  // 完了音
+  beep();
+}
+
+/* =========================
+   ✅ 表示更新まとめ
+========================= */
+function renderStats(){
+  const s = calcStreak();
+  const streak = (localStorage.getItem("lastDone")===todayKey())
+    ? Number(localStorage.getItem("streak")||0)
+    : s;
+
+  document.getElementById("streak").textContent = streak;
+  document.getElementById("rank").textContent = "称号：" + rankByStreak(streak);
+  document.getElementById("coachMsg").textContent = coachMessage(streak);
+}
+
+/* 初期 */
+rollToday(false);
+renderToday();
+renderStats();
+renderMonth();
+resetUI();
+
+</script>
+
+</body>
+</html>
