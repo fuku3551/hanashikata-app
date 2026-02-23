@@ -2,66 +2,353 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>舌トレ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>舌トレ | 一人話し方GYM</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* このページ用の補助スタイル（既存のstyle.cssを壊しません） */
+    .mini { font-size: 14px; opacity: 0.85; }
+    .soft { opacity: 0.9; line-height: 1.7; }
+    .box { border:1px solid #eee; border-radius:14px; padding:12px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; }
+    .tip { margin-top:10px; font-size:14px; opacity:0.9; line-height:1.8; }
+    .hr { height:1px; background:#eee; margin:14px 0; }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid #ddd; font-size:13px; margin:6px 6px 0 0; }
+    .tDisplay{
+      font-size:48px;
+      font-weight:800;
+      text-align:center;
+      letter-spacing:1px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .twrap button{
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #ddd;
+      background:#fff;
+    }
+    .svgWrap { display:flex; justify-content:center; margin-top:10px; }
+  </style>
 </head>
 
 <body>
   <header class="top">
-    <h1> 舌トレ</h1>
-    <p class="sub">ラ行・タ行・口の中の筋トレ</p>
+    <h1>👅 舌トレ</h1>
+    <p class="sub">ラ行・タ行・“舌の当てどころ”を整える</p>
     <p><a href="index.html">← ホームへ戻る</a></p>
   </header>
 
   <main class="menu">
+
+    <!-- 今日のやり方（迷わない導線） -->
     <div class="card" style="display:block;">
-      <div class="title">① 舌のウォームアップ（30秒）</div>
+      <div class="title">🔰 今日のやり方（約3分）</div>
       <div class="desc">
-        ・舌を「べー」と出す → しまう ×10<br>
-        ・舌を上唇/下唇にタッチ ×10
+        <div class="box">
+          <div class="mini soft">
+            迷ったらこれだけでOK。<b>「毎日1セット」</b>で確実に伸びます。
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="soft" style="line-height:2;">
+            1) ウォームアップ（30秒）<br>
+            2) スポットタッチ（45秒）<br>
+            3) タ行リズム（45秒）<br>
+            4) ラ行フラップ（45秒）<br>
+            <span class="mini">＋余裕がある日：舌ぐるぐる（右10回→左10回）</span>
+          </div>
+
+          <div class="tip">💡 コツ：完璧を目指さず「<b>1個だけ改善</b>」でOKです。</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" style="display:block;">
-      <div class="title">② 左右タッチ（1分）</div>
+    <!-- ① ウォームアップ -->
+    <section class="card" style="display:block;">
+      <div class="title">① ウォームアップ（30秒）</div>
       <div class="desc">
-        口を軽く開けて、舌先で口角を左右交互にタッチ。<br>
-        右↔左で1回として ×30回
-      </div>
-    </div>
+        <span class="badge">目的：舌の“起動”</span>
+        <span class="badge">効果：もつれ減</span>
 
-    <div class="card" style="display:block;">
-      <div class="title">③ 上下タッチ（1分）</div>
-      <div class="desc">
-        上の歯の裏（前歯の付け根）→下の歯の裏を交互にタッチ。<br>
-        上↔下で1回として ×30回
-      </div>
-    </div>
+        <div class="box" style="margin-top:10px;">
+          <div class="soft">
+            <b>回数の目安</b><br>
+            ・舌 出す↔戻す：<b>10回</b><br>
+            ・上唇→下唇タッチ：<b>10回</b>
+          </div>
 
-    <div class="card" style="display:block;">
-      <div class="title">④ 舌でぐるぐる（1分）</div>
-      <div class="desc">
-        口を閉じたまま、舌で歯ぐきをなぞるように円を描く。<br>
-        右回り×10 → 左回り×10
-      </div>
-    </div>
+          <div class="tip">
+            ✅ 一声：<b>「舌が軽くなって、タ行/ラ行が回りやすくなる」</b><br>
+            力は<b>2〜3割</b>でOK（準備運動なので全力いりません）
+          </div>
 
-    <div class="card" style="display:block;">
-      <div class="title">⑤ 「タ・テ・ト」高速（30秒）</div>
-      <div class="desc">
-        タテトタテトタテト…を一定のリズムで。<br>
-        できたら「ダ・デ・ド」も追加
-      </div>
-    </div>
+          <div class="svgWrap">
+            <!-- ウォームアップ図 -->
+            <svg width="260" height="140" viewBox="0 0 240 130" aria-label="ウォームアップ図">
+              <path d="M30,70 C45,25 195,25 210,70 C195,110 45,110 30,70 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
+              <path d="M110,70 C110,55 130,55 130,70 C130,90 110,90 110,70 Z" fill="#fb7185" opacity="0.9"/>
+              <text x="120" y="118" text-anchor="middle" font-size="12" fill="#666">舌を出す→戻す / 唇タッチ</text>
+            </svg>
+          </div>
 
-    <div class="card" style="display:block;">
-      <div class="title">⑥ 「ラ行」強化（30秒）</div>
-      <div class="desc">
-        ラリルレロ ×10セット<br>
-        仕上げ：ラララララ…（10秒）
+          <!-- タイマー -->
+          <div class="box" style="margin-top:12px;">
+            <div class="mini soft">⏱ タイマー</div>
+            <div class="twrap" data-seconds="30">
+              <div class="tDisplay">00:30</div>
+              <div class="row" style="margin-top:10px;">
+                <button class="tStart">▶ スタート</button>
+                <button class="tStop">⏹ ストップ</button>
+                <button class="tReset">↩ リセット</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- ② スポットタッチ -->
+    <section class="card" style="display:block;">
+      <div class="title">② スポットタッチ（45秒）</div>
+      <div class="desc">
+        <span class="badge">目的：位置を覚える</span>
+        <span class="badge">効果：タ/ラが安定</span>
+
+        <div class="box" style="margin-top:10px;">
+          <div class="soft">
+            <b>やり方</b><br>
+            上の前歯の裏（付け根あたり＝スポット）に、舌先を<b>軽く「トン」</b>と当てる。<br>
+            押しつけてキープではなく、<b>タップ（当てて離す）</b>が基本です。
+          </div>
+
+          <div class="tip">
+            ✅ 力は<b>1〜2割</b>でOK（強く押すほど良いタイプではありません）<br>
+            ✅ 一声：<b>「舌が迷わなくなって、早口でも発音が安定する」</b><br>
+            目安：<b>トン×30回</b>（一定リズムで）
+          </div>
+
+          <div class="svgWrap">
+            <!-- スポット図 -->
+            <svg width="260" height="150" viewBox="0 0 240 140" aria-label="スポット位置の図">
+              <path d="M20,80 C40,20 200,20 220,80 C200,120 40,120 20,80 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
+              <circle cx="120" cy="58" r="10" fill="#8b5cf6" opacity="0.9"/>
+              <text x="120" y="62" text-anchor="middle" font-size="11" fill="#fff">SP</text>
+              <text x="120" y="112" text-anchor="middle" font-size="12" fill="#666">上の前歯の裏（付け根）</text>
+            </svg>
+          </div>
+
+          <!-- タイマー -->
+          <div class="box" style="margin-top:12px;">
+            <div class="mini soft">⏱ タイマー</div>
+            <div class="twrap" data-seconds="45">
+              <div class="tDisplay">00:45</div>
+              <div class="row" style="margin-top:10px;">
+                <button class="tStart">▶ スタート</button>
+                <button class="tStop">⏹ ストップ</button>
+                <button class="tReset">↩ リセット</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ③ タ行リズム -->
+    <section class="card" style="display:block;">
+      <div class="title">③ タ行リズム（45秒）</div>
+      <div class="desc">
+        <span class="badge">目的：キレ</span>
+        <span class="badge">効果：聞き返し減</span>
+
+        <div class="box" style="margin-top:10px;">
+          <div class="soft">
+            <b>やり方</b><br>
+            「タ・テ・ト」を一定のテンポで繰り返す（例：タテト タテト…）
+          </div>
+
+          <div class="tip">
+            ✅ 一声：<b>「言葉のキレが戻って、モゴモゴが減る」</b><br>
+            ✅ 早く言うより、<b>崩れないテンポ</b>が勝ちです。
+          </div>
+
+          <div class="svgWrap">
+            <!-- タ行図 -->
+            <svg width="260" height="130" viewBox="0 0 240 120" aria-label="タ行の図">
+              <path d="M30,65 C45,25 195,25 210,65 C195,105 45,105 30,65 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
+              <text x="120" y="55" text-anchor="middle" font-size="18" fill="#111">タ テ ト</text>
+              <text x="120" y="95" text-anchor="middle" font-size="12" fill="#666">キレ（破裂）を作る</text>
+            </svg>
+          </div>
+
+          <!-- タイマー -->
+          <div class="box" style="margin-top:12px;">
+            <div class="mini soft">⏱ タイマー</div>
+            <div class="twrap" data-seconds="45">
+              <div class="tDisplay">00:45</div>
+              <div class="row" style="margin-top:10px;">
+                <button class="tStart">▶ スタート</button>
+                <button class="tStop">⏹ ストップ</button>
+                <button class="tReset">↩ リセット</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ④ ラ行フラップ -->
+    <section class="card" style="display:block;">
+      <div class="title">④ ラ行フラップ（45秒）</div>
+      <div class="desc">
+        <span class="badge">目的：弾き</span>
+        <span class="badge">効果：滑舌UP</span>
+
+        <div class="box" style="margin-top:10px;">
+          <div class="soft">
+            <b>やり方</b><br>
+            「ラリルレロ」を繰り返す。<br>
+            コツは、押すのではなく<b>“軽く弾く”</b>こと。
+          </div>
+
+          <div class="tip">
+            ✅ 一声：<b>「舌が軽く弾けて、ラ行が一段クリアになる」</b><br>
+            ✅ 目安：<b>ラリルレロ×10セット</b>＋<b>ラララ…10秒</b>
+          </div>
+
+          <div class="svgWrap">
+            <!-- ラ行図 -->
+            <svg width="260" height="130" viewBox="0 0 240 120" aria-label="ラ行の図">
+              <path d="M30,65 C45,25 195,25 210,65 C195,105 45,105 30,65 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
+              <path d="M120,40 q-10,15 0,30 q10,-15 0,-30 Z" fill="#f59e0b" opacity="0.9"/>
+              <text x="120" y="98" text-anchor="middle" font-size="12" fill="#666">舌先を軽く当てて「弾く」</text>
+            </svg>
+          </div>
+
+          <!-- タイマー -->
+          <div class="box" style="margin-top:12px;">
+            <div class="mini soft">⏱ タイマー</div>
+            <div class="twrap" data-seconds="45">
+              <div class="tDisplay">00:45</div>
+              <div class="row" style="margin-top:10px;">
+                <button class="tStart">▶ スタート</button>
+                <button class="tStop">⏹ ストップ</button>
+                <button class="tReset">↩ リセット</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑤ オプション：舌ぐるぐる -->
+    <section class="card" style="display:block;">
+      <div class="title">（余裕がある日だけ）舌ぐるぐる</div>
+      <div class="desc">
+        <span class="badge">目的：柔軟</span>
+        <span class="badge">効果：こわばり減</span>
+
+        <div class="box" style="margin-top:10px;">
+          <div class="soft">
+            <b>やり方</b><br>
+            口を閉じたまま、舌で歯ぐきをなぞるように円を描く。<br>
+            目安：<b>右回り10回 → 左回り10回</b>
+          </div>
+
+          <div class="tip">
+            ✅ 一声：<b>「口の中のこわばりが取れて、発音が滑らかになる」</b><br>
+            ✅ 緊張・疲労・顎が硬い日に特におすすめ。
+          </div>
+
+          <div class="svgWrap">
+            <!-- ぐるぐる図 -->
+            <svg width="260" height="150" viewBox="0 0 240 140" aria-label="舌ぐるぐる図">
+              <path d="M20,80 C40,20 200,20 220,80 C200,120 40,120 20,80 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
+              <path d="M120,70 m-28,0 a28,20 0 1,0 56,0 a28,20 0 1,0 -56,0"
+                    fill="none" stroke="#22c55e" stroke-width="3" opacity="0.9"/>
+              <text x="120" y="118" text-anchor="middle" font-size="12" fill="#666">歯ぐきをなぞる円</text>
+            </svg>
+          </div>
+
+          <!-- タイマー（オプションなので30秒にしておく：回数でもOK） -->
+          <div class="box" style="margin-top:12px;">
+            <div class="mini soft">⏱ タイマー（30秒でもOK）</div>
+            <div class="twrap" data-seconds="30">
+              <div class="tDisplay">00:30</div>
+              <div class="row" style="margin-top:10px;">
+                <button class="tStart">▶ スタート</button>
+                <button class="tStop">⏹ ストップ</button>
+                <button class="tReset">↩ リセット</button>
+              </div>
+            </div>
+            <div class="tip">※回数でやるなら「右10回→左10回」でOK（タイマーは補助）。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <script>
+  (function(){
+    // ほかのタイマーを同時に動かさない（迷わない設計）
+    let runningStopFunc = null;
+
+    function fmt(sec){
+      sec = Math.max(0, sec|0);
+      const m = String(Math.floor(sec/60)).padStart(2,"0");
+      const s = String(sec%60).padStart(2,"0");
+      return `${m}:${s}`;
+    }
+
+    function setupTimer(el){
+      const display = el.querySelector(".tDisplay");
+      const startBtn = el.querySelector(".tStart");
+      const stopBtn  = el.querySelector(".tStop");
+      const resetBtn = el.querySelector(".tReset");
+
+      const base = Number(el.dataset.seconds || 30);
+      let left = base;
+      let iv = null;
+
+      display.textContent = fmt(left);
+
+      function stop(){
+        if(iv){ clearInterval(iv); iv = null; }
+      }
+
+      function reset(){
+        stop();
+        left = base;
+        display.textContent = fmt(left);
+      }
+
+      function start(){
+        // ほかが動いてたら止める
+        if(runningStopFunc && runningStopFunc !== stop){
+          runningStopFunc();
+        }
+        runningStopFunc = stop;
+
+        if(iv) return;
+        iv = setInterval(()=>{
+          left--;
+          display.textContent = fmt(left);
+          if(left <= 0){
+            stop();
+            display.textContent = "00:00";
+            alert("終了！お疲れさまでした😊");
+          }
+        },1000);
+      }
+
+      startBtn.addEventListener("click", start);
+      stopBtn.addEventListener("click", stop);
+      resetBtn.addEventListener("click", reset);
+    }
+
+    document.querySelectorAll(".twrap").forEach(setupTimer);
+  })();
+  </script>
 </body>
 </html>
