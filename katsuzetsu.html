@@ -48,6 +48,8 @@ input[type=range]{
 .mini{
   font-size:14px;
   opacity:0.8;
+  line-height:1.7;
+  white-space:pre-wrap;
 }
 </style>
 </head>
@@ -64,373 +66,446 @@ input[type=range]{
 
 <!-- 今日のミッション -->
 <div class="card">
-<div class="title">🔰 今日のミッション</div>
+  <div class="title">🔰 今日のミッション（約2〜3分）</div>
+  <div class="desc">
+    <div id="dailyText" class="mini">読み込み中…</div>
 
-<div class="desc">
-<div id="dailyText" class="mini">読み込み中…</div>
+    <div class="row" style="margin-top:10px;">
+      <button onclick="startDaily()">▶ 開始</button>
+      <button onclick="shuffleDaily()">🎲 変更</button>
+    </div>
 
-<div class="row" style="margin-top:10px;">
-<button onclick="startDaily()">▶ 開始</button>
-<button onclick="shuffleDaily()">🎲 変更</button>
+    <div class="mini" style="margin-top:8px;">
+      💡 迷ったらこれだけでOK（短時間で続く設計）
+    </div>
+  </div>
 </div>
-</div>
-</div>
-
 
 <!-- セクション -->
 <div class="card">
-<div class="title">セクション</div>
-
-<div class="desc row">
-<button onclick="setSection(0)">①母音</button>
-<button onclick="setSection(1)">②基本</button>
-<button onclick="setSection(2)">③濁音</button>
-<button onclick="setSection(3)">④拗音</button>
-<button onclick="setSection(4)">⑤リズム</button>
-<button onclick="setSection(5)">⑥難語</button>
+  <div class="title">セクション</div>
+  <div class="desc row">
+    <button onclick="setSection(0)">①母音</button>
+    <button onclick="setSection(1)">②基本</button>
+    <button onclick="setSection(2)">③濁音</button>
+    <button onclick="setSection(3)">④拗音</button>
+    <button onclick="setSection(4)">⑤リズム</button>
+    <button onclick="setSection(5)">⑥難語</button>
+  </div>
 </div>
-</div>
-
 
 <!-- 操作 -->
 <div class="card">
+  <div class="title">操作</div>
+  <div class="desc">
 
-<div class="title">操作</div>
+    <div class="row">
+      <button onclick="togglePlay()">🔊再生</button>
+      <button id="autoBtn" onclick="toggleAuto()">自動OFF</button>
+      <button id="karaBtn" onclick="toggleKara()">🌈ON</button>
+    </div>
 
-<div class="desc">
+    <div class="row" style="margin-top:8px;">
+      速度
+      <input id="speedRange" type="range" min="200" max="900" value="450" oninput="setSpeed(this.value)">
+      <span id="speedLabel">450ms</span>
+    </div>
 
-<div class="row">
-<button onclick="togglePlay()">🔊再生</button>
-<button id="autoBtn" onclick="toggleAuto()">自動OFF</button>
-<button id="karaBtn" onclick="toggleKara()">🌈ON</button>
+    <div class="row" style="margin-top:8px;">
+      <button id="bBtn" class="modeOn" onclick="setLevel('b')">初心者</button>
+      <button id="aBtn" onclick="setLevel('a')">上級</button>
+    </div>
+
+    <div class="mini" style="margin-top:8px;">
+      ・初心者：ゆっくり＆正確（おすすめ）<br>
+      ・上級：テンポUP（自動ON推奨）
+    </div>
+
+  </div>
 </div>
-
-<div class="row" style="margin-top:8px;">
-速度
-<input type="range" min="200" max="900" value="450" oninput="setSpeed(this.value)">
-<span id="speedLabel">450ms</span>
-</div>
-
-<div class="row" style="margin-top:8px;">
-<button id="bBtn" class="modeOn" onclick="setLevel('b')">初心者</button>
-<button id="aBtn" onclick="setLevel('a')">上級</button>
-</div>
-
-</div>
-</div>
-
 
 <!-- 表示 -->
 <div class="card">
+  <div class="title" id="sectionTitle"></div>
+  <div class="desc">
 
-<div class="title" id="sectionTitle"></div>
+    <div style="text-align:center;">
+      <span id="counter"></span>
+    </div>
 
-<div class="desc">
+    <div style="border:1px solid #ccc;border-radius:12px;padding:12px;">
+      <div id="phraseBody"></div>
+    </div>
 
-<div style="text-align:center;">
-<span id="counter"></span>
-</div>
+    <div class="row" style="margin-top:10px;">
+      <button onclick="prev()">◀</button>
+      <button onclick="next()">▶</button>
+      <button onclick="rand()">🎲</button>
+      <button onclick="reset()">⟲</button>
+    </div>
 
-<div style="border:1px solid #ccc;border-radius:12px;padding:12px;">
-<div id="phraseBody"></div>
-</div>
+    <div class="mini" style="text-align:center; margin-top:10px;">
+      ※ まず「ゆっくり正確に」→ 慣れたら少しテンポアップ
+    </div>
 
-<div class="row" style="margin-top:10px;">
-<button onclick="prev()">◀</button>
-<button onclick="next()">▶</button>
-<button onclick="rand()">🎲</button>
-<button onclick="reset()">⟲</button>
-</div>
-
-</div>
+  </div>
 </div>
 
 </main>
 
-
 <script>
+/* =========================
+   データ（増量フル版）
+========================= */
 
-/* ===== データ ===== */
-
-const p1=["あいうえお","あえいうえお"];
-const p2=["かきくけこ","さしすせそ","たちつてと"];
-const p3=["がぎぐげご","ばびぶべぼ"];
-const p4=["ちゃちゅちょ","きゃきゅきょ","しゃしゅしょ"];
-const p5=["たたた","かかか","さささ"];
-const p6=["バスガス爆発","東京特許許可局"];
-
-const sections=[
-{t:"①母音",d:p1},
-{t:"②基本",d:p2},
-{t:"③濁音",d:p3},
-{t:"④拗音",d:p4},
-{t:"⑤リズム",d:p5},
-{t:"⑥難語",d:p6},
+// ① 母音（増量）
+const p1 = [
+  "あいうえお",
+  "あえいうえお　あお",
+  "あいうえお　あお",
+  "あお　あえい　うえお",
+  "あいうえお　あいうえお",
+  "あーいーうーえーおー（ゆっくり）",
+  "あ　い　う　え　お（1音ずつ）",
+  "あい　うえ　おあ　えう",
+  "あいう　えおあ　いうえお",
+  "あえい　うえお　あお",
+  "あおあお　あえいえ　うえおう",
+  "あいうえお　おえういあ"
 ];
 
-let sec=0;
-let idx=0;
+// ② 行別基本（フル）
+const p2 = [
+  "（あ行） あ　い　う　え　お",
+  "あえい　うえお　あお",
+  "（か行） か　き　く　け　こ",
+  "かきくけこ　かけこ　きくけ",
+  "（さ行） さ　し　す　せ　そ",
+  "さしすせそ　させそ　しすせ",
+  "（た行） た　ち　つ　て　と",
+  "たちつてと　たてと　ちつて",
+  "（な行） な　に　ぬ　ね　の",
+  "なにぬねの　なねの　にぬね",
+  "（は行） は　ひ　ふ　へ　ほ",
+  "はひふへほ　はへほ　ひふへ",
+  "（ま行） ま　み　む　め　も",
+  "まみむめも　まめも　みむめ",
+  "（や行） や　ゆ　よ",
+  "やゆよ　ゆよや　よやゆ",
+  "（ら行） ら　り　る　れ　ろ",
+  "らりるれろ　られろ　りるれ",
+  "（わ行） わ　を　ん",
+  "わをん　わんを　をわん"
+];
+
+// ③ 濁音・半濁音（フル）
+const p3 = [
+  "がぎぐげご　がげご　ぎぐげ",
+  "ざじずぜぞ　ざぜぞ　じずぜ",
+  "だぢづでど　だでど　ぢづで",
+  "ばびぶべぼ　ばべぼ　びぶべ",
+  "ぱぴぷぺぽ　ぱぺぽ　ぴぷぺ"
+];
+
+// ④ 拗音（フル）
+const p4 = [
+  "きゃきゅきょ　きゃくきょ　きゅきょきゃ",
+  "しゃしゅしょ　しゃくしょ　しゅしょしゃ",
+  "ちゃちゅちょ　ちゃくちょ　ちゅちょちゃ",
+  "にゃにゅにょ　にゃくにょ　にゅにょにゃ",
+  "ひゃひゅひょ　ひゃくひょ　ひゅひょひゃ",
+  "みゃみゅみょ　みゃくみょ　みゅみょみゃ",
+  "りゃりゅりょ　りゃくりょ　りゅりょりゃ"
+];
+
+// ⑤ リズム（フル）
+const p5 = [
+  "たたた　ててて　ととと",
+  "かかか　ききき　くくく",
+  "さささ　ししし　すすす",
+  "ららら　りりり　るるる"
+];
+
+// ⑥ 言いにくい言葉（フル）
+const p6 = [
+  "あめんぼあかいな　あいうえお　うきもにこえびもおよいでる",
+  "生麦（なまむぎ）　生米（なまごめ）　生卵（なまたまご）",
+  "赤巻紙（あかまきがみ）　青巻紙（あおまきがみ）　黄巻紙（きまきがみ）",
+  "東京特許許可局（とうきょうとっきょきょかきょく）",
+  "隣（となり）の客（きゃく）はよく柿（かき）食う客だ",
+  "この竹垣（たけがき）に竹立（たけた）てかけたのは竹立（たけた）てかけたかったから",
+  "老若男女（ろうにゃくなんにょ）",
+  "旅客機（りょかっき）　旅客船（りょかくせん）　旅館（りょかん）",
+  "業務上過失致死傷（ぎょうむじょうかしつちししょう）",
+  "打者走者勝者（だしゃそうしゃしょうしゃ）",
+  "魔術師手術中（まじゅつししゅじゅつちゅう）",
+  "貧乏人（びんぼうにん）　敏腕弁護士（びんわんべんごし）",
+  "バスガス爆発（ばすがすばくはつ）",
+  "貨客船（かきゃくせん）　旅客船（りょかくせん）　客船（きゃくせん）",
+  "究極（きゅうきょく）　供給（きょうきゅう）　要求（ようきゅう）",
+  "きゃりーきゅりーきょろきょろ（※拗音練習）",
+  "しゃしゅしょで　しゅしゅしゅっと　しょしょしょ",
+  "ちゃちゅちょで　ちょちょちょっと　ちゅちゅちゅっと",
+  "新設（しんせつ）施設（しせつ）視察（しさつ）",
+  "早朝（そうちょう）早退（そうたい）相対（そうたい）",
+  "初出場（しょしゅつじょう）　出場者（しゅつじょうしゃ）　主張（しゅちょう）",
+  "肩叩き機（かたたたきき）　ただ叩き機（ただたたきき）",
+  "取捨選択（しゅしゃせんたく）　試写室（ししゃしつ）　支社視察（ししゃしさつ）",
+  "左折車（させつしゃ）　右折車（うせつしゃ）　徐行車（じょこうしゃ）",
+  "最終手段（さいしゅうしゅだん）　収集（しゅうしゅう）　集中（しゅうちゅう）",
+  "特急列車（とっきゅうれっしゃ）　普通列車（ふつうれっしゃ）",
+  "再再再（さいさいさい）確認（かくにん）　最終（さいしゅう）確認（かくにん）"
+];
+
+const sections = [
+  {t:"①母音", d:p1},
+  {t:"②基本", d:p2},
+  {t:"③濁音", d:p3},
+  {t:"④拗音", d:p4},
+  {t:"⑤リズム", d:p5},
+  {t:"⑥難語", d:p6},
+];
+
+let sec = 0;
+let idx = 0;
 
 /* ===== 設定 ===== */
+let auto = false;
+let kara = true;
+let speed = 450;
+let level = "b";
+let timer = null;
 
-let auto=false;
-let kara=true;
-let speed=450;
-let level="b";
-
-let timer=null;
-
-
-/* ===== 拗音処理 ===== */
-
+/* =========================
+   拗音処理（2文字セット対応）
+   例：ち + ゃ を「ちゃ」として1ユニット扱い
+========================= */
 function splitText(txt){
+  const small = "ゃゅょぁぃぅぇぉ";
+  let arr = [];
+  let buf = "";
 
-const small="ゃゅょぁぃぅぇぉ";
-
-let arr=[];
-let buf="";
-
-for(let c of txt){
-
-if(small.includes(c)){
-buf+=c;
-}else{
-if(buf) arr.push(buf);
-buf=c;
+  for(let c of txt){
+    if(small.includes(c)){
+      buf += c;          // 直前の文字に小文字を連結
+    }else{
+      if(buf) arr.push(buf);
+      buf = c;
+    }
+  }
+  if(buf) arr.push(buf);
+  return arr;
 }
-}
-
-if(buf) arr.push(buf);
-
-return arr;
-}
-
 
 /* ===== 表示 ===== */
-
 function render(){
+  const s = sections[sec];
+  sectionTitle.textContent = s.t;
+  counter.textContent = (idx+1) + "/" + s.d.length;
 
-const s=sections[sec];
+  const text = s.d[idx];
 
-sectionTitle.textContent=s.t;
-counter.textContent=(idx+1)+"/"+s.d.length;
-
-const text=s.d[idx];
-
-if(kara){
-renderKara(text);
-}else{
-phraseBody.textContent=text;
-}
+  if(kara){
+    renderKara(text);
+  }else{
+    phraseBody.textContent = text;
+  }
 }
 
 function renderKara(text){
+  phraseBody.innerHTML = "";
+  const units = splitText(text);
 
-phraseBody.innerHTML="";
-
-const units=splitText(text);
-
-units.forEach(u=>{
-const sp=document.createElement("span");
-sp.className="karaChar";
-sp.textContent=u;
-phraseBody.appendChild(sp);
-});
+  units.forEach(u=>{
+    const sp = document.createElement("span");
+    sp.className = "karaChar";
+    sp.textContent = u;
+    phraseBody.appendChild(sp);
+  });
 }
-
 
 /* ===== カラオケ ===== */
-
 function stopKara(){
-
-if(timer){
-clearInterval(timer);
-timer=null;
-}
-
-document.querySelectorAll(".karaChar").forEach(s=>{
-s.classList.remove("active","done");
-});
+  if(timer){
+    clearInterval(timer);
+    timer = null;
+  }
+  document.querySelectorAll(".karaChar").forEach(s=>{
+    s.classList.remove("active","done");
+  });
 }
 
 function startKara(){
+  if(!kara) return;
 
-if(!kara) return;
+  stopKara();
 
-stopKara();
+  const spans = document.querySelectorAll(".karaChar");
+  let i = 0;
 
-const spans=document.querySelectorAll(".karaChar");
+  timer = setInterval(()=>{
+    if(i>0){
+      spans[i-1].classList.remove("active");
+      spans[i-1].classList.add("done");
+    }
 
-let i=0;
+    if(i >= spans.length){
+      clearInterval(timer);
+      timer = null;
+      if(auto) setTimeout(next, 600);
+      return;
+    }
 
-timer=setInterval(()=>{
-
-if(i>0){
-spans[i-1].classList.remove("active");
-spans[i-1].classList.add("done");
+    spans[i].classList.add("active");
+    i++;
+  }, speed);
 }
-
-if(i>=spans.length){
-clearInterval(timer);
-timer=null;
-
-if(auto) setTimeout(next,600);
-
-return;
-}
-
-spans[i].classList.add("active");
-i++;
-
-},speed);
-}
-
 
 /* ===== 操作 ===== */
-
 function setSection(n){
-sec=n;
-idx=0;
-stop();
-render();
+  sec = n;
+  idx = 0;
+  stop();
+  render();
 }
 
 function next(){
-idx=(idx+1)%sections[sec].d.length;
-stop();
-render();
-if(auto) startKara();
+  idx = (idx + 1) % sections[sec].d.length;
+  stop();
+  render();
+  if(auto) startKara();
 }
 
 function prev(){
-idx=(idx-1+sections[sec].d.length)%sections[sec].d.length;
-stop();
-render();
+  idx = (idx - 1 + sections[sec].d.length) % sections[sec].d.length;
+  stop();
+  render();
 }
 
 function rand(){
-idx=Math.floor(Math.random()*sections[sec].d.length);
-stop();
-render();
+  idx = Math.floor(Math.random() * sections[sec].d.length);
+  stop();
+  render();
 }
 
 function reset(){
-idx=0;
-stop();
-render();
+  idx = 0;
+  stop();
+  render();
 }
 
-
 /* ===== 制御 ===== */
-
 function stop(){
-stopKara();
+  stopKara();
 }
 
 function togglePlay(){
-stop();
-startKara();
+  stop();
+  startKara();
+}
+
+function syncAutoBtn(){
+  autoBtn.textContent = auto ? "自動ON" : "自動OFF";
 }
 
 function toggleAuto(){
-auto=!auto;
-autoBtn.textContent=auto?"自動ON":"自動OFF";
+  auto = !auto;
+  syncAutoBtn();
 }
 
 function toggleKara(){
-kara=!kara;
-karaBtn.textContent=kara?"🌈ON":"🌈OFF";
-stop();
-render();
+  kara = !kara;
+  karaBtn.textContent = kara ? "🌈ON" : "🌈OFF";
+  stop();
+  render();
 }
 
 function setSpeed(v){
-speed=Number(v);
-speedLabel.textContent=speed+"ms";
+  speed = Number(v);
+  speedLabel.textContent = speed + "ms";
 }
 
 function setLevel(l){
+  level = l;
 
-level=l;
+  bBtn.classList.remove("modeOn");
+  aBtn.classList.remove("modeOn");
 
-bBtn.classList.remove("modeOn");
-aBtn.classList.remove("modeOn");
-
-if(l==="b"){
-bBtn.classList.add("modeOn");
-speed=Math.max(speed,450);
-}else{
-aBtn.classList.add("modeOn");
-speed=Math.min(speed,350);
+  if(l === "b"){
+    bBtn.classList.add("modeOn");
+    speed = Math.max(speed, 450);
+    speedRange.value = speed;
+  }else{
+    aBtn.classList.add("modeOn");
+    speed = Math.min(speed, 350);
+    speedRange.value = speed;
+  }
+  speedLabel.textContent = speed + "ms";
 }
-
-speedLabel.textContent=speed+"ms";
-}
-
 
 /* ===== 今日のミッション ===== */
-
-let daily=null;
-
-function pickDaily(){
-
-return[
-{sec:0,p:r(p1)},
-{sec:3,p:r(p4)},
-{sec:2,p:r(p3)}
-];
-}
+let daily = null;
 
 function r(a){
-return a[Math.floor(Math.random()*a.length)];
+  return a[Math.floor(Math.random()*a.length)];
+}
+
+function pickDaily(){
+  // 迷いにくい王道ルート
+  // 母音 → 拗音 → 濁音（＋たまにリズム）
+  const plan = [
+    {sec:0, p:r(p1)},
+    {sec:3, p:r(p4)},
+    {sec:2, p:r(p3)}
+  ];
+  if(Math.random() < 0.5){
+    plan.splice(1, 0, {sec:4, p:r(p5)}); // たまにリズムを挟む
+  }
+  return plan;
 }
 
 function showDaily(){
-
-if(!daily) daily=pickDaily();
-
-dailyText.textContent=
-daily.map((x,i)=>`(${i+1}) ${sections[x.sec].t}：${x.p}`).join("\n");
+  if(!daily) daily = pickDaily();
+  dailyText.textContent =
+    daily.map((x,i)=>`(${i+1}) ${sections[x.sec].t}：${x.p}`).join("\n");
 }
 
 function shuffleDaily(){
-daily=pickDaily();
-showDaily();
+  daily = pickDaily();
+  showDaily();
 }
 
 function startDaily(){
+  if(!daily) daily = pickDaily();
 
-if(!daily) daily=pickDaily();
+  // ✅ ここ修正ポイント：toggleAuto() を呼ぶと反転するので「ONに固定」
+  auto = true;
+  syncAutoBtn();
 
-auto=true;
-toggleAuto();
-
-runDaily(0);
+  runDaily(0);
 }
 
 function runDaily(i){
+  if(!daily[i]) return;
 
-if(!daily[i]) return;
+  sec = daily[i].sec;
+  idx = sections[sec].d.indexOf(daily[i].p);
+  if(idx < 0) idx = 0;
 
-sec=daily[i].sec;
-idx=sections[sec].d.indexOf(daily[i].p);
+  render();
+  startKara();
 
-render();
-startKara();
-
-const len=splitText(daily[i].p).length;
-
-setTimeout(()=>{
-runDaily(i+1);
-},len*speed+800);
+  const len = splitText(daily[i].p).length;
+  setTimeout(()=>{
+    runDaily(i+1);
+  }, len * speed + 800);
 }
 
-
 /* ===== 初期 ===== */
-
 render();
 showDaily();
-
+syncAutoBtn();
+karaBtn.textContent = kara ? "🌈ON" : "🌈OFF";
 </script>
 
 </body>
