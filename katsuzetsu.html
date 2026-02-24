@@ -13,21 +13,47 @@
   font-weight:800;
   text-align:center;
   line-height:1.9;
+  white-space:pre-wrap;
 }
 
+/* 旧：karaChar（残してもOKだけど使わない） */
 .karaChar{
   display:inline-block;
   padding:2px 3px;
   border-radius:6px;
 }
-
 .karaChar.active{
   background:#ffdddd;
   color:#d60000;
 }
-
 .karaChar.done{
   opacity:0.5;
+}
+
+/* ✅ 新：ruby対応ユニット */
+.karaUnit{
+  display:inline-block;
+  padding:2px 4px;
+  border-radius:6px;
+  transition: .15s;
+}
+.karaUnit.active{
+  background:#ffdddd;
+  color:#d60000;
+}
+.karaUnit.done{
+  opacity:.45;
+}
+.karaUnit.skip{
+  background:transparent !important;
+  color:inherit !important;
+  opacity:1;
+}
+
+/* rubyの見た目（ふりがなを小さく） */
+ruby rt{
+  font-size: 0.55em;
+  opacity: 0.85;
 }
 
 .row{
@@ -35,6 +61,7 @@
   gap:10px;
   justify-content:center;
   flex-wrap:wrap;
+  align-items:center;
 }
 
 input[type=range]{
@@ -58,7 +85,7 @@ input[type=range]{
 
 <header class="top">
 <h1>👄 滑舌練習</h1>
-<p class="sub">カラオケ式で練習できます</p>
+<p class="sub">カラオケ式で練習できます（拗音・ふりがな対応）</p>
 <p><a href="index.html">← ホームへ</a></p>
 </header>
 
@@ -99,8 +126,14 @@ input[type=range]{
   <div class="title">操作</div>
   <div class="desc">
 
+    <!-- ✅ 追加：停止＋速度± -->
     <div class="row">
       <button onclick="togglePlay()">🔊再生</button>
+      <button onclick="stop()">⏹停止</button>
+
+      <button onclick="slow()">➖遅く</button>
+      <button onclick="fast()">➕速く</button>
+
       <button id="autoBtn" onclick="toggleAuto()">自動OFF</button>
       <button id="karaBtn" onclick="toggleKara()">🌈ON</button>
     </div>
@@ -226,44 +259,32 @@ const p5 = [
   "ららら　りりり　るるる"
 ];
 
-// ⑥ 言いにくい言葉（フル）
+/* ✅ ⑥ 難語：完全ruby（漢字だけを光らせやすくする） */
 const p6 = [
   "あめんぼあかいな　あいうえお　うきもにこえびもおよいでる",
-  "生麦（なまむぎ）　生米（なまごめ）　生卵（なまたまご）",
-  "赤巻紙（あかまきがみ）　青巻紙（あおまきがみ）　黄巻紙（きまきがみ）",
-  "東京特許許可局（とうきょうとっきょきょかきょく）",
-  "隣（となり）の客（きゃく）はよく柿（かき）食う客だ",
-  "この竹垣（たけがき）に竹立（たけた）てかけたのは竹立（たけた）てかけたかったから",
-  "老若男女（ろうにゃくなんにょ）",
-  "旅客機（りょかっき）　旅客船（りょかくせん）　旅館（りょかん）",
-  "業務上過失致死傷（ぎょうむじょうかしつちししょう）",
-  "打者走者勝者（だしゃそうしゃしょうしゃ）",
-  "魔術師手術中（まじゅつししゅじゅつちゅう）",
-  "貧乏人（びんぼうにん）　敏腕弁護士（びんわんべんごし）",
-  "バスガス爆発（ばすがすばくはつ）",
-  "貨客船（かきゃくせん）　旅客船（りょかくせん）　客船（きゃくせん）",
-  "究極（きゅうきょく）　供給（きょうきゅう）　要求（ようきゅう）",
-  "きゃりーきゅりーきょろきょろ（※拗音練習）",
-  "しゃしゅしょで　しゅしゅしゅっと　しょしょしょ",
-  "ちゃちゅちょで　ちょちょちょっと　ちゅちゅちゅっと",
-  "新設（しんせつ）施設（しせつ）視察（しさつ）",
-  "早朝（そうちょう）早退（そうたい）相対（そうたい）",
-  "初出場（しょしゅつじょう）　出場者（しゅつじょうしゃ）　主張（しゅちょう）",
-  "肩叩き機（かたたたきき）　ただ叩き機（ただたたきき）",
-  "取捨選択（しゅしゃせんたく）　試写室（ししゃしつ）　支社視察（ししゃしさつ）",
-  "左折車（させつしゃ）　右折車（うせつしゃ）　徐行車（じょこうしゃ）",
-  "最終手段（さいしゅうしゅだん）　収集（しゅうしゅう）　集中（しゅうちゅう）",
-  "特急列車（とっきゅうれっしゃ）　普通列車（ふつうれっしゃ）",
-  "再再再（さいさいさい）確認（かくにん）　最終（さいしゅう）確認（かくにん）"
+  "<ruby>生麦<rt>なまむぎ</rt></ruby> <ruby>生米<rt>なまごめ</rt></ruby> <ruby>生卵<rt>なまたまご</rt></ruby>",
+  "<ruby>赤巻紙<rt>あかまきがみ</rt></ruby> <ruby>青巻紙<rt>あおまきがみ</rt></ruby> <ruby>黄巻紙<rt>きまきがみ</rt></ruby>",
+  "<ruby>東京<rt>とうきょう</rt></ruby><ruby>特許<rt>とっきょ</rt></ruby><ruby>許可局<rt>きょかきょく</rt></ruby>",
+  "<ruby>隣<rt>となり</rt></ruby>の<ruby>客<rt>きゃく</rt></ruby>はよく<ruby>柿<rt>かき</rt></ruby><ruby>食<rt>く</rt></ruby>う<ruby>客<rt>きゃく</rt></ruby>だ",
+  "<ruby>老若男女<rt>ろうにゃくなんにょ</rt></ruby>",
+  "<ruby>旅客機<rt>りょかっき</rt></ruby> <ruby>旅客船<rt>りょかくせん</rt></ruby> <ruby>旅館<rt>りょかん</rt></ruby>",
+  "<ruby>業務上過失致死傷<rt>ぎょうむじょうかしつちししょう</rt></ruby>",
+  "<ruby>打者走者勝者<rt>だしゃそうしゃしょうしゃ</rt></ruby>",
+  "<ruby>魔術師手術中<rt>まじゅつししゅじゅつちゅう</rt></ruby>",
+  "<ruby>貧乏人<rt>びんぼうにん</rt></ruby> <ruby>敏腕弁護士<rt>びんわんべんごし</rt></ruby>",
+  "<ruby>バスガス爆発<rt>ばすがすばくはつ</rt></ruby>",
+  "<ruby>最終手段<rt>さいしゅうしゅだん</rt></ruby> <ruby>収集<rt>しゅうしゅう</rt></ruby> <ruby>集中<rt>しゅうちゅう</rt></ruby>",
+  "<ruby>特急列車<rt>とっきゅうれっしゃ</rt></ruby> <ruby>普通列車<rt>ふつうれっしゃ</rt></ruby>",
+  "<ruby>取捨選択<rt>しゅしゃせんたく</rt></ruby> <ruby>試写室<rt>ししゃしつ</rt></ruby> <ruby>支社視察<rt>ししゃしさつ</rt></ruby>"
 ];
 
 const sections = [
-  {t:"①母音", d:p1},
-  {t:"②基本", d:p2},
-  {t:"③濁音", d:p3},
-  {t:"④拗音", d:p4},
-  {t:"⑤リズム", d:p5},
-  {t:"⑥難語", d:p6},
+  {t:"①母音", d:p1, isHtml:false},
+  {t:"②基本", d:p2, isHtml:false},
+  {t:"③濁音", d:p3, isHtml:false},
+  {t:"④拗音", d:p4, isHtml:false},
+  {t:"⑤リズム", d:p5, isHtml:false},
+  {t:"⑥難語", d:p6, isHtml:true},   // ✅ 難語はHTML（ruby）を含む
 ];
 
 let sec = 0;
@@ -277,23 +298,68 @@ let level = "b";
 let timer = null;
 
 /* =========================
-   拗音処理（2文字セット対応）
-   例：ち + ゃ を「ちゃ」として1ユニット扱い
+  ✅ ユニット化
+  - 難語（rubyあり）：rubyは1ユニット、空白はskip
+  - 通常：拗音（小文字）を前の文字と合体、空白はskip、（ ）もskip
 ========================= */
-function splitText(txt){
+function buildUnits(text, isHtml){
+
+  // HTML（ruby）を含む場合
+  if(isHtml){
+    const temp = document.createElement("div");
+    temp.innerHTML = text;
+    const units = [];
+
+    function walk(node){
+      if(node.nodeType === 3){
+        for(const c of node.textContent){
+          if(/\s/.test(c)) units.push({t:c, skip:true});
+          else units.push({t:c});
+        }
+        return;
+      }
+      if(node.nodeType === 1){
+        if(node.tagName === "RUBY"){
+          units.push({html: node.outerHTML});
+          return;
+        }
+        for(const ch of node.childNodes) walk(ch);
+      }
+    }
+    walk(temp);
+    return units;
+  }
+
+  // 通常（拗音合体、（）除外）
   const small = "ゃゅょぁぃぅぇぉ";
   let arr = [];
   let buf = "";
+  let inParen = false;
 
-  for(let c of txt){
+  for(const c of text){
+
+    // （）内はスキップしたい場合
+    if(c === "（"){ inParen = true; continue; }
+    if(c === "）"){ inParen = false; continue; }
+    if(inParen) continue;
+
+    // 空白は光らせない（表示は残す）
+    if(/\s/.test(c)){
+      if(buf){ arr.push({t:buf}); buf=""; }
+      arr.push({t:c, skip:true});
+      continue;
+    }
+
+    // 拗音小文字は前の文字に合体
     if(small.includes(c)){
-      buf += c;          // 直前の文字に小文字を連結
+      buf += c;
+      continue;
     }else{
-      if(buf) arr.push(buf);
+      if(buf) arr.push({t:buf});
       buf = c;
     }
   }
-  if(buf) arr.push(buf);
+  if(buf) arr.push({t:buf});
   return arr;
 }
 
@@ -306,20 +372,34 @@ function render(){
   const text = s.d[idx];
 
   if(kara){
-    renderKara(text);
+    renderKara(text, s.isHtml);
   }else{
-    phraseBody.textContent = text;
+    // kara OFF のとき：HTMLならruby表示、通常なら文字表示
+    if(s.isHtml){
+      phraseBody.innerHTML = text;
+    }else{
+      phraseBody.textContent = text;
+    }
   }
 }
 
-function renderKara(text){
+function renderKara(text, isHtml){
   phraseBody.innerHTML = "";
-  const units = splitText(text);
+
+  const units = buildUnits(text, isHtml);
 
   units.forEach(u=>{
     const sp = document.createElement("span");
-    sp.className = "karaChar";
-    sp.textContent = u;
+    sp.className = "karaUnit";
+
+    if(u.skip){
+      sp.classList.add("skip");
+      sp.textContent = u.t;
+    }else if(u.html){
+      sp.innerHTML = u.html; // ruby表示
+    }else{
+      sp.textContent = u.t;
+    }
     phraseBody.appendChild(sp);
   });
 }
@@ -330,7 +410,7 @@ function stopKara(){
     clearInterval(timer);
     timer = null;
   }
-  document.querySelectorAll(".karaChar").forEach(s=>{
+  document.querySelectorAll(".karaUnit").forEach(s=>{
     s.classList.remove("active","done");
   });
 }
@@ -340,7 +420,9 @@ function startKara(){
 
   stopKara();
 
-  const spans = document.querySelectorAll(".karaChar");
+  const spans = Array.from(document.querySelectorAll(".karaUnit"))
+    .filter(sp=>!sp.classList.contains("skip")); // ✅ skipは光らせない
+
   let i = 0;
 
   timer = setInterval(()=>{
@@ -420,8 +502,21 @@ function toggleKara(){
   render();
 }
 
+/* 速度：スライダー */
 function setSpeed(v){
   speed = Number(v);
+  speedLabel.textContent = speed + "ms";
+}
+
+/* ✅ 速度：ボタン（±50ms） */
+function slow(){
+  speed = Math.min(speed + 50, 900);
+  speedRange.value = speed;
+  speedLabel.textContent = speed + "ms";
+}
+function fast(){
+  speed = Math.max(speed - 50, 200);
+  speedRange.value = speed;
   speedLabel.textContent = speed + "ms";
 }
 
@@ -478,7 +573,6 @@ function shuffleDaily(){
 function startDaily(){
   if(!daily) daily = pickDaily();
 
-  // ✅ ここ修正ポイント：toggleAuto() を呼ぶと反転するので「ONに固定」
   auto = true;
   syncAutoBtn();
 
@@ -489,16 +583,21 @@ function runDaily(i){
   if(!daily[i]) return;
 
   sec = daily[i].sec;
+
+  // ✅ 難語セクションはHTML文字列なので、今日ミッションには入れていない（安全）
   idx = sections[sec].d.indexOf(daily[i].p);
   if(idx < 0) idx = 0;
 
   render();
   startKara();
 
-  const len = splitText(daily[i].p).length;
+  // ✅ ユニット数で時間見積もり（skip除外）
+  const units = buildUnits(sections[sec].d[idx], sections[sec].isHtml)
+    .filter(u=>!u.skip);
+
   setTimeout(()=>{
     runDaily(i+1);
-  }, len * speed + 800);
+  }, units.length * speed + 800);
 }
 
 /* ===== 初期 ===== */
