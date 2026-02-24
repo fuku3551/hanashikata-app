@@ -1,393 +1,184 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>読み練習（外郎売）</title>
-<link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外郎売（縦書き朗読モード）</title>
+<link rel="stylesheet" href="style.css">
 
 <style>
-  /* 全体表示 */
-  #textBody{
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 2.1;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
+body{
+  margin:0;
+  overflow:hidden;
+}
 
-  /* ruby（ふりがな） */
-  ruby{
-    ruby-position: over;
-  }
-  ruby rt{
-    font-size: .55em;
-    opacity: .85;
-    letter-spacing: 0.02em;
-  }
+#reader{
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size:18px;
+  line-height:2.2;
+  height:100vh;
+  overflow:hidden;
+  padding:20px 40px;
+  position:relative;
+  white-space:pre-wrap;
+}
 
-  /* カラオケ（波） */
-  .karaUnit{
-    display: inline-block;
-    padding: 2px 3px;
-    border-radius: 8px;
-    transition: opacity .25s ease;
-  }
+.column{
+  display:inline-block;
+  height:100%;
+  vertical-align:top;
+  padding:0 12px;
+}
 
-  /* 波が横に流れる（じわ〜） */
-  .karaUnit.active{
-    color: #b80000;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 214, 214, 0.0) 0%,
-      rgba(255, 214, 214, 0.65) 35%,
-      rgba(255, 214, 214, 0.95) 50%,
-      rgba(255, 214, 214, 0.65) 65%,
-      rgba(255, 214, 214, 0.0) 100%
-    );
-    background-size: 220% 100%;
-    animation: waveMove 1.2s ease-in-out infinite;
-  }
+.guideLine{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:rgba(255,0,0,0.25);
+  right:0;
+  transition:transform .4s ease;
+}
 
-  @keyframes waveMove{
-    0%   { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
-  }
+.controls{
+  position:fixed;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.9);
+  padding:10px 16px;
+  border-radius:16px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  font-size:14px;
+}
 
-  .karaUnit.done{
-    opacity: .35;
-  }
+button{
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  background:#fff;
+}
 
-  /* 空白や記号はハイライトしない */
-  .karaUnit.skip{
-    padding: 0;
-    border-radius: 0;
-    background: none !important;
-    color: inherit !important;
-    animation: none !important;
-  }
-
-  /* UI */
-  .row{
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    flex-wrap:wrap;
-    align-items:center;
-  }
-  .pill{
-    display:inline-block;
-    padding:6px 12px;
-    border-radius:999px;
-    background: rgba(255,255,255,.75);
-    border:1px solid rgba(0,0,0,.12);
-    font-size:14px;
-  }
-  .btn{
-    padding:10px 14px;
-    border-radius:12px;
-    border:1px solid rgba(0,0,0,.12);
-    background:#fff;
-    font-weight:800;
-  }
-  .btnPrimary{
-    background:#0ea5e9;
-    color:#fff;
-    border:none;
-  }
-  .btnDanger{
-    background:#ef4444;
-    color:#fff;
-    border:none;
-  }
-  .mini{
-    font-size:14px;
-    opacity:.85;
-    line-height:1.7;
-    white-space:pre-wrap;
-  }
+.speed{
+  font-size:12px;
+}
 </style>
 </head>
 
 <body>
 
-<header class="top">
-  <h1>📖 読み練習（外郎売）</h1>
-  <p class="sub">漢字にふりがな＋波カラオケ（速度調整OK）</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
-</header>
+<div id="reader"></div>
+<div class="guideLine" id="guide"></div>
 
-<main class="menu">
-
-  <!-- 操作 -->
-  <div class="card" style="display:block;">
-    <div class="title">操作</div>
-    <div class="desc">
-      <div class="row">
-        <button class="btn btnPrimary" onclick="play()">▶ 開始</button>
-        <button class="btn btnDanger" onclick="stop()">⏹ ストップ</button>
-        <button class="btn" onclick="slower()">➖ 速度</button>
-        <button class="btn" onclick="faster()">➕ 速度</button>
-      </div>
-
-      <div class="row" style="margin-top:10px;">
-        <span class="pill">速度：<span id="speedLabel">380ms</span></span>
-        <span class="pill">進捗：<span id="progressLabel">0 / 0</span></span>
-      </div>
-
-      <div class="mini" style="margin-top:10px;text-align:center;">
-        💡 波の色は「じわ〜っと」流れます（難語でも違和感少なめ）
-      </div>
-    </div>
-  </div>
-
-  <!-- 本文 -->
-  <div class="card" style="display:block;">
-    <div class="title">外郎売（自動ふりがな化）</div>
-    <div class="desc">
-      <div id="textBody">読み込み中…</div>
-    </div>
-  </div>
-
-</main>
+<div class="controls">
+  <button onclick="toggleGuide()">ガイドON/OFF</button>
+  <button onclick="toggleAuto()">自動送りON/OFF</button>
+  <button onclick="slower()">−</button>
+  <button onclick="faster()">＋</button>
+  <span class="speed">速度:<span id="speedLabel">1500</span>ms</span>
+</div>
 
 <script>
-/* ======================================================
-  ✅ 元テキスト（福田さんの形式：漢字の直後にひらがな）
-  → JSで自動的に <ruby>漢字<rt>ひらがな</rt></ruby> に変換します
-====================================================== */
-const RAW_TEXT = `
-拙者せっしゃ親方おやかたと申もうすは、お立たち会 あいの中 うちに御存ごぞんじのお方かたもござりましょうが、お江戸えどを発たって二十里にじゅうり上方かみがた、相州 そうしゅう小田原おだわら一色町 いっしきまちをお過すぎなされて、青物あおもの町 ちょうを上のぼりへお出いでなさるれば、欄干らんかん橋 ばし虎屋とらや藤 と右衛門うえもん、只今ただいまは剃髪ていはつ致いたして圓えん斎 さいと名乗なのりまする。
-元朝がんちょうより大晦日 おおつごもりまで、御手おてに入いれまする此 この薬くすりは、昔むかし、珍ちんの国くにの唐人とうじん、 外郎ういろうと云いう人ひと、我わが朝 ちょうへ来きたり。 帝みかどへ参内さんだいの折 おりから、此 この薬くすりを深ふかく込こめ置おき、用 もちゆる時ときは一いち粒 りゅうずつ冠かんむりの隙間すきまより取とり出 いだす。 依よ ってその名なを帝みかどより、 透頂香 とうちんこうと 賜たまわる。即すなわち 文字もじ には、「 頂 いただき、 透すく、香 におい 」と書か いて「とうちんこう」と 申もうす。
-只今ただいまは此 この薬くすり、殊ことの外ほか、 世上 せじょうに広ひろまり、方々 ほうぼうに似にせ看板かんばんを出 いだし、イヤ小田原おだわらの、灰はい俵 だわらの、さん俵 だわらの、炭俵すみだわらのと、色々いろいろに申もうせども、平仮名ひらがな をもって「ういろう」と 致いたしたは、親方おやかた圓えん斎さいばかり。 もしやお 立たち会 あいの中 うちに、熱海あたみか塔ノ沢とうのさわへ湯治とうじにお出いでなさるるか、又または伊勢いせ御ご参宮さんぐうの折おりからは、必かならず門 かど違ちがいなされまするな。 御 お上のぼりなれば右みぎの方 かた、御 お下くだりなれば左側ひだりがわ、八方はっぽうが八 やつ棟 むね、表おもてが三 みつ棟 むね玉堂ぎょくどう造 づくり、破風はふには菊きくに桐きりの薹とうの御ご紋もんを御ご赦免しゃめんあって、系図けいず正 ただしき薬 くすりでござる。
-イヤ最前さいぜんより家名かめいの自慢じまんばかり申もうしても、御存ごぞんじない方 かたには、正身 しょうしんの胡椒の丸呑こしょうのまるのみ、白河夜船しらかわよふね 。さらば 一いち粒 りゅう食たべかけて、その気味合きみあいをお目めに懸かけましょう。 先まず此 この薬くすりを斯様かように一いち粒 りゅう舌したの上うえ へ 乗のせまして、腹 ふく内ないへ納おさめますると、イヤどうもいえぬは、 胃い、心 しん、肺はい、肝 かんが健すこやかに成なって、薫風くんぷう喉のどより来きたり、口中 こうちゅう微び涼りょうを生しょうずるが如ごとし。 魚 ぎょ鳥 ちょう、木きの子こ、麺類めんるいの食くい合あわせ、其その外ほか、万病 まんびょう即効そっこうあること神かみの如ごとし。  さて此 この薬くすり、第一だいいちの奇妙きみょうには、舌したの廻 まわることが銭 ぜにごまが裸足はだしで逃にげる。ひょっと舌したが廻まわり出だすと、矢やも盾たても堪たまらぬじゃ。
-そりゃそりゃそりゃ、そりゃそりゃ、廻まわって来きたわ、廻まわって来くるわ。 アワヤ 喉のど、サタラナ舌したにカ牙 げサ歯音しおん、ハマの二ふたつは唇くちびるの軽重 きょうじゅう開口かいこう爽さわやかに、アカサタナ、ハマヤラワ、オコソトノ、ホモヨロヲ。 一つへぎへぎに、へぎ干ほし、はじかみ。 盆ぼん豆まめ、盆ぼん米 ごめ、盆ぼん牛蒡ごぼう 。 摘 つみ蓼 たで、 摘 つみ豆 まめ、摘山椒 つみさんしょう、書写山しょしゃざんの社しゃ僧正そうじょう。 小米こごめの生なま噛 がみ、小米こごめの生なま噛 がみ、こん小米こごめのこ生 なま噛 がみ。繻子しゅす緋ひ繻子 じゅす、繻子しゅす繻珍 しゅちん。 親おやも嘉兵衛かへえ、子こも嘉兵衛かへえ、親嘉兵衛おやかへえ子こ嘉兵衛かへえ、子こ嘉兵衛かへえ親 おや嘉兵衛かへえ。古栗こぐりの木きの古 ふる切口きりくち。雨合羽あまがっぱが番ばん合羽 がっぱか。貴様きさまの脚絆きゃはんも皮かわ脚絆 ぎゃはん、我 われ等らが脚絆きゃはんも皮かわ脚絆 ぎゃはん。尻しり皮 かわ袴 ばかまのしっ綻 ぽころびを、三 み針はり針長はりながにちょと縫ぬうて、縫ぬうてちょとぶん出 だせ。河原撫子かわらなでしこ野石 のぜき竹 ちく。野良のら如来にょらい野良のら如来にょらい、三野みの良 ら如来にょらいに六野 むの良 ら如来にょらい 。 一寸先いっすんさき のお 小仏こぼとけにお蹴躓けつまずきゃるな、細溝ほそみぞにどじょにょろり。京きょうの生なま鱈 だら、奈良なら、生なま学 まな鰹 がつお、ちょと四 し五ご貫目かんめ。お茶ちゃ立 たちょ、茶ちゃ立 だちょ、ちゃっと立 たちょ、茶ちゃ立 だちょ。青竹あおだけ茶筅ちゃせんでお茶ちゃちゃと立たちゃ。  来くるわ来くるわ何なにが来くる、高野 こうやの山やまのおこけら小僧こぞう、狸たぬき百 ひゃっ匹 ぴき、箸はし百ひゃく膳ぜん、天目てんもく百 ひゃっ杯 ぱい、棒ぼう八 はっ百 ぴゃっ本 ぽん。武具ぶぐ、馬具ばぐ、武具ぶぐ馬具ばぐ、三 み武具ぶぐ馬具ばぐ、合あわせて武具ぶぐ馬具ばぐ、六 む武具ぶぐ馬具ばぐ。 菊きく、栗くり、菊きく栗くり、三 み菊きく栗くり、合あわせて菊きく栗くり、六 む菊きく栗くり。麦むぎ、ごみ、麦むぎごみ、三 み麦むぎごみ、合あわせて麦むぎごみ、六 む麦むぎごみ。あの長押なげしの長 なが薙刀なぎなたは誰 たが長 なが薙刀なぎなたぞ。向むこうの胡麻ごま殻 がらは荏えの胡麻ごま殻 がらか真ま胡麻ごま殻 がらか、あれこそ本ほんの真ま胡麻ごま殻 がら。がらぴぃがらぴぃ風車かざぐるま。起おきゃがれ小法師 こぼし、起おきゃがれ小法師 こぼし、昨夜 ゆんべも溢 こぼしてまた溢 こぼした。 たぁぷぽぽ、たぁぷぽぽ、ちりからちりから、つったっぽ。たっぽたっぽ一丁いっちょう蛸だこ、落 おちたら煮にて食くを。煮にても焼やいても食くわれぬ物ものは、五徳ごとく、鉄てつ弓 きゅう、金かな熊童子くまどうじに、石熊いしくま、石持いしもち、虎熊とらくま、虎鱚とらぎす。中 なかにも東寺とうじの羅生門らしょうもんには、茨木童子いばらきどうじが腕うで栗 ぐり五 ごん合ごう掴つか んでおむしゃる。かの頼光 らいこうの膝元ひざもと去さらず。
-鮒ふな、金柑きんかん、椎茸しいたけ、定さだめて後段 ごだんな、蕎麦切そばきり、素麺そうめん、饂飩うどんか愚鈍ぐどんなこ新発しんぼ知 ち。小棚 こだなの小下こしたに、小桶こおけにこ味噌みそがこ有あるぞ、こ杓子しゃくしこ持 もって、こすくてこ寄よこせ。 おっと合点がてんだ、心得こころえ田圃たんぼの川崎かわさき、神奈川かながわ、程ほどヶ谷 がや、戸塚とつかは走はしって行 ゆけば、灸やいとを擦すりむく、三里さんりばかりか、藤沢ふじさわ、平塚ひらつか、大磯おおいそがしや、小磯こいその宿やどを七ななつ起おきして、早天そうてんそうそう、相州 そうしゅう小田原おだわら、透 とう頂 ちん香こう。隠かくれござらぬ貴賎きせん群衆 ぐんじゅの 花はなの御 お江戸えどの花はな ういろう。 あれ、あの花はなを見みて、お心こころをお和やわ らぎやという。 産 うぶ子こ、這子 はうこに至いたるまで、此 このういろうの御ご評判ひょうばん、御存ごぞんじないとは申もうされまいまいつぶり、角出 つのだせ、棒ぼう出だせ、ぼうぼう眉まゆに、臼うす、杵きね、擂鉢すりばち、ばちばち、ぐゎらぐゎらぐゎらと、 羽目はめを外はずして今日 こんにち御 おい出 での何 いずれ様 さまに、上あげねばならぬ、売うらねばならぬと、息いきせい引ひっ張ぱり、東方とうほう世界せかいの薬くすりの元締もとじめ、薬師如来やくしにょらいも照覧 しょうらんあれと、ホホ 敬うやまって、ういろうはいらっしゃりませぬか。
-`.trim();
 
-/* ======================================================
-  ✅ 自動ruby化： 「漢字＋ひらがな」が連続している箇所を
-     <ruby>漢字<rt>ひらがな</rt></ruby> にします
-====================================================== */
-function isKanji(ch){
-  return /[一-龥々]/.test(ch);
-}
-function isHiragana(ch){
-  return /[ぁ-ゖー]/.test(ch);
-}
-
-function autoRuby(text){
-  let out = "";
-  let i = 0;
-
-  while(i < text.length){
-    const c = text[i];
-
-    // 改行などはそのまま
-    if(c === "\n" || c === "\r"){
-      out += c;
-      i++;
-      continue;
-    }
-
-    // 漢字の連続
-    if(isKanji(c)){
-      let kanjiRun = c;
-      i++;
-      while(i < text.length && isKanji(text[i])){
-        kanjiRun += text[i];
-        i++;
-      }
-
-      // 直後のひらがな連続を読みとして取得
-      let hiraRun = "";
-      while(i < text.length && isHiragana(text[i])){
-        hiraRun += text[i];
-        i++;
-      }
-
-      if(hiraRun.length > 0){
-        out += `<ruby>${escapeHtml(kanjiRun)}<rt>${escapeHtml(hiraRun)}</rt></ruby>`;
-      }else{
-        out += escapeHtml(kanjiRun);
-      }
-      continue;
-    }
-
-    // その他文字
-    out += escapeHtml(c);
-    i++;
-  }
-
-  return out;
-}
-
-function escapeHtml(s){
-  return (s+"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
-}
-
-/* ======================================================
-  ✅ カラオケ：拗音（小文字）を1ユニット扱い
-  ✅ 空白・記号・括弧・読点などはハイライトしない
-====================================================== */
-const SKIP_CHARS = /[\s　、。．，・…！？!?\(\)（）「」『』【】［］〔〕〈〉《》【】]/;
-
-function splitMoraUnits(txt){
-  const small = "ゃゅょぁぃぅぇぉャュョァィゥェォ";
-  const arr = [];
-  let buf = "";
-
-  for(const ch of txt){
-    if(small.includes(ch)){
-      buf += ch;
-    }else{
-      if(buf) arr.push(buf);
-      buf = ch;
-    }
-  }
-  if(buf) arr.push(buf);
-  return arr;
-}
-
-function buildUnitsFromHtml(html){
-  const temp = document.createElement("div");
-  temp.innerHTML = html;
-
-  const units = [];
-
-  function walk(node){
-    if(node.nodeType === 3){
-      const t = node.textContent || "";
-      const mors = splitMoraUnits(t);
-
-      for(const m of mors){
-        if(SKIP_CHARS.test(m)){
-          units.push({ text: m, skip: true });
-        }else{
-          units.push({ text: m, skip: false });
-        }
-      }
-      return;
-    }
-
-    if(node.nodeType === 1){
-      if(node.tagName === "RUBY"){
-        // rubyは1塊でハイライト（難語でも自然）
-        units.push({ html: node.outerHTML, skip: false, isRuby: true });
-        return;
-      }
-      for(const ch of node.childNodes) walk(ch);
-    }
-  }
-
-  for(const n of temp.childNodes) walk(n);
-  return units;
-}
-
-/* ======================================================
-  ✅ 描画
-====================================================== */
-let speed = 380;   // ms
+let speed = 1500;
+let auto = false;
+let guideOn = true;
 let timer = null;
-let activeIndex = 0;
-let playableSpans = [];
+let columnIndex = 0;
 
-function render(){
-  const rubyHtml = autoRuby(RAW_TEXT);
+const text = `（ここに外郎売本文をそのまま貼ってください）`;
 
-  const units = buildUnitsFromHtml(rubyHtml);
-  const box = document.getElementById("textBody");
-  box.innerHTML = "";
+function buildColumns(){
+  const reader = document.getElementById("reader");
+  reader.innerHTML = "";
 
-  units.forEach(u=>{
-    const sp = document.createElement("span");
-    sp.className = "karaUnit";
+  const columnWidth = 40; 
+  const charsPerColumn = Math.floor(window.innerHeight / 22);
 
-    if(u.skip){
-      sp.classList.add("skip");
-      sp.textContent = u.text;
-    }else if(u.html){
-      sp.innerHTML = u.html;
-    }else{
-      sp.textContent = u.text;
+  let current = "";
+  let count = 0;
+
+  for(let char of text){
+    current += char;
+    count++;
+
+    if(count >= charsPerColumn){
+      addColumn(current);
+      current="";
+      count=0;
     }
+  }
 
-    box.appendChild(sp);
-  });
-
-  // 再生対象（skip以外）だけを取得
-  playableSpans = [...box.querySelectorAll(".karaUnit")].filter(s=>!s.classList.contains("skip"));
-  activeIndex = 0;
-  updateLabels();
+  if(current) addColumn(current);
 }
 
-function updateLabels(){
-  document.getElementById("speedLabel").textContent = speed + "ms";
-  document.getElementById("progressLabel").textContent = `${Math.min(activeIndex, playableSpans.length)} / ${playableSpans.length}`;
+function addColumn(content){
+  const col = document.createElement("div");
+  col.className="column";
+  col.textContent=content;
+  document.getElementById("reader").appendChild(col);
 }
 
-/* ======================================================
-  ✅ 再生/停止
-====================================================== */
-function play(){
-  stop();
-
-  if(playableSpans.length === 0) return;
-
-  timer = setInterval(()=>{
-    // 前をdoneに
-    if(activeIndex > 0 && playableSpans[activeIndex-1]){
-      playableSpans[activeIndex-1].classList.remove("active");
-      playableSpans[activeIndex-1].classList.add("done");
-    }
-
-    // 終了
-    if(activeIndex >= playableSpans.length){
-      stop(); // 最後まで行ったら止める
-      return;
-    }
-
-    // 現在をactive
-    const cur = playableSpans[activeIndex];
-    cur.classList.add("active");
-    activeIndex++;
-
-    updateLabels();
-  }, speed);
+function moveGuide(){
+  const guide = document.getElementById("guide");
+  guide.style.transform = `translateX(-${columnIndex*60}px)`;
 }
 
-function stop(){
+function toggleGuide(){
+  guideOn=!guideOn;
+  document.getElementById("guide").style.display = guideOn?"block":"none";
+}
+
+function toggleAuto(){
+  auto=!auto;
+  if(auto) startAuto();
+  else stopAuto();
+}
+
+function startAuto(){
+  stopAuto();
+  timer=setInterval(()=>{
+    columnIndex++;
+    moveGuide();
+  },speed);
+}
+
+function stopAuto(){
   if(timer){
     clearInterval(timer);
-    timer = null;
+    timer=null;
   }
-  // active/done解除（止めたら全部戻す）
-  document.querySelectorAll(".karaUnit").forEach(s=>{
-    s.classList.remove("active","done");
-  });
-  activeIndex = 0;
-  updateLabels();
 }
 
-/* ======================================================
-  ✅ 速度
-====================================================== */
 function slower(){
-  speed = Math.min(speed + 60, 1200);
-  updateLabels();
-  if(timer){ play(); } // 再生中なら速度反映で再スタート
-}
-function faster(){
-  speed = Math.max(speed - 60, 160);
-  updateLabels();
-  if(timer){ play(); }
+  speed+=300;
+  updateSpeed();
 }
 
-/* 初期化 */
-render();
+function faster(){
+  speed=Math.max(300,speed-300);
+  updateSpeed();
+}
+
+function updateSpeed(){
+  document.getElementById("speedLabel").textContent=speed;
+  if(auto){
+    startAuto();
+  }
+}
+
+window.addEventListener("resize",()=>{
+  columnIndex=0;
+  buildColumns();
+  moveGuide();
+});
+
+buildColumns();
+moveGuide();
+
 </script>
 
 </body>
