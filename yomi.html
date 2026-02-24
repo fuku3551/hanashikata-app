@@ -7,88 +7,70 @@
 <link rel="stylesheet" href="style.css" />
 
 <style>
-  /* ===== 画面全体 ===== */
-  .wrap{
-    max-width: 1100px;
-    margin: 0 auto;
-  }
+  .wrap{max-width:1100px;margin:0 auto;}
 
-  /* ===== 本文エリア（縦書き右→左） ===== */
+  /* 本文エリア（縦書き右→左） */
   #reader{
-    position: relative;
-    height: 70vh;                 /* 画面に収まる高さ */
-    overflow: auto;
-    border: 1px solid rgba(0,0,0,.12);
-    border-radius: 14px;
-    background: rgba(255,255,255,.75);
-    padding: 14px;
+    position:relative;
+    height:70vh;
+    overflow:auto;
+    border:1px solid rgba(0,0,0,.12);
+    border-radius:14px;
+    background:rgba(255,255,255,.75);
+    padding:14px;
   }
 
   #textBody{
-    writing-mode: vertical-rl;     /* 縦書き・右→左 */
-    text-orientation: mixed;
-    font-size: 19px;              /* 気持ち小さめ */
-    font-weight: 650;
-    line-height: 1.9;
-    letter-spacing: 0.03em;
-    white-space: pre-wrap;
-    word-break: break-word;
+    writing-mode:vertical-rl;     /* 縦書き・右→左 */
+    text-orientation:mixed;
+    font-size:19px;              /* 少し小さめ */
+    font-weight:650;
+    line-height:1.9;
+    letter-spacing:.03em;
+    white-space:pre-wrap;
+    word-break:break-word;
   }
 
-  /* ふりがな（縦書きでも上に出る） */
-  ruby{ ruby-position: over; }
+  /* ruby（ふりがな） */
+  ruby{ ruby-position: over; ruby-align: center; }
   ruby rt{
-    font-size: .55em;
-    opacity: .85;
-    letter-spacing: 0.02em;
+    font-size:.55em;
+    opacity:.88;
+    letter-spacing:.02em;
+    line-height:1.1;
+    /* iOS Safari対策：余計な回転やズレが出にくい設定 */
+    text-orientation:mixed;
   }
 
-  /* ===== ガイド縦線 ===== */
+  /* ガイド縦線 */
   #guideLine{
-    position: absolute;
-    top: 10px;
-    bottom: 10px;
-    width: 2px;
-    background: rgba(230, 0, 51, 0.18); /* 薄い赤 */
-    right: 18px;  /* 右端寄り（縦書きの“読み始め列”側） */
-    display: none; /* 初期OFF */
-    border-radius: 999px;
-    pointer-events: none;
+    position:absolute;
+    top:10px; bottom:10px;
+    width:2px;
+    background:rgba(230,0,51,.18);
+    right:18px;
+    display:none;
+    border-radius:999px;
+    pointer-events:auto; /* ドラッグするためON */
+    touch-action:none;
   }
 
-  /* ===== 操作UI ===== */
   .row{
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    flex-wrap:wrap;
-    align-items:center;
+    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;
   }
   .pill{
-    display:inline-block;
-    padding:6px 12px;
-    border-radius:999px;
-    background:rgba(255,255,255,.75);
-    border:1px solid rgba(0,0,0,.12);
-    font-size:14px;
+    display:inline-block;padding:6px 12px;border-radius:999px;
+    background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.12);font-size:14px;
   }
   .btn{
-    padding:10px 14px;
-    border-radius:12px;
-    border:1px solid rgba(0,0,0,.12);
-    background:#fff;
-    font-weight:800;
+    padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,.12);
+    background:#fff;font-weight:800;
   }
-  .btnPrimary{ background:#0ea5e9;color:#fff;border:none; }
-  .btnDanger{ background:#ef4444;color:#fff;border:none; }
+  .btnPrimary{background:#0ea5e9;color:#fff;border:none;}
+  .btnDanger{background:#ef4444;color:#fff;border:none;}
+  .mini{font-size:14px;opacity:.85;line-height:1.7;text-align:center;white-space:pre-wrap;}
 
-  .mini{
-    font-size:14px;
-    opacity:.85;
-    line-height:1.7;
-    white-space:pre-wrap;
-    text-align:center;
-  }
+  input[type="range"]{ width:240px; }
 </style>
 </head>
 
@@ -101,7 +83,6 @@
 
 <main class="menu wrap">
 
-  <!-- 操作 -->
   <div class="card" style="display:block;">
     <div class="title">操作</div>
     <div class="desc">
@@ -117,24 +98,28 @@
       </div>
 
       <div class="row" style="margin-top:10px;">
+        <span class="pill">縦線位置</span>
+        <input id="linePos" type="range" min="0" max="120" value="18" oninput="setLineRight(this.value)">
+        <span class="pill"><span id="lineRightLabel">18</span>px</span>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
         <button class="btn" onclick="slower()">➖ 速度</button>
         <span class="pill">速度：<span id="speedLabel">900</span>ms</span>
         <button class="btn" onclick="faster()">➕ 速度</button>
       </div>
 
       <div class="mini" style="margin-top:10px;">
-        💡「縦線ON」→ 読む列が迷いにくい<br>
-        💡「自動スライドON」→ 縦線が右→左へゆっくり移動します
+        ✅ 縦線は「スライダー」でも「指ドラッグ」でも位置調整できます
       </div>
     </div>
   </div>
 
-  <!-- 本文 -->
   <div class="card" style="display:block;">
     <div class="title">外郎売（縦書き）</div>
     <div class="desc">
       <div id="reader">
-        <div id="guideLine"></div>
+        <div id="guideLine" title="ドラッグで縦線位置を調整"></div>
         <div id="textBody">読み込み中…</div>
       </div>
     </div>
@@ -144,22 +129,33 @@
 
 <script>
 /* ======================================================
-  ✅ 元テキスト（漢字の直後にひらがな）
+  ✅ ここに全文を貼る（あなたの形式：漢字の直後にひらがな）
 ====================================================== */
 const RAW_TEXT = `
-拙者せっしゃ親方おやかたと申もうすは、お立たち会 あいの中 うちに御存ごぞんじのお方かたもござりましょうが、お江戸えどを発たって二十里にじゅうり上方かみがた、相州 そうしゅう小田原おだわら一色町 いっしきまちをお過すぎなされて、青物あおもの町 ちょうを上のぼりへお出いでなさるれば、欄干らんかん橋 ばし虎屋とらや藤 と右衛門うえもん、只今ただいまは剃髪ていはつ致いたして圓えん斎 さいと名乗なのりまする。
-元朝がんちょうより大晦日 おおつごもりまで、御手おてに入いれまする此 この薬くすりは、昔むかし、珍ちんの国くにの唐人とうじん、 外郎ういろうと云いう人ひと、我わが朝 ちょうへ来きたり。 帝みかどへ参内さんだいの折 おりから、此 この薬くすりを深ふかく込こめ置おき、用 もちゆる時ときは一いち粒 りゅうずつ冠かんむりの隙間すきまより取とり出 いだす。 依よ ってその名なを帝みかどより、 透頂香 とうちんこうと 賜たまわる。即すなわち 文字もじ には、「 頂 いただき、 透すく、香 におい 」と書か いて「とうちんこう」と 申もうす。
-只今ただいまは此 この薬くすり、殊ことの外ほか、 世上 せじょうに広ひろまり、方々 ほうぼうに似にせ看板かんばんを出 いだし、イヤ小田原おだわらの、灰はい俵 だわらの、さん俵 だわらの、炭俵すみだわらのと、色々いろいろに申もうせども、平仮名ひらがな をもって「ういろう」と 致いたしたは、親方おやかた圓えん斎さいばかり。 もしやお 立たち会 あいの中 うちに、熱海あたみか塔ノ沢とうのさわへ湯治とうじにお出いでなさるるか、又または伊勢いせ御ご参宮さんぐうの折おりからは、必かならず門 かど違ちがいなされまするな。 御 お上のぼりなれば右みぎの方 かた、御 お下くだりなれば左側ひだりがわ、八方はっぽうが八 やつ棟 むね、表おもてが三 みつ棟 むね玉堂ぎょくどう造 づくり、破風はふには菊きくに桐きりの薹とうの御ご紋もんを御ご赦免しゃめんあって、系図けいず正 ただしき薬 くすりでござる。
-イヤ最前さいぜんより家名かめいの自慢じまんばかり申もうしても、御存ごぞんじない方 かたには、正身 しょうしんの胡椒の丸呑こしょうのまるのみ、白河夜船しらかわよふね 。さらば 一いち粒 りゅう食たべかけて、その気味合きみあいをお目めに懸かけましょう。 先まず此 この薬くすりを斯様かように一いち粒 りゅう舌したの上うえ へ 乗のせまして、腹 ふく内ないへ納おさめますると、イヤどうもいえぬは、 胃い、心 しん、肺はい、肝 かんが健すこやかに成なって、薫風くんぷう喉のどより来きたり、口中 こうちゅう微び涼りょうを生しょうずるが如ごとし。 魚 ぎょ鳥 ちょう、木きの子こ、麺類めんるいの食くい合あわせ、其その外ほか、万病 まんびょう即効そっこうあること神かみの如ごとし。  さて此 この薬くすり、第一だいいちの奇妙きみょうには、舌したの廻 まわることが銭 ぜにごまが裸足はだしで逃にげる。ひょっと舌したが廻まわり出だすと、矢やも盾たても堪たまらぬじゃ。
-そりゃそりゃそりゃ、そりゃそりゃ、廻まわって来きたわ、廻まわって来くるわ。 アワヤ 喉のど、サタラナ舌したにカ牙 げサ歯音しおん、ハマの二ふたつは唇くちびるの軽重 きょうじゅう開口かいこう爽さわやかに、アカサタナ、ハマヤラワ、オコソトノ、ホモヨロヲ。 一つへぎへぎに、へぎ干ほし、はじかみ。 盆ぼん豆まめ、盆ぼん米 ごめ、盆ぼん牛蒡ごぼう 。 摘 つみ蓼 たで、 摘 つみ豆 まめ、摘山椒 つみさんしょう、書写山しょしゃざんの社しゃ僧正そうじょう。 小米こごめの生なま噛 がみ、小米こごめの生なま噛 がみ、こん小米こごめのこ生 なま噛 がみ。繻子しゅす緋ひ繻子 じゅす、繻子しゅす繻珍 しゅちん。 親おやも嘉兵衛かへえ、子こも嘉兵衛かへえ、親嘉兵衛おやかへえ子こ嘉兵衛かへえ、子こ嘉兵衛かへえ親 おや嘉兵衛かへえ。古栗こぐりの木きの古 ふる切口きりくち。雨合羽あまがっぱが番ばん合羽 がっぱか。貴様きさまの脚絆きゃはんも皮かわ脚絆 ぎゃはん、我 われ等らが脚絆きゃはんも皮かわ脚絆 ぎゃはん。尻しり皮 かわ袴 ばかまのしっ綻 ぽころびを、三 み針はり針長はりながにちょと縫ぬうて、縫ぬうてちょとぶん出 だせ。河原撫子かわらなでしこ野石 のぜき竹 ちく。野良のら如来にょらい野良のら如来にょらい、三野みの良 ら如来にょらいに六野 むの良 ら如来にょらい 。 一寸先いっすんさき のお 小仏こぼとけにお蹴躓けつまずきゃるな、細溝ほそみぞにどじょにょろり。京きょうの生なま鱈 だら、奈良なら、生なま学 まな鰹 がつお、ちょと四 し五ご貫目かんめ。お茶ちゃ立 たちょ、茶ちゃ立 だちょ、ちゃっと立 たちょ、茶ちゃ立 だちょ。青竹あおだけ茶筅ちゃせんでお茶ちゃちゃと立たちゃ。  来くるわ来くるわ何なにが来くる、高野 こうやの山やまのおこけら小僧こぞう、狸たぬき百 ひゃっ匹 ぴき、箸はし百ひゃく膳ぜん、天目てんもく百 ひゃっ杯 ぱい、棒ぼう八 はっ百 ぴゃっ本 ぽん。武具ぶぐ、馬具ばぐ、武具ぶぐ馬具ばぐ、三 み武具ぶぐ馬具ばぐ、合あわせて武具ぶぐ馬具ばぐ、六 む武具ぶぐ馬具ばぐ。 菊きく、栗くり、菊きく栗くり、三 み菊きく栗くり、合あわせて菊きく栗くり、六 む菊きく栗くり。麦むぎ、ごみ、麦むぎごみ、三 み麦むぎごみ、合あわせて麦むぎごみ、六 む麦むぎごみ。あの長押なげしの長 なが薙刀なぎなたは誰 たが長 なが薙刀なぎなたぞ。向むこうの胡麻ごま殻 がらは荏えの胡麻ごま殻 がらか真ま胡麻ごま殻 がらか、あれこそ本ほんの真ま胡麻ごま殻 がら。がらぴぃがらぴぃ風車かざぐるま。起おきゃがれ小法師 こぼし、起おきゃがれ小法師 こぼし、昨夜 ゆんべも溢 こぼしてまた溢 こぼした。 たぁぷぽぽ、たぁぷぽぽ、ちりからちりから、つったっぽ。たっぽたっぽ一丁いっちょう蛸だこ、落 おちたら煮にて食くを。煮にても焼やいても食くわれぬ物ものは、五徳ごとく、鉄てつ弓 きゅう、金かな熊童子くまどうじに、石熊いしくま、石持いしもち、虎熊とらくま、虎鱚とらぎす。中 なかにも東寺とうじの羅生門らしょうもんには、茨木童子いばらきどうじが腕うで栗 ぐり五 ごん合ごう掴つか んでおむしゃる。かの頼光 らいこうの膝元ひざもと去さらず。
-鮒ふな、金柑きんかん、椎茸しいたけ、定さだめて後段 ごだんな、蕎麦切そばきり、素麺そうめん、饂飩うどんか愚鈍ぐどんなこ新発しんぼ知 ち。小棚 こだなの小下こしたに、小桶こおけにこ味噌みそがこ有あるぞ、こ杓子しゃくしこ持 もって、こすくてこ寄よこせ。 おっと合点がてんだ、心得こころえ田圃たんぼの川崎かわさき、神奈川かながわ、程ほどヶ谷 がや、戸塚とつかは走はしって行 ゆけば、灸やいとを擦すりむく、三里さんりばかりか、藤沢ふじさわ、平塚ひらつか、大磯おおいそがしや、小磯こいその宿やどを七ななつ起おきして、早天そうてんそうそう、相州 そうしゅう小田原おだわら、透 とう頂 ちん香こう。隠かくれござらぬ貴賎きせん群衆 ぐんじゅの 花はなの御 お江戸えどの花はな ういろう。 あれ、あの花はなを見みて、お心こころをお和やわ らぎやという。 産 うぶ子こ、這子 はうこに至いたるまで、此 このういろうの御ご評判ひょうばん、御存ごぞんじないとは申もうされまいまいつぶり、角出 つのだせ、棒ぼう出だせ、ぼうぼう眉まゆに、臼うす、杵きね、擂鉢すりばち、ばちばち、ぐゎらぐゎらぐゎらと、 羽目はめを外はずして今日 こんにち御 おい出 での何 いずれ様 さまに、上あげねばならぬ、売うらねばならぬと、息いきせい引ひっ張ぱり、東方とうほう世界せかいの薬くすりの元締もとじめ、薬師如来やくしにょらいも照覧 しょうらんあれと、ホホ 敬うやまって、ういろうはいらっしゃりませぬか。
+拙者せっしゃ親方おやかたと申もうすは、お立会たちあいの中うちに御存知ごぞんじのお方かたもござりましょうが、お江戸えどを発たって二十里にじゅうり上方かみがた、相州そうしゅう小田原おだわら一色町いっしきまちをお過すぎなされて、青物あおもの町ちょうを登のぼりへお出いでなさるれば、欄干橋らんかんばし虎屋とらや藤右衛門とうえもん、只今ただいまは剃髪ていはつ致いたして圓斎えんさいと名乗なのりまする。
+元朝がんちょうより大晦日おおつごもりまで、御手おてに入いれまする此この薬くすりは、昔むかし珍ちんの国くにの唐人とうじん、外郎ういろうと云いう人ひと、我が朝ちょうへ来きたり。帝みかどへ参内さんだいの折おりから、此この薬くすりを深ふかく込こめ置おき、用もちゆる時ときは一粒いちりゅうずつ冠かんむりの隙間すきまより取とり出いだす。依よってその名なを帝みかどより透頂香とうちんこうと賜たまわる。即すなわち文字もじには、「頂いただき、透すく、香におい」と書かいて「とうちんこう」と申もうす。
+只今ただいまは此この薬くすり、殊ことの外ほか世上せじょうに広ひろまり、方々ほうぼうに似にせ看板かんばんを出いだし、イヤ小田原おだわらの灰俵はいだわらの、さん俵だわらの、炭俵すみだわらのと、色々いろいろに申もうせども、平仮名ひらがなをもって「ういろう」と致いたしたは、親方おやかた圓斎えんさいばかり。もしやお立会たちあいの中うちに、熱海あたみか塔ノ沢とうのさわへ湯治とうじにお出いでなさるるか、又または伊勢いせ御参宮ごさんぐうの折おりからは、必かならず門かど違ちがいなされまするな。御上のぼりなれば右みぎの方かた、御下くだりなれば左側ひだりがわ、八方はっぽうが八つ棟やつむね、表おもてが三つ棟みつむね玉堂ぎょくどう造づくり、破風はふには菊きくに桐きりの薹とうの御紋ごもんを御赦免しゃめんあって、系図けいず正ただしき薬くすりでござる。
+イヤ最前さいぜんより家名かめいの自慢じまんばかり申もうしても、御存知ごぞんじない方かたには、正身しょうしんの胡椒こしょうの丸呑まるのみ、白河夜船しらかわよふね。さらば一粒いちりゅう食たべかけて、その気味合きみあいをお目めに懸かけましょう。先まず此この薬くすりを斯様かように一粒いちりゅう舌したの上うえへ乗のせまして、腹ふく内ないへ納おさめますると、イヤどうもいえぬは、胃い、心しん、肺はい、肝かんが健すこやかに成なって、薫風くんぷう喉のどより来きたり、口中こうちゅう微涼びりょうを生しょうずるが如ごとし。魚鳥ぎょちょう、木の子きのこ、麺類めんるいの食くい合あわせ、其その外ほか万病まんびょう即効そっこうあること神かみの如ごとし。
+さて此この薬くすり、第一だいいちの奇妙きみょうには、舌したの廻まわることが銭ぜにごまが裸足はだしで逃にげる。ひょっと舌したが廻まわり出だすと、矢やも盾たても堪たまらぬじゃ。
+そりゃそりゃそりゃ、そりゃそりゃ、廻まわって来きたわ、廻まわって来くるわ。アワヤ喉のど、サタラナ舌したにカ牙げサ歯音しおん、ハマの二つふたつは唇くちびるの軽重きょうじゅう開口かいこう爽さわやかに、アカサタナ、ハマヤラワ、オコソトノ、ホモヨロヲ。
+一つへぎへぎに、へぎ干ほし、はじかみ。盆豆ぼんまめ、盆米ぼんごめ、盆牛蒡ぼんごぼう。摘つみ蓼たで、摘つみ豆まめ、摘つみ山椒さんしょう、書写山しょしゃざんの社しゃ僧正そうじょう。
+小米こごめの生なま噛がみ、小米こごめの生なま噛がみ、こん小米こごめのこ生なま噛がみ。繻子しゅす緋ひ繻子じゅす、繻子しゅす繻珍しゅちん。
+親おやも嘉兵衛かへえ、子こも嘉兵衛かへえ、親嘉兵衛おやかへえ子嘉兵衛こかへえ、子嘉兵衛こかへえ親嘉兵衛おやかへえ。古栗こぐりの木きの古ふる切口きりくち。雨合羽あまがっぱが番ばん合羽がっぱか。貴様きさまの脚絆きゃはんも皮脚絆かわぎゃはん、我等われらが脚絆きゃはんも皮脚絆かわぎゃはん。尻皮袴しりかわばかまのしっ綻ぽころびを、三針みはり針長はりながにちょと縫ぬうて、縫ぬうてちょとぶん出だせ。河原撫子かわらなでしこ、野石のぜき竹ちく。野良如来のらにょらい野良如来のらにょらい、三野良如来みのらにょらいに六野良如来むのらにょらい。
+一寸先いっすんさきのお小仏こぼとけにお蹴躓けつまずきゃるな、細溝ほそみぞにどじょにょろり。京きょうの生鱈なまだら、奈良なら生学鰹なまながつお、ちょと四五貫目しごかんめ。お茶立ちゃだちょ、茶立ちゃだちょ、ちゃっと立たちょ、茶立ちゃだちょ。青竹あおだけ茶筅ちゃせんでお茶ちゃちゃと立たちゃ。
+来くるわ来くるわ何なにが来くる、高野こうやの山やまのおこけら小僧こぞう、狸たぬき百匹ひゃっぴき、箸はし百膳ひゃくぜん、天目てんもく百杯ひゃっぱい、棒ぼう八百本はっぴゃっぽん。武具ぶぐ、馬具ばぐ、武具馬具ぶぐばぐ、三武具馬具みぶぐばぐ、合あわせて武具馬具ぶぐばぐ、六武具馬具むぶぐばぐ。
+菊きく、栗くり、菊栗きくくり、三菊栗みきくくり、合あわせて菊栗きくくり、六菊栗むきくくり。麦むぎ、ごみ、麦ごみむぎごみ、三麦ごみみむぎごみ、合あわせて麦ごみむぎごみ、六麦ごみむむぎごみ。あの長押なげしの長なが薙刀なぎなたは誰たが長なが薙刀なぎなたぞ。向むこうの胡麻殻ごまがらは荏えの胡麻殻ごまがらか真胡麻まごまの胡麻殻ごまがらか、あれこそ本ほんの真胡麻まごまの胡麻殻ごまがら。がらぴいがらぴい風車かざぐるま。起おきゃがれ小法師こぼし、起おきゃがれ小法師こぼし、昨夜ゆんべも溢こぼしてまた溢こぼした。
+たぁぷぽぽ、たぁぷぽぽ、ちりからちりから、つったっぽ。たっぽたっぽ一丁いっちょう蛸だこ、落おちたら煮にて食くを。煮にても焼やいても食くわれぬ物ものは、五徳ごとく、鉄弓てつきゅう、金熊童子かなぐまどうじに、石熊いしくま、石持いしもち、虎熊とらくま、虎鱚とらぎす。中なかにも東寺とうじの羅生門らしょうもんには、茨木童子いばらきどうじが腕うで栗ぐり五合ごんごう掴つかんでおむしゃる。かの頼光らいこうの膝元ひざもと去さらず。
+鮒ふな、金柑きんかん、椎茸しいたけ、定さだめて後段ごだんな、蕎麦切そばきり、素麺そうめん、饂飩うどんか愚鈍ぐどんなこ新発しんぼ知ち。小棚こだなの小下こしたに、小桶こおけに小味噌こみそが小有こあるぞ、小杓子こしゃくし小持こもって、小すくって小寄よこせ。おっと合点がてんだ、心得こころえ田圃たんぼの川崎かわさき、神奈川かながわ、程ヶ谷ほどがや、戸塚とつかは走はしって行ゆけば、灸やいとを擦すりむく、三里さんりばかりか、藤沢ふじさわ、平塚ひらつか、大磯おおいそがしや、小磯こいその宿やどを七つななつ起おきして、早天そうてんそうそう、相州そうしゅう小田原おだわら、透頂香とうちんこう。隠かくれござらぬ貴賎きせん群衆ぐんじゅの花はなの御江戸えどの花はな、ういろう。あれ、あの花はなを見みて、お心こころをお和やわらぎやという。産うぶ子こ、這子はうこに至いたるまで、此このういろうの御評判ごひょうばん、御存知ごぞんじないとは申もうされまいまいつぶり、角出つのだせ、棒出ぼうだせ、ぼうぼう眉まゆに、臼うす、杵きね、擂鉢すりばち、ばちばち、ぐゎらぐゎらぐゎらと、羽目はめを外はずして今日こんにち御出でおいでの何いずれ様さまに、上あげねばならぬ、売うらねばならぬと、息せい引ひっ張ぱり、東方とうほう世界せかいの薬くすりの元締もとじめ、薬師如来やくしにょらいも照覧しょうらんあれと、ホホ敬うやまって、ういろうはいらっしゃりませぬか。
 `.trim();
 
 /* ======================================================
-  ✅ 自動ruby化：漢字連続 + 直後ひらがな連続
+  ✅ 自動ruby化（重要改善）
+  - 「漢字の後に 空白 があっても」読みを拾う
+  - 例：相州 そうしゅう → <ruby>相州<rt>そうしゅう</rt></ruby>
 ====================================================== */
 function isKanji(ch){ return /[一-龥々]/.test(ch); }
-function isHiragana(ch){ return /[ぁ-ゖー]/.test(ch); }
+function isHiragana(ch){ return /[ぁ-ゖーゝゞ]/.test(ch); } // ー/ゝ/ゞも許容
+function isSpace(ch){ return ch === " " || ch === "　"; }
 
 function escapeHtml(s){
   return (s+"")
@@ -171,6 +167,7 @@ function escapeHtml(s){
 function autoRuby(text){
   let out = "";
   let i = 0;
+
   while(i < text.length){
     const c = text[i];
 
@@ -181,6 +178,7 @@ function autoRuby(text){
     }
 
     if(isKanji(c)){
+      // 1) 漢字連続
       let kanjiRun = c;
       i++;
       while(i < text.length && isKanji(text[i])){
@@ -188,6 +186,10 @@ function autoRuby(text){
         i++;
       }
 
+      // 2) 漢字と読みの間の空白をスキップ（ここが改善点）
+      while(i < text.length && isSpace(text[i])) i++;
+
+      // 3) ひらがな連続（読み）
       let hiraRun = "";
       while(i < text.length && isHiragana(text[i])){
         hiraRun += text[i];
@@ -205,37 +207,87 @@ function autoRuby(text){
     out += escapeHtml(c);
     i++;
   }
+
   return out;
 }
 
-/* ======================================================
-  ✅ 描画
-====================================================== */
 function render(){
   document.getElementById("textBody").innerHTML = autoRuby(RAW_TEXT);
 }
 render();
 
 /* ======================================================
-  ✅ 縦線 ON/OFF
+  ✅ 縦線 ON/OFF + 位置調整
 ====================================================== */
 let lineOn = false;
+
+function setLineRight(px){
+  const v = Number(px);
+  document.getElementById("guideLine").style.right = v + "px";
+  document.getElementById("lineRightLabel").textContent = String(v);
+}
+
 function toggleLine(){
   lineOn = !lineOn;
   document.getElementById("guideLine").style.display = lineOn ? "block" : "none";
   document.getElementById("lineState").textContent = lineOn ? "ON" : "OFF";
+  if(lineOn){
+    // スライダー値を反映
+    setLineRight(document.getElementById("linePos").value);
+  }
 }
 
+/* 指ドラッグで縦線移動（iPhone用） */
+(function enableDragLine(){
+  const line = document.getElementById("guideLine");
+  const reader = document.getElementById("reader");
+  let dragging = false;
+
+  function clientX(e){
+    return (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+  }
+
+  function onDown(e){
+    if(!lineOn) return;
+    dragging = true;
+    e.preventDefault();
+  }
+
+  function onMove(e){
+    if(!dragging) return;
+    const rect = reader.getBoundingClientRect();
+    const x = clientX(e);
+    // right(px) = rect.right - x
+    let right = Math.round(rect.right - x);
+    right = Math.max(0, Math.min(220, right)); // 範囲制限（好みで調整OK）
+    line.style.right = right + "px";
+    document.getElementById("linePos").value = right;
+    document.getElementById("lineRightLabel").textContent = String(right);
+    e.preventDefault();
+  }
+
+  function onUp(){
+    dragging = false;
+  }
+
+  line.addEventListener("touchstart", onDown, {passive:false});
+  window.addEventListener("touchmove", onMove, {passive:false});
+  window.addEventListener("touchend", onUp);
+
+  line.addEventListener("mousedown", onDown);
+  window.addEventListener("mousemove", onMove);
+  window.addEventListener("mouseup", onUp);
+})();
+
 /* ======================================================
-  ✅ 自動スライド（縦線を右→左へ少しずつ）
-  ※ 縦書きは「横スクロール」方向に列が進む
+  ✅ 自動スライド（右→左へ進む）
 ====================================================== */
 let slideOn = false;
-let speed = 900;           // ms（遅めデフォ）
+let speed = 900; // ms
 let timer = null;
 
 function updateSpeedLabel(){
-  document.getElementById("speedLabel").textContent = speed;
+  document.getElementById("speedLabel").textContent = String(speed);
 }
 updateSpeedLabel();
 
@@ -252,28 +304,22 @@ function toggleSlide(){
 
 function startAuto(){
   stopAuto();
-  if(!slideOn && !lineOn){
-    // 線もスライドもOFFなら何もしない
-    return;
-  }
+  if(!slideOn) return;
 
   const reader = document.getElementById("reader");
   const line = document.getElementById("guideLine");
 
-  // 初期位置：現在のスクロールに合わせて右端寄り
-  const baseRight = 18;
-  line.style.right = baseRight + "px";
-
   timer = setInterval(()=>{
-    // 1) 読む位置を少し左へ（＝ right を増やす）
+    // 線を少し左へ（right増加）
     const cur = parseFloat(line.style.right || "18");
-    line.style.right = (cur + 12) + "px";
+    const next = cur + 12;
+    line.style.right = next + "px";
+    document.getElementById("linePos").value = Math.min(220, next);
+    document.getElementById("lineRightLabel").textContent = String(Math.round(next));
 
-    // 2) 同時に本文も少しスクロール（横方向へ）
-    // 縦書き vertical-rl は「左へスクロール」すると次の列へ進む
+    // 本文も横へ進める
     reader.scrollLeft += 18;
 
-    // 3) 端まで行ったら停止
     const max = reader.scrollWidth - reader.clientWidth;
     if(reader.scrollLeft >= max - 5){
       stopAuto();
@@ -292,11 +338,11 @@ function resetPos(){
   stopAuto();
   const reader = document.getElementById("reader");
   reader.scrollLeft = 0;
-  const line = document.getElementById("guideLine");
-  line.style.right = "18px";
+  // 線を初期位置へ
+  document.getElementById("linePos").value = 18;
+  setLineRight(18);
 }
 
-/* 速度 */
 function slower(){
   speed = Math.min(speed + 120, 3000);
   updateSpeedLabel();
@@ -307,6 +353,9 @@ function faster(){
   updateSpeedLabel();
   if(timer) startAuto();
 }
+
+/* 初期：縦線位置ラベル */
+setLineRight(document.getElementById("linePos").value);
 </script>
 
 </body>
