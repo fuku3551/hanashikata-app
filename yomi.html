@@ -12,49 +12,40 @@
   /* 本文エリア（縦書き右→左） */
   #reader{
     position:relative;
-    height:70vh;
-    overflow:auto;
+    height:45vh; /* ✅ 70vh → 半分くらいへ */
+    overflow-x:auto;       /* ✅ 縦書きの“読み進め”は横スクロールが自然 */
+    overflow-y:hidden;     /* ✅ 縦方向のブレを封じる */
+    -webkit-overflow-scrolling:touch;
+    touch-action: pan-x;   /* ✅ 斜めスクロールを防止（横だけ） */
+
     border:1px solid rgba(0,0,0,.12);
-    border-radius:30px;
+    border-radius:14px;
     background:rgba(255,255,255,.75);
-    padding:30px;
-    -webkit-overflow-scrolling: touch;
+
+    /* ✅ 右端（開始列）が見えにくい問題を解決：右余白を大きめに */
+    padding:14px 46px 14px 20px; /* 上 右 下 左 */
+    box-sizing:border-box;
   }
 
   #textBody{
     writing-mode:vertical-rl;     /* 縦書き・右→左 */
     text-orientation:mixed;
-    font-size:19px;              /* 少し小さめ */
+    font-size:18px;              /* 少し小さめ */
     font-weight:650;
-    line-height:1.9;
+    line-height:1.95;
     letter-spacing:.03em;
     white-space:pre-wrap;
     word-break:break-word;
   }
 
-  /* =========================
-     ✅ ruby（ふりがな）安定化セット
-     - 縦書きでは ruby-position: over が「右側」に来やすい
-     - iOS Safariのズレ対策を追加
-  ========================= */
-  ruby{
-    ruby-position: over;
-    ruby-align: center;
-  }
+  /* ruby（ふりがな） */
+  ruby{ ruby-position: over; ruby-align: center; }
   ruby rt{
     font-size:.55em;
-    opacity:.9;
+    opacity:.88;
     letter-spacing:.02em;
-    line-height:1.05;
-    white-space:nowrap;
-
-    /* iOSで回転したり下に落ちたりするのを抑える */
-    text-orientation: upright;
-    -webkit-text-orientation: upright;
-    writing-mode: inherit;
-
-    /* 位置のブレを減らす */
-    transform: translateY(-0.05em);
+    line-height:1.1;
+    text-orientation:mixed;
   }
 
   /* ガイド縦線 */
@@ -63,11 +54,10 @@
     top:10px; bottom:10px;
     width:2px;
     background:rgba(230,0,51,.18);
-    right:18px;
+    right:46px; /* ✅ 右余白に合わせて初期位置 */
     display:none;
     border-radius:999px;
-    pointer-events:auto; /* ドラッグするためON */
-    touch-action:none;
+    pointer-events:none; /* ✅ 触らない（操作は上部コントロールで） */
   }
 
   .row{
@@ -98,9 +88,11 @@
 
 <main class="menu wrap">
 
+  <!-- 操作 -->
   <div class="card" style="display:block;">
     <div class="title">操作</div>
     <div class="desc">
+
       <div class="row">
         <button class="btn btnPrimary" onclick="startAuto()">▶ 開始</button>
         <button class="btn btnDanger" onclick="stopAuto()">⏹ 停止</button>
@@ -112,30 +104,38 @@
         <button class="btn" onclick="toggleSlide()">⇢ 自動スライド：<span id="slideState">OFF</span></button>
       </div>
 
+      <!-- ✅ 縦線コントロール（上部に集約して使いやすく） -->
       <div class="row" style="margin-top:10px;">
-        <span class="pill">縦線位置</span>
-        <input id="linePos" type="range" min="0" max="220" value="18" oninput="setLineRight(this.value)">
-        <span class="pill"><span id="lineRightLabel">18</span>px</span>
+        <span class="pill">縦線</span>
+        <button class="btn" onclick="moveLine(12)">◀</button>
+        <input id="linePos" type="range" min="0" max="260" value="46" oninput="setLineRight(this.value)">
+        <button class="btn" onclick="moveLine(-12)">▶</button>
+        <span class="pill"><span id="lineRightLabel">46</span>px</span>
       </div>
 
+      <!-- ✅ 速度：ボタン＋スライダー（どちらでもOK） -->
       <div class="row" style="margin-top:10px;">
-        <button class="btn" onclick="slower()">➖ 速度</button>
-        <span class="pill">速度：<span id="speedLabel">900</span>ms</span>
-        <button class="btn" onclick="faster()">➕ 速度</button>
+        <span class="pill">自動速度</span>
+        <button class="btn" onclick="slower()">➖</button>
+        <input id="speedRange" type="range" min="200" max="3000" step="50" value="900" oninput="setSpeed(this.value)">
+        <button class="btn" onclick="faster()">➕</button>
+        <span class="pill"><span id="speedLabel">900</span>ms</span>
       </div>
 
       <div class="mini" style="margin-top:10px;">
-        ✅ 縦線は「スライダー」でも「指ドラッグ」でも位置調整できます
+        ✅ スクロールは「横だけ」に固定（斜めブレ防止）<br>
+        ✅ 縦線は上部コントロールで自由に調整できます
       </div>
     </div>
   </div>
 
+  <!-- 本文 -->
   <div class="card" style="display:block;">
     <div class="title">外郎売（縦書き）</div>
     <div class="desc">
       <div id="reader">
-        <div id="guideLine" title="ドラッグで縦線位置を調整"></div>
-        <div id="textBody">（ここに本文を貼ってください）</div>
+        <div id="guideLine"></div>
+        <div id="textBody">読み込み中…</div>
       </div>
     </div>
   </div>
@@ -144,11 +144,10 @@
 
 <script>
 /* ======================================================
-  ✅ ここに全文を貼る（形式：漢字の直後にひらがな）
-  ※ 福田さんが本文は貼る前提なので空でOK
+  ✅ 本文は福田さんが貼るので、ここだけ差し替えてOK
+  （このままでも動作確認はできます）
 ====================================================== */
 const RAW_TEXT = `
-
 拙者せっしゃ親方おやかたと申もうすは、お立たち会 あいの中 うちに御存ごぞんじのお方かたもござりましょうが、お江戸えどを発たって二十里にじゅうり上方かみがた、相州 そうしゅう小田原おだわら一色町 いっしきまちをお過すぎなされて、青物あおもの町 ちょうを上のぼりへお出いでなさるれば、欄干らんかん橋 ばし虎屋とらや藤 と右衛門うえもん、只今ただいまは剃髪ていはつ致いたして圓えん斎 さいと名乗なのりまする。
 元朝がんちょうより大晦日 おおつごもりまで、御手おてに入いれまする此 この薬くすりは、昔むかし、珍ちんの国くにの唐人とうじん、 外郎ういろうと云いう人ひと、我わが朝 ちょうへ来きたり。 帝みかどへ参内さんだいの折 おりから、此 この薬くすりを深ふかく込こめ置おき、用 もちゆる時ときは一いち粒 りゅうずつ冠かんむりの隙間すきまより取とり出 いだす。 依よ ってその名なを帝みかどより、 透頂香 とうちんこうと 賜たまわる。即すなわち 文字もじ には、「 頂 いただき、 透すく、香 におい 」と書か いて「とうちんこう」と 申もうす。
 只今ただいまは此 この薬くすり、殊ことの外ほか、 世上 せじょうに広ひろまり、方々 ほうぼうに似にせ看板かんばんを出 いだし、イヤ小田原おだわらの、灰はい俵 だわらの、さん俵 だわらの、炭俵すみだわらのと、色々いろいろに申もうせども、平仮名ひらがな をもって「ういろう」と 致いたしたは、親方おやかた圓えん斎さいばかり。 もしやお 立たち会 あいの中 うちに、熱海あたみか塔ノ沢とうのさわへ湯治とうじにお出いでなさるるか、又または伊勢いせ御ご参宮さんぐうの折おりからは、必かならず門 かど違ちがいなされまするな。 御 お上のぼりなれば右みぎの方 かた、御 お下くだりなれば左側ひだりがわ、八方はっぽうが八 やつ棟 むね、表おもてが三 みつ棟 むね玉堂ぎょくどう造 づくり、破風はふには菊きくに桐きりの薹とうの御ご紋もんを御ご赦免しゃめんあって、系図けいず正 ただしき薬 くすりでござる。
@@ -158,9 +157,7 @@ const RAW_TEXT = `
 `.trim();
 
 /* ======================================================
-  ✅ 自動ruby化（空白対応＋安定化）
-  - 「漢字 + 空白 + ひらがな」も拾う
-  - 読みは「ひらがな・長音・繰り返し記号」も拾う
+  ✅ 自動ruby化（漢字＋ひらがな / 漢字＋空白＋ひらがな に対応）
 ====================================================== */
 function isKanji(ch){ return /[一-龥々]/.test(ch); }
 function isHiragana(ch){ return /[ぁ-ゖーゝゞ]/.test(ch); }
@@ -187,7 +184,6 @@ function autoRuby(text){
     }
 
     if(isKanji(c)){
-      // 漢字連続
       let kanjiRun = c;
       i++;
       while(i < text.length && isKanji(text[i])){
@@ -195,17 +191,15 @@ function autoRuby(text){
         i++;
       }
 
-      // 漢字と読みの間の空白スキップ
       while(i < text.length && isSpace(text[i])) i++;
 
-      // ひらがな連続（読み）
       let hiraRun = "";
       while(i < text.length && isHiragana(text[i])){
         hiraRun += text[i];
         i++;
       }
 
-      if(hiraRun.length){
+      if(hiraRun.length > 0){
         out += `<ruby>${escapeHtml(kanjiRun)}<rt>${escapeHtml(hiraRun)}</rt></ruby>`;
       }else{
         out += escapeHtml(kanjiRun);
@@ -221,85 +215,57 @@ function autoRuby(text){
 }
 
 function render(){
-  const box = document.getElementById("textBody");
-  if(!RAW_TEXT){
-    box.textContent = "（RAW_TEXT が空です。本文を貼ってください）";
-    return;
-  }
-  box.innerHTML = autoRuby(RAW_TEXT);
+  document.getElementById("textBody").innerHTML = autoRuby(RAW_TEXT);
 }
 render();
 
 /* ======================================================
-  ✅ 縦線 ON/OFF + 位置調整（スライダー＋ドラッグ）
+  ✅ 縦線 ON/OFF + 位置調整（上部コントロール）
 ====================================================== */
 let lineOn = false;
 
 function setLineRight(px){
   const v = Number(px);
-  document.getElementById("guideLine").style.right = v + "px";
+  const line = document.getElementById("guideLine");
+  line.style.right = v + "px";
   document.getElementById("lineRightLabel").textContent = String(v);
+  document.getElementById("linePos").value = v;
 }
 
 function toggleLine(){
   lineOn = !lineOn;
   document.getElementById("guideLine").style.display = lineOn ? "block" : "none";
   document.getElementById("lineState").textContent = lineOn ? "ON" : "OFF";
-  if(lineOn){
-    setLineRight(document.getElementById("linePos").value);
-  }
 }
 
-/* 指ドラッグで縦線移動（iPhone対応） */
-(function enableDragLine(){
-  const line = document.getElementById("guideLine");
-  const reader = document.getElementById("reader");
-  let dragging = false;
+function moveLine(delta){
+  const cur = Number(document.getElementById("linePos").value || 46);
+  let next = cur + delta;
+  next = Math.max(0, Math.min(260, next));
+  setLineRight(next);
+}
 
-  function clientX(e){
-    return (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
-  }
-
-  function onDown(e){
-    if(!lineOn) return;
-    dragging = true;
-    e.preventDefault();
-  }
-
-  function onMove(e){
-    if(!dragging) return;
-    const rect = reader.getBoundingClientRect();
-    const x = clientX(e);
-    let right = Math.round(rect.right - x);
-    right = Math.max(0, Math.min(220, right));
-    line.style.right = right + "px";
-    document.getElementById("linePos").value = right;
-    document.getElementById("lineRightLabel").textContent = String(right);
-    e.preventDefault();
-  }
-
-  function onUp(){ dragging = false; }
-
-  line.addEventListener("touchstart", onDown, {passive:false});
-  window.addEventListener("touchmove", onMove, {passive:false});
-  window.addEventListener("touchend", onUp);
-
-  line.addEventListener("mousedown", onDown);
-  window.addEventListener("mousemove", onMove);
-  window.addEventListener("mouseup", onUp);
-})();
+/* 初期：縦線位置を反映（右余白と揃える） */
+setLineRight(46);
 
 /* ======================================================
-  ✅ 自動スライド（縦書きは scrollTop が安定）
+  ✅ 自動スライド（縦書き＝右→左へ“読み進める”ので scrollLeft を進める）
 ====================================================== */
 let slideOn = false;
-let speed = 900;
+let speed = 900; // ms
 let timer = null;
 
 function updateSpeedLabel(){
   document.getElementById("speedLabel").textContent = String(speed);
+  document.getElementById("speedRange").value = String(speed);
 }
 updateSpeedLabel();
+
+function setSpeed(v){
+  speed = Number(v);
+  updateSpeedLabel();
+  if(timer) startAuto();
+}
 
 function toggleSlide(){
   slideOn = !slideOn;
@@ -315,25 +281,21 @@ function toggleSlide(){
 
 function startAuto(){
   stopAuto();
-  if(!slideOn) return;
+  if(!slideOn) slideOn = true, document.getElementById("slideState").textContent = "ON";
+  if(!lineOn) toggleLine();
 
   const reader = document.getElementById("reader");
-  const line = document.getElementById("guideLine");
 
   timer = setInterval(()=>{
-    // 縦線を少し左へ（right増加）
-    const cur = parseFloat(line.style.right || "18");
-    const next = Math.min(cur + 10, 220);
-    line.style.right = next + "px";
-    document.getElementById("linePos").value = next;
-    document.getElementById("lineRightLabel").textContent = String(Math.round(next));
+    // 読み進め（横方向）
+    reader.scrollLeft += 18;
 
-    // ✅ 縦書きの「次の列へ」：scrollTopを進める方が安定
-    reader.scrollTop += 24;
-
-    const max = reader.scrollHeight - reader.clientHeight;
-    if(reader.scrollTop >= max - 5){
+    // 端まで行ったら停止
+    const max = reader.scrollWidth - reader.clientWidth;
+    if(reader.scrollLeft >= max - 2){
       stopAuto();
+      slideOn = false;
+      document.getElementById("slideState").textContent = "OFF";
     }
   }, speed);
 }
@@ -348,10 +310,9 @@ function stopAuto(){
 function resetPos(){
   stopAuto();
   const reader = document.getElementById("reader");
-  reader.scrollTop = 0;
-
-  document.getElementById("linePos").value = 18;
-  setLineRight(18);
+  reader.scrollLeft = 0;
+  // 縦線位置も初期へ
+  setLineRight(46);
 }
 
 function slower(){
@@ -364,9 +325,6 @@ function faster(){
   updateSpeedLabel();
   if(timer) startAuto();
 }
-
-/* 初期：縦線位置 */
-setLineRight(document.getElementById("linePos").value);
 </script>
 
 </body>
