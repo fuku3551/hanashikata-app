@@ -1,194 +1,246 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>滑舌練習（フレーズ式）</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>👄 滑舌練習（今日のミッション）</title>
+<link rel="stylesheet" href="style.css" />
 
 <style>
-#phraseBody{
-  font-size:32px;
-  font-weight:800;
-  text-align:center;
-  line-height:1.9;
-  white-space:pre-wrap;
-}
+  /* ===== 全体 ===== */
+  #phraseBody{
+    font-size:32px;
+    font-weight:900;
+    text-align:center;
+    line-height:1.9;
+    white-space:pre-wrap;
+  }
 
-/* 旧：karaChar（残してもOKだけど使わない） */
-.karaChar{
-  display:inline-block;
-  padding:2px 3px;
-  border-radius:6px;
-}
-.karaChar.active{
-  background:#ffdddd;
-  color:#d60000;
-}
-.karaChar.done{
-  opacity:0.5;
-}
+  ruby rt{ font-size:0.55em; opacity:0.85; }
 
-/* ✅ 新：ruby対応ユニット */
-.karaUnit{
-  display:inline-block;
-  padding:2px 4px;
-  border-radius:6px;
-  transition: .15s;
-}
-.karaUnit.active{
-  background:#ffdddd;
-  color:#d60000;
-}
-.karaUnit.done{
-  opacity:.45;
-}
-.karaUnit.skip{
-  background:transparent !important;
-  color:inherit !important;
-  opacity:1;
-}
+  .row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    align-items:center;
+  }
 
-/* rubyの見た目（ふりがなを小さく） */
-ruby rt{
-  font-size: 0.55em;
-  opacity: 0.85;
-}
+  .mini{
+    font-size:14px;
+    opacity:0.85;
+    line-height:1.7;
+    white-space:pre-wrap;
+  }
 
-.row{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  flex-wrap:wrap;
-  align-items:center;
-}
+  /* ===== カラオケ：ruby対応ユニット ===== */
+  .karaUnit{
+    display:inline-block;
+    padding:2px 4px;
+    border-radius:8px;
+    transition:.12s;
+  }
+  .karaUnit.active{
+    background:#ffdddd;
+    color:#d60000;
+  }
+  .karaUnit.done{ opacity:.45; }
+  .karaUnit.skip{
+    background:transparent !important;
+    color:inherit !important;
+    opacity:1;
+  }
 
-input[type=range]{
-  width:220px;
-}
+  /* 難語は「全体を点灯」するので、phraseBody自体にも色付け */
+  .hardAllOn{
+    background:#ffdddd;
+    color:#d60000;
+    border-radius:12px;
+    padding:6px 8px;
+    display:inline-block;
+  }
 
-.modeOn{
-  border:2px solid #333;
-}
+  /* ===== 読み上げ位置（固定表示） ===== */
+  .readStage{
+    position: sticky;
+    top: var(--readTop, 220px);
+    z-index: 5;
+  }
+  .readBox{
+    border:1px solid rgba(0,0,0,.18);
+    border-radius:14px;
+    padding:12px;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(4px);
+  }
 
-.mini{
-  font-size:14px;
-  opacity:0.8;
-  line-height:1.7;
-  white-space:pre-wrap;
-}
+  input[type=range]{ width:240px; }
+
+  /* ===== ボタン：大きめ ===== */
+  .controls{
+    position:relative;
+    z-index:10;
+  }
+  .bigBtn{
+    font-size:18px;
+    font-weight:900;
+    padding:16px 18px;
+    border-radius:14px;
+    border:1px solid rgba(0,0,0,.12);
+    background:#fff;
+    min-width:150px;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+  }
+  .bigBtn:active{ transform: scale(.98); }
+  .primary{ background:#0ea5e9; color:#fff; border:none; }
+  .danger{ background:#ef4444; color:#fff; border:none; }
+  .ghost{ background:#fff; }
+  .warn{ background:#111; color:#fff; border:none; }
+  .disabled{ opacity:.45; }
+
+  /* ===== 下段：アドバイス横スクロール ===== */
+  .marqueeBox{
+    width:100%;
+    overflow:hidden;
+    border-radius:12px;
+    border:1px solid rgba(0,0,0,.12);
+    background:rgba(255,255,255,.85);
+    padding:8px 10px;
+    box-sizing:border-box;
+  }
+  .marquee{
+    display:inline-block;
+    white-space:nowrap;
+    will-change:transform;
+    animation: marqueeMove 11s linear infinite;
+    font-weight:900;
+    font-size:16px;
+  }
+  @keyframes marqueeMove{
+    0%{ transform: translateX(100%); }
+    100%{ transform: translateX(-100%); }
+  }
+  .marquee.paused{ animation-play-state: paused; }
+
+  /* 見出し補助 */
+  .subHeader{
+    text-align:center;
+    font-size:14px;
+    opacity:.85;
+    margin-top:-6px;
+  }
 </style>
 </head>
 
 <body>
 
 <header class="top">
-<h1>👄 滑舌練習</h1>
-<p class="sub">カラオケ式で練習できます（拗音・ふりがな対応）</p>
-<p><a href="index.html">← ホームへ</a></p>
+  <h1>👄 滑舌練習</h1>
+  <p><a href="index.html">← ホームへ</a></p>
 </header>
 
 <main class="menu">
 
-<!-- 今日のミッション -->
-<div class="card">
-  <div class="title">🔰 今日のミッション（約2〜3分）</div>
-  <div class="desc">
-    <div id="dailyText" class="mini">読み込み中…</div>
+  <!-- ✅ 今日のミッション（上部を分かりやすく） -->
+  <div class="card">
+    <div class="title">🔰 今日のミッション（約2〜3分）</div>
+    <div class="desc">
+      <div id="dailyText" class="mini">読み込み中…</div>
 
-    <div class="row" style="margin-top:10px;">
-      <button onclick="startDaily()">▶ 開始</button>
-      <button onclick="shuffleDaily()">🎲 変更</button>
-    </div>
-
-    <div class="mini" style="margin-top:8px;">
-      💡 迷ったらこれだけでOK（短時間で続く設計）
+      <!-- ✅ ここで読み上げ位置を設定 -->
+      <div style="margin-top:12px;">
+        <div class="mini" style="text-align:center;font-weight:900;">📍 読み上げ位置（上下調整）</div>
+        <div class="row" style="margin-top:8px;">
+          <span class="mini">上</span>
+          <input id="readPosRange" type="range" min="80" max="420" value="220" />
+          <span class="mini">下</span>
+          <span class="mini" id="readPosLabel">220px</span>
+        </div>
+        <div class="subHeader">※ 読む場所を「目線の高さ」に合わせると疲れにくいです</div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- セクション -->
-<div class="card">
-  <div class="title">セクション</div>
-  <div class="desc row">
-    <button onclick="setSection(0)">①母音</button>
-    <button onclick="setSection(1)">②基本</button>
-    <button onclick="setSection(2)">③濁音</button>
-    <button onclick="setSection(3)">④拗音</button>
-    <button onclick="setSection(4)">⑤リズム</button>
-    <button onclick="setSection(5)">⑥難語</button>
+  <!-- ✅ 操作ボタン（大きく・読み上げ位置より下） -->
+  <div class="card">
+    <div class="title">操作</div>
+    <div class="desc controls">
+      <div class="row">
+        <button id="playBtn"  class="bigBtn primary" type="button">▶ 開始</button>
+        <button id="pauseBtn" class="bigBtn ghost"   type="button">⏸ 一時停止</button>
+        <button id="stopBtn"  class="bigBtn danger"  type="button">⏹ 停止</button>
+        <button id="skipBtn"  class="bigBtn warn"    type="button">⏭ スキップ</button>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button id="autoBtn" class="bigBtn ghost" type="button">自動OFF</button>
+        <button id="karaBtn" class="bigBtn ghost" type="button">🌈 ON</button>
+        <button id="shuffleBtn" class="bigBtn ghost" type="button">🎲 ミッション変更</button>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <span class="mini" style="font-weight:900;">速度</span>
+        <input id="speedRange" type="range" min="250" max="1000" value="700" />
+        <span class="mini" id="speedLabel">700ms</span>
+      </div>
+
+      <div class="mini" style="margin-top:8px; text-align:center;">
+        ・通常：1ユニット=0.7秒（おすすめ）<br>
+        ・難語：1フレーズ=3秒で自動切替（全文点灯）
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- 操作 -->
-<div class="card">
-  <div class="title">操作</div>
-  <div class="desc">
-
-    <!-- ✅ 追加：停止＋速度± -->
-    <div class="row">
-      <button onclick="togglePlay()">🔊再生</button>
-      <button onclick="stop()">⏹停止</button>
-
-      <button onclick="slow()">➖遅く</button>
-      <button onclick="fast()">➕速く</button>
-
-      <button id="autoBtn" onclick="toggleAuto()">自動OFF</button>
-      <button id="karaBtn" onclick="toggleKara()">🌈ON</button>
+  <!-- セクション -->
+  <div class="card">
+    <div class="title">セクション</div>
+    <div class="desc row">
+      <button class="bigBtn ghost" type="button" onclick="setSection(0)">①母音</button>
+      <button class="bigBtn ghost" type="button" onclick="setSection(1)">②基本</button>
+      <button class="bigBtn ghost" type="button" onclick="setSection(2)">③濁音</button>
+      <button class="bigBtn ghost" type="button" onclick="setSection(3)">④拗音</button>
+      <button class="bigBtn ghost" type="button" onclick="setSection(4)">⑤リズム</button>
+      <button class="bigBtn ghost" type="button" onclick="setSection(5)">⑥難語</button>
     </div>
-
-    <div class="row" style="margin-top:8px;">
-      速度
-      <input id="speedRange" type="range" min="200" max="900" value="450" oninput="setSpeed(this.value)">
-      <span id="speedLabel">450ms</span>
-    </div>
-
-    <div class="row" style="margin-top:8px;">
-      <button id="bBtn" class="modeOn" onclick="setLevel('b')">初心者</button>
-      <button id="aBtn" onclick="setLevel('a')">上級</button>
-    </div>
-
-    <div class="mini" style="margin-top:8px;">
-      ・初心者：ゆっくり＆正確（おすすめ）<br>
-      ・上級：テンポUP（自動ON推奨）
-    </div>
-
   </div>
-</div>
 
-<!-- 表示 -->
-<div class="card">
-  <div class="title" id="sectionTitle"></div>
-  <div class="desc">
+  <!-- 表示 -->
+  <div class="card readStage" id="readStage">
+    <div class="title" id="sectionTitle"></div>
+    <div class="desc">
+      <div style="text-align:center;">
+        <span id="counter" class="mini"></span>
+      </div>
 
-    <div style="text-align:center;">
-      <span id="counter"></span>
+      <div class="readBox">
+        <div id="phraseBody"></div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="bigBtn ghost" type="button" onclick="prev()">◀ 前</button>
+        <button class="bigBtn ghost" type="button" onclick="next()">▶ 次</button>
+        <button class="bigBtn ghost" type="button" onclick="rand()">🎲 ランダム</button>
+        <button class="bigBtn ghost" type="button" onclick="reset()">⟲ リセット</button>
+      </div>
     </div>
-
-    <div style="border:1px solid #ccc;border-radius:12px;padding:12px;">
-      <div id="phraseBody"></div>
-    </div>
-
-    <div class="row" style="margin-top:10px;">
-      <button onclick="prev()">◀</button>
-      <button onclick="next()">▶</button>
-      <button onclick="rand()">🎲</button>
-      <button onclick="reset()">⟲</button>
-    </div>
-
-    <div class="mini" style="text-align:center; margin-top:10px;">
-      ※ まず「ゆっくり正確に」→ 慣れたら少しテンポアップ
-    </div>
-
   </div>
-</div>
+
+  <!-- ✅ 下段：ワンポイントアドバイス（自動横スクロール） -->
+  <div class="card">
+    <div class="title">ワンポイント</div>
+    <div class="desc">
+      <div class="marqueeBox">
+        <span id="adviceMarquee" class="marquee">読み込み中…</span>
+      </div>
+    </div>
+  </div>
 
 </main>
 
 <script>
 /* =========================
-   データ（増量フル版）
+   データ
 ========================= */
 
 // ① 母音（増量）
@@ -207,7 +259,7 @@ const p1 = [
   "あいうえおおえういあ"
 ];
 
-// ② 行別基本（フル）
+// ② 行別基本
 const p2 = [
   "（あ行） あ　い　う　え　お",
   "あえい　うえお　あお",
@@ -231,7 +283,7 @@ const p2 = [
   "わをん　わんを　をわん"
 ];
 
-// ③ 濁音・半濁音（フル）
+// ③ 濁音・半濁音
 const p3 = [
   "がぎぐげご　がげご　ぎぐげ",
   "ざじずぜぞ　ざぜぞ　じずぜ",
@@ -240,7 +292,7 @@ const p3 = [
   "ぱぴぷぺぽ　ぱぺぽ　ぴぷぺ"
 ];
 
-// ④ 拗音（フル）
+// ④ 拗音
 const p4 = [
   "きゃきゅきょ　きゃくきょ　きゅきょきゃ",
   "しゃしゅしょ　しゃくしょ　しゅしょしゃ",
@@ -251,7 +303,7 @@ const p4 = [
   "りゃりゅりょ　りゃくりょ　りゅりょりゃ"
 ];
 
-// ⑤ リズム（フル）
+// ⑤ リズム
 const p5 = [
   "たたた　ててて　ととと",
   "かかか　ききき　くくく",
@@ -259,23 +311,28 @@ const p5 = [
   "ららら　りりり　るるる"
 ];
 
-/* ✅ ⑥ 難語：完全ruby（漢字だけを光らせやすくする） */
+/* ✅ ⑥ 難語：被らない20個（1フレーズ3秒で切替、2行もOK） */
 const p6 = [
-  "あめんぼあかいな　あいうえお　うきもにこえびもおよいでる",
-  "<ruby>生麦<rt>なまむぎ</rt></ruby> <ruby>生米<rt>なまごめ</rt></ruby> <ruby>生卵<rt>なまたまご</rt></ruby>",
-  "<ruby>赤巻紙<rt>あかまきがみ</rt></ruby> <ruby>青巻紙<rt>あおまきがみ</rt></ruby> <ruby>黄巻紙<rt>きまきがみ</rt></ruby>",
-  "<ruby>東京<rt>とうきょう</rt></ruby><ruby>特許<rt>とっきょ</rt></ruby><ruby>許可局<rt>きょかきょく</rt></ruby>",
-  "<ruby>隣<rt>となり</rt></ruby>の<ruby>客<rt>きゃく</rt></ruby>はよく<ruby>柿<rt>かき</rt></ruby><ruby>食<rt>く</rt></ruby>う<ruby>客<rt>きゃく</rt></ruby>だ",
-  "<ruby>老若男女<rt>ろうにゃくなんにょ</rt></ruby>",
-  "<ruby>旅客機<rt>りょかっき</rt></ruby> <ruby>旅客船<rt>りょかくせん</rt></ruby> <ruby>旅館<rt>りょかん</rt></ruby>",
-  "<ruby>業務上過失致死傷<rt>ぎょうむじょうかしつちししょう</rt></ruby>",
-  "<ruby>打者走者勝者<rt>だしゃそうしゃしょうしゃ</rt></ruby>",
-  "<ruby>魔術師手術中<rt>まじゅつししゅじゅつちゅう</rt></ruby>",
-  "<ruby>貧乏人<rt>びんぼうにん</rt></ruby> <ruby>敏腕弁護士<rt>びんわんべんごし</rt></ruby>",
-  "<ruby>バスガス爆発<rt>ばすがすばくはつ</rt></ruby>",
-  "<ruby>最終手段<rt>さいしゅうしゅだん</rt></ruby> <ruby>収集<rt>しゅうしゅう</rt></ruby> <ruby>集中<rt>しゅうちゅう</rt></ruby>",
-  "<ruby>特急列車<rt>とっきゅうれっしゃ</rt></ruby> <ruby>普通列車<rt>ふつうれっしゃ</rt></ruby>",
-  "<ruby>取捨選択<rt>しゅしゃせんたく</rt></ruby> <ruby>試写室<rt>ししゃしつ</rt></ruby> <ruby>支社視察<rt>ししゃしさつ</rt></ruby>"
+  "すもももももももものうち\nもももすももももものうち",
+  "坊主が屏風に上手に坊主の絵を描いた",
+  "カエルぴょこぴょこ三ぴょこぴょこ\n合わせてぴょこぴょこ六ぴょこぴょこ",
+  "青パジャマ赤パジャマ黄パジャマ",
+  "隣の竹垣に竹立てかけたのは\n竹立てかけたかったからだ",
+  "この釘引き抜きにくい釘\n引き抜きにくい釘だ",
+  "右目右耳右肩右腕\n左目左耳左肩左腕",
+  "新進シャンソン歌手総出演\n新春シャンソンショー",
+  "早朝送迎車商社駐車場集合",
+  "調査主任、諸所視察し所感書記",
+  "貨物客室、各客が客席確保",
+  "油売りが油を売る間に\n売上がうっかり落ちる",
+  "特製炭酸水、瞬間酸欠寸前",
+  "隙間隙間にすき焼きの具を\nすきすき詰める",
+  "バナナの謎はまだなぞだ\n謎なら謎と名乗れ",
+  "連続朗読、論理論述、朗朗論",
+  "急遽休暇、究極級の供給不足",
+  "客席逆さ、逆走客が急加速",
+  "朴訥な牧童、北斗の木刀特訓",
+  "発泡発酵、白泡発生、反復発話"
 ];
 
 const sections = [
@@ -284,73 +341,53 @@ const sections = [
   {t:"③濁音", d:p3, isHtml:false},
   {t:"④拗音", d:p4, isHtml:false},
   {t:"⑤リズム", d:p5, isHtml:false},
-  {t:"⑥難語", d:p6, isHtml:true},   // ✅ 難語はHTML（ruby）を含む
+  {t:"⑥難語", d:p6, isHtml:false}, // ✅ 難語は「全文点灯＋3秒切替」なのでHTML不要
 ];
 
 let sec = 0;
 let idx = 0;
 
 /* ===== 設定 ===== */
-let auto = false;
-let kara = true;
-let speed = 450;
-let level = "b";
-let timer = null;
+let auto = false;     // 自動で次へ
+let kara = true;      // 色付け
+let speed = 700;      // 通常：1ユニット0.7秒
+let timer = null;     // karaoke interval
+let isPlaying = false;
+let paused = false;
+
+/* ===== ワンポイント（セクション別） ===== */
+const adviceMap = {
+  0: "①母音：口を“縦に大きく”開けて、あ→い→う→え→お を丁寧に。声は小さくてもOK。",
+  1: "②基本：子音→母音をセットで。『か』は“k”を当ててから“a”へ。急がず正確に。",
+  2: "③濁音：強く当てすぎない。喉に力を入れず“やわらかい濁り”を意識。",
+  3: "④拗音：きゃ＝『き』＋小さい『ゃ』を“ひと固まり”で。分けずに一息で。",
+  4: "⑤リズム：同じ形で口を動かす。テンポより“等間隔”が大事（メトロノーム感覚）。",
+  5: "⑥難語：速さより正確さ。噛んだら一回止めて、最初の3文字だけ完璧にして再開。"
+};
 
 /* =========================
-  ✅ ユニット化
-  - 難語（rubyあり）：rubyは1ユニット、空白はskip
-  - 通常：拗音（小文字）を前の文字と合体、空白はskip、（ ）もskip
+  ✅ ユニット化（通常用）
+   - 拗音（小文字）を前の文字と合体
+   - 空白はskip
+   - （）は表示から除外
 ========================= */
-function buildUnits(text, isHtml){
-
-  // HTML（ruby）を含む場合
-  if(isHtml){
-    const temp = document.createElement("div");
-    temp.innerHTML = text;
-    const units = [];
-
-    function walk(node){
-      if(node.nodeType === 3){
-        for(const c of node.textContent){
-          if(/\s/.test(c)) units.push({t:c, skip:true});
-          else units.push({t:c});
-        }
-        return;
-      }
-      if(node.nodeType === 1){
-        if(node.tagName === "RUBY"){
-          units.push({html: node.outerHTML});
-          return;
-        }
-        for(const ch of node.childNodes) walk(ch);
-      }
-    }
-    walk(temp);
-    return units;
-  }
-
-  // 通常（拗音合体、（）除外）
+function buildUnits(text){
   const small = "ゃゅょぁぃぅぇぉ";
   let arr = [];
   let buf = "";
   let inParen = false;
 
   for(const c of text){
-
-    // （）内はスキップしたい場合
     if(c === "（"){ inParen = true; continue; }
     if(c === "）"){ inParen = false; continue; }
     if(inParen) continue;
 
-    // 空白は光らせない（表示は残す）
     if(/\s/.test(c)){
       if(buf){ arr.push({t:buf}); buf=""; }
       arr.push({t:c, skip:true});
       continue;
     }
 
-    // 拗音小文字は前の文字に合体
     if(small.includes(c)){
       buf += c;
       continue;
@@ -363,7 +400,40 @@ function buildUnits(text, isHtml){
   return arr;
 }
 
+/* ===== DOM ===== */
+const phraseBody = document.getElementById("phraseBody");
+const sectionTitle = document.getElementById("sectionTitle");
+const counter = document.getElementById("counter");
+
+const dailyText = document.getElementById("dailyText");
+const adviceMarquee = document.getElementById("adviceMarquee");
+
+const playBtn = document.getElementById("playBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const stopBtn = document.getElementById("stopBtn");
+const skipBtn = document.getElementById("skipBtn");
+const autoBtn = document.getElementById("autoBtn");
+const karaBtn = document.getElementById("karaBtn");
+const shuffleBtn = document.getElementById("shuffleBtn");
+
+const speedRange = document.getElementById("speedRange");
+const speedLabel = document.getElementById("speedLabel");
+
+const readStage = document.getElementById("readStage");
+const readPosRange = document.getElementById("readPosRange");
+const readPosLabel = document.getElementById("readPosLabel");
+
 /* ===== 表示 ===== */
+function updateAdvice(){
+  const txt = adviceMap[sec] || "口を大きく、ゆっくり、はっきり。";
+  adviceMarquee.textContent = txt + "　／　" + txt; // 途切れ感を減らすため2回つなぐ
+
+  // iPhoneで確実に更新（アニメ再スタート）
+  adviceMarquee.style.animation = "none";
+  void adviceMarquee.offsetWidth;
+  adviceMarquee.style.animation = "";
+}
+
 function render(){
   const s = sections[sec];
   sectionTitle.textContent = s.t;
@@ -371,32 +441,27 @@ function render(){
 
   const text = s.d[idx];
 
+  phraseBody.classList.remove("hardAllOn");
+
   if(kara){
-    renderKara(text, s.isHtml);
+    renderKara(text);
   }else{
-    // kara OFF のとき：HTMLならruby表示、通常なら文字表示
-    if(s.isHtml){
-      phraseBody.innerHTML = text;
-    }else{
-      phraseBody.textContent = text;
-    }
+    phraseBody.textContent = text;
   }
+
+  updateAdvice();
 }
 
-function renderKara(text, isHtml){
+function renderKara(text){
   phraseBody.innerHTML = "";
-
-  const units = buildUnits(text, isHtml);
+  const units = buildUnits(text);
 
   units.forEach(u=>{
     const sp = document.createElement("span");
     sp.className = "karaUnit";
-
     if(u.skip){
       sp.classList.add("skip");
       sp.textContent = u.t;
-    }else if(u.html){
-      sp.innerHTML = u.html; // ruby表示
     }else{
       sp.textContent = u.t;
     }
@@ -404,159 +469,224 @@ function renderKara(text, isHtml){
   });
 }
 
-/* ===== カラオケ ===== */
-function stopKara(){
+/* =========================
+   再生/停止/一時停止
+========================= */
+function clearTimers(){
   if(timer){
     clearInterval(timer);
     timer = null;
   }
+}
+
+function stopKaraVisual(){
   document.querySelectorAll(".karaUnit").forEach(s=>{
     s.classList.remove("active","done");
   });
+  phraseBody.classList.remove("hardAllOn");
 }
 
-function startKara(){
+function stopAll(){
+  isPlaying = false;
+  paused = false;
+  pauseBtn.textContent = "⏸ 一時停止";
+  clearTimers();
+  stopKaraVisual();
+}
+
+/* ===== 通常（ユニット順点灯） ===== */
+let playIndex = 0; // 途中停止→再開で使う
+
+function startNormal(){
   if(!kara) return;
 
-  stopKara();
+  clearTimers();
 
   const spans = Array.from(document.querySelectorAll(".karaUnit"))
-    .filter(sp=>!sp.classList.contains("skip")); // ✅ skipは光らせない
+    .filter(sp=>!sp.classList.contains("skip"));
 
-  let i = 0;
+  if(spans.length === 0) return;
 
   timer = setInterval(()=>{
-    if(i>0){
-      spans[i-1].classList.remove("active");
-      spans[i-1].classList.add("done");
+    if(!isPlaying) return;
+    if(paused) return;
+
+    if(playIndex > 0){
+      spans[playIndex-1].classList.remove("active");
+      spans[playIndex-1].classList.add("done");
     }
 
-    if(i >= spans.length){
-      clearInterval(timer);
-      timer = null;
-      if(auto) setTimeout(next, 600);
+    if(playIndex >= spans.length){
+      clearTimers();
+      if(auto){
+        setTimeout(()=> next(true), 420);
+      }else{
+        isPlaying = false;
+      }
       return;
     }
 
-    spans[i].classList.add("active");
-    i++;
+    spans[playIndex].classList.add("active");
+    playIndex++;
   }, speed);
 }
 
-/* ===== 操作 ===== */
+/* ===== 難語（全文点灯＋3秒で次へ） ===== */
+let hardTimeout = null;
+function clearHardTimeout(){
+  if(hardTimeout){
+    clearTimeout(hardTimeout);
+    hardTimeout = null;
+  }
+}
+
+function startHard(){
+  // 難語は「全文点灯」→3秒→次へ
+  clearTimers();
+  clearHardTimeout();
+  stopKaraVisual();
+
+  phraseBody.classList.add("hardAllOn");
+
+  // 全ユニットもactiveにしておく（見た目強化）
+  document.querySelectorAll(".karaUnit").forEach(sp=>{
+    if(!sp.classList.contains("skip")){
+      sp.classList.add("active");
+    }
+  });
+
+  hardTimeout = setTimeout(()=>{
+    if(!isPlaying) return;
+    if(paused){
+      // pausedならここでは進めない。再開時に再スケジュールする
+      return;
+    }
+    next(true); // 自動的に次へ
+  }, 3000);
+}
+
+/* ===== 再生開始 ===== */
+function startPlay(){
+  stopKaraVisual();
+  clearTimers();
+  clearHardTimeout();
+
+  isPlaying = true;
+  paused = false;
+  pauseBtn.textContent = "⏸ 一時停止";
+
+  playIndex = 0;
+
+  // 難語セクションは特別ルール
+  if(sec === 5){
+    // kara OFFでも難語は3秒切替が欲しいので、karaがOFFなら全文点灯なしで切替
+    if(kara){
+      startHard();
+    }else{
+      clearHardTimeout();
+      hardTimeout = setTimeout(()=>{ if(isPlaying && !paused) next(true); }, 3000);
+    }
+    return;
+  }
+
+  if(kara){
+    startNormal();
+  }
+}
+
+function togglePause(){
+  if(!isPlaying) return;
+  paused = !paused;
+  pauseBtn.textContent = paused ? "▶ 再開" : "⏸ 一時停止";
+
+  // 難語のとき：paused解除で再スケジュール
+  if(sec === 5 && !paused && isPlaying){
+    // 3秒切替を“再開時点から”やり直す方が初心者に優しい
+    if(kara) startHard();
+    else{
+      clearHardTimeout();
+      hardTimeout = setTimeout(()=>{ if(isPlaying && !paused) next(true); }, 3000);
+    }
+  }
+}
+
+/* =========================
+   操作（次/前/ランダム/リセット）
+   - next(true) は「自動経由」扱い（止めずに続ける）
+========================= */
 function setSection(n){
   sec = n;
   idx = 0;
-  stop();
+  stopAll();
   render();
 }
 
-function next(){
+function next(fromAuto=false){
   idx = (idx + 1) % sections[sec].d.length;
-  stop();
+  stopKaraVisual();
+  clearTimers();
+  clearHardTimeout();
   render();
-  if(auto) startKara();
+
+  if(fromAuto && isPlaying){
+    // 継続再生
+    if(sec === 5){
+      if(kara) startHard();
+      else hardTimeout = setTimeout(()=>{ if(isPlaying && !paused) next(true); }, 3000);
+    }else{
+      playIndex = 0;
+      startNormal();
+    }
+  }else{
+    // 手動nextのとき：自動ONなら継続
+    if(auto && isPlaying){
+      startPlay();
+    }
+  }
 }
 
 function prev(){
   idx = (idx - 1 + sections[sec].d.length) % sections[sec].d.length;
-  stop();
+  stopAll();
   render();
 }
 
 function rand(){
   idx = Math.floor(Math.random() * sections[sec].d.length);
-  stop();
+  stopAll();
   render();
 }
 
 function reset(){
   idx = 0;
-  stop();
+  stopAll();
   render();
 }
 
-/* ===== 制御 ===== */
-function stop(){
-  stopKara();
-}
-
-function togglePlay(){
-  stop();
-  startKara();
-}
-
-function syncAutoBtn(){
-  autoBtn.textContent = auto ? "自動ON" : "自動OFF";
-}
-
-function toggleAuto(){
-  auto = !auto;
-  syncAutoBtn();
-}
-
-function toggleKara(){
-  kara = !kara;
-  karaBtn.textContent = kara ? "🌈ON" : "🌈OFF";
-  stop();
-  render();
-}
-
-/* 速度：スライダー */
-function setSpeed(v){
-  speed = Number(v);
-  speedLabel.textContent = speed + "ms";
-}
-
-/* ✅ 速度：ボタン（±50ms） */
-function slow(){
-  speed = Math.min(speed + 50, 900);
-  speedRange.value = speed;
-  speedLabel.textContent = speed + "ms";
-}
-function fast(){
-  speed = Math.max(speed - 50, 200);
-  speedRange.value = speed;
-  speedLabel.textContent = speed + "ms";
-}
-
-function setLevel(l){
-  level = l;
-
-  bBtn.classList.remove("modeOn");
-  aBtn.classList.remove("modeOn");
-
-  if(l === "b"){
-    bBtn.classList.add("modeOn");
-    speed = Math.max(speed, 450);
-    speedRange.value = speed;
+/* スキップ：再生中は即次へ / 停止中なら次表示だけ */
+function skip(){
+  if(isPlaying){
+    next(true);
   }else{
-    aBtn.classList.add("modeOn");
-    speed = Math.min(speed, 350);
-    speedRange.value = speed;
+    next(false);
   }
-  speedLabel.textContent = speed + "ms";
 }
 
-/* ===== 今日のミッション ===== */
+/* =========================
+   今日のミッション
+   指定の並び：母音 → リズム → 拗音 → 濁音（4本）
+========================= */
 let daily = null;
 
-function r(a){
-  return a[Math.floor(Math.random()*a.length)];
-}
+function r(a){ return a[Math.floor(Math.random()*a.length)]; }
 
 function pickDaily(){
-  // 迷いにくい王道ルート
-  // 母音 → 拗音 → 濁音（＋たまにリズム）
-  const plan = [
+  return [
     {sec:0, p:r(p1)},
+    {sec:4, p:r(p5)},
     {sec:3, p:r(p4)},
     {sec:2, p:r(p3)}
   ];
-  if(Math.random() < 0.5){
-    plan.splice(1, 0, {sec:4, p:r(p5)}); // たまにリズムを挟む
-  }
-  return plan;
 }
 
 function showDaily(){
@@ -570,41 +700,154 @@ function shuffleDaily(){
   showDaily();
 }
 
-function startDaily(){
-  if(!daily) daily = pickDaily();
+/* ミッション開始：自動ONで順番に再生 */
+let dailyIndex = 0;
+let dailyRunTimeout = null;
 
-  auto = true;
-  syncAutoBtn();
-
-  runDaily(0);
+function clearDailyRun(){
+  if(dailyRunTimeout){
+    clearTimeout(dailyRunTimeout);
+    dailyRunTimeout = null;
+  }
 }
 
-function runDaily(i){
-  if(!daily[i]) return;
+function startDaily(){
+  if(!daily) daily = pickDaily();
+  auto = true;
+  syncAutoBtn();
+  dailyIndex = 0;
+  runDailyStep();
+}
 
-  sec = daily[i].sec;
+function runDailyStep(){
+  clearDailyRun();
 
-  // ✅ 難語セクションはHTML文字列なので、今日ミッションには入れていない（安全）
-  idx = sections[sec].d.indexOf(daily[i].p);
+  const item = daily[dailyIndex];
+  if(!item){
+    // 終了
+    stopAll();
+    return;
+  }
+
+  sec = item.sec;
+  idx = sections[sec].d.indexOf(item.p);
   if(idx < 0) idx = 0;
 
   render();
-  startKara();
 
-  // ✅ ユニット数で時間見積もり（skip除外）
-  const units = buildUnits(sections[sec].d[idx], sections[sec].isHtml)
-    .filter(u=>!u.skip);
+  // その項目を再生（通常はユニット数×speed、難語は3秒）
+  isPlaying = true;
+  paused = false;
+  pauseBtn.textContent = "⏸ 一時停止";
 
-  setTimeout(()=>{
-    runDaily(i+1);
-  }, units.length * speed + 800);
+  // 1項目だけ流して次へ（ミッション用）
+  if(sec === 5){
+    // 難語はミッションに入れない想定だが、保険
+    if(kara){
+      startHard();
+      dailyRunTimeout = setTimeout(()=>{
+        dailyIndex++;
+        runDailyStep();
+      }, 3200);
+    }else{
+      dailyRunTimeout = setTimeout(()=>{
+        dailyIndex++;
+        runDailyStep();
+      }, 3200);
+    }
+    return;
+  }
+
+  // 通常：ユニット数で見積もり
+  const units = buildUnits(sections[sec].d[idx]).filter(u=>!u.skip);
+  startPlay();
+
+  const est = units.length * speed + 600;
+  dailyRunTimeout = setTimeout(()=>{
+    // 次のミッションへ
+    stopAll();
+    dailyIndex++;
+    runDailyStep();
+  }, est);
 }
 
-/* ===== 初期 ===== */
-render();
+/* =========================
+   UI同期
+========================= */
+function syncAutoBtn(){
+  autoBtn.textContent = auto ? "自動ON" : "自動OFF";
+}
+function syncKaraBtn(){
+  karaBtn.textContent = kara ? "🌈 ON" : "🌈 OFF";
+}
+function setSpeed(v){
+  speed = Number(v);
+  speedLabel.textContent = speed + "ms";
+}
+
+/* 読み上げ位置 */
+function setReadTop(px){
+  readStage.style.setProperty("--readTop", px + "px");
+  readPosLabel.textContent = px + "px";
+}
+
+/* =========================
+   イベント（iPhone安定：click + touchend）
+========================= */
+function bindTap(el, fn){
+  el.addEventListener("click", fn);
+  el.addEventListener("touchend", fn, {passive:true});
+}
+
+bindTap(playBtn, ()=>{
+  // ミッション表示の「開始」ではなく、今表示中フレーズの開始
+  startPlay();
+});
+bindTap(pauseBtn, ()=> togglePause());
+bindTap(stopBtn,  ()=> { stopAll(); clearDailyRun(); });
+bindTap(skipBtn,  ()=> skip());
+
+bindTap(autoBtn, ()=>{
+  auto = !auto;
+  syncAutoBtn();
+});
+bindTap(karaBtn, ()=>{
+  kara = !kara;
+  syncKaraBtn();
+  stopAll();
+  render();
+});
+bindTap(shuffleBtn, ()=>{
+  shuffleDaily();
+});
+
+speedRange.addEventListener("input", (e)=>{
+  setSpeed(e.target.value);
+  // 再生中に変えたら、次回から反映（今のintervalは継続）
+});
+
+readPosRange.addEventListener("input", (e)=>{
+  setReadTop(Number(e.target.value));
+});
+
+/* =========================
+   初期
+========================= */
+setSpeed(speedRange.value);
+setReadTop(Number(readPosRange.value));
+daily = pickDaily();
 showDaily();
 syncAutoBtn();
-karaBtn.textContent = kara ? "🌈ON" : "🌈OFF";
+syncKaraBtn();
+render();
+
+// 追加：ミッション開始ボタンも欲しいなら、dailyTextの下に置く設計にしてあるので
+// 「ミッション開始」も操作ボタンに紐付けたい場合はここでOK
+// 例：長押しでミッション開始などもできる
+// 今回は “ミッション変更” ボタンのみ操作に置き、ミッション開始は上カードに付けたいなら下を有効化：
+(function addMissionButtonsIfMissing(){
+  // 上カードに「開始/変更」が欲しい場合の保険（既にUIはあるが、今回は最上部をテキスト中心にしたので不要）
+})();
 </script>
 
 </body>
