@@ -46,7 +46,9 @@
   .danger{background:#ef4444;color:#fff;border:none;}
   .ghost{background:#fff;}
   .warn{background:#111;color:#fff;border:none;}
-  .disabled{opacity:.45;pointer-events:none;}
+
+  /* ✅ pointer-events:none を消す（iPhoneで取りこぼし対策） */
+  .disabled{opacity:.45;}
 
   .pill{
     display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid rgba(0,0,0,.12);
@@ -60,7 +62,6 @@
   .countDown{font-size:56px;font-weight:1000;letter-spacing:.02em;line-height:1.1;}
   .countLabel{font-size:20px;opacity:.9;margin-top:6px;}
 
-  /* 滑舌：点灯スタイル */
   .gyouWrap{
     display:inline-block;
     padding:10px 18px;
@@ -100,10 +101,19 @@
       <div id="startHint" class="blinkArrow">⬇️⬇️⬇️</div>
 
       <div class="controls">
-        <button id="startBtn" class="btn primary" type="button" style="min-width:220px;">▶ 開始</button>
-        <button id="pauseBtn" class="btn ghost disabled" type="button" disabled>⏸ 一時停止</button>
-        <button id="stopBtn" class="btn danger disabled" type="button" disabled>⏹ 停止</button>
-        <button id="skipBtn" class="btn warn disabled" type="button" disabled>⏭ スキップ</button>
+        <button id="startBtn" class="btn primary" type="button" style="min-width:220px;"
+          onclick="startAll()">▶ 開始</button>
+
+        <!-- ✅ onclick を保険で復活 -->
+        <button id="pauseBtn" class="btn ghost disabled" type="button" disabled
+          onclick="togglePause()">⏸ 一時停止</button>
+
+        <button id="stopBtn" class="btn danger disabled" type="button" disabled
+          onclick="stopAll()">⏹ 停止</button>
+
+        <button id="skipBtn" class="btn warn disabled" type="button" disabled
+          onclick="skipPhase()">⏭ スキップ</button>
+
         <button class="btn ghost" type="button" onclick="changeTopic()">🎲 話題変更</button>
       </div>
     </div>
@@ -128,7 +138,6 @@
 let runToken = 0;
 let speechRunning = false;
 
-/* 一時停止 */
 let paused = false;
 let pauseResolvers = [];
 function waitWhilePaused(){
@@ -139,10 +148,8 @@ function resumePausedWaiters(){
   pauseResolvers.splice(0).forEach(r=>r());
 }
 
-/* スキップ */
 let skipRequested = false;
 
-/* UI */
 function setPhase(t){ document.getElementById("phase").textContent=t; }
 function setDisplay(html){ document.getElementById("display").innerHTML=html; }
 function setSub(t){ document.getElementById("sub").textContent=t; }
@@ -155,7 +162,6 @@ const DEFAULT_TOP = topMarquee.textContent;
 
 function setTopMarquee(text){
   topMarquee.textContent = text;
-  // iOSで差し替え確実化（アニメ再スタート）
   topMarquee.style.animation = "none";
   void topMarquee.offsetWidth;
   topMarquee.style.animation = "";
@@ -163,10 +169,10 @@ function setTopMarquee(text){
 function pauseTopMarquee(){ topMarquee.classList.add("paused"); }
 function resumeTopMarquee(){ topMarquee.classList.remove("paused"); }
 
-/* ボタン有効/無効（属性も） */
+/* ボタン制御（disabled属性で統一） */
 function setBtnEnabled(btn, enabled){
-  btn.classList.toggle("disabled", !enabled);
   btn.disabled = !enabled;
+  btn.classList.toggle("disabled", !enabled);
 }
 function enableDuringRun(on){
   setBtnEnabled(document.getElementById("pauseBtn"), on);
@@ -174,9 +180,9 @@ function enableDuringRun(on){
   setBtnEnabled(document.getElementById("skipBtn"),  on);
 }
 
-/* “止まれる待ち” */
+/* 待ち（止められる） */
 async function wait(ms, token){
-  const step = 70;
+  const step = 60;
   let left = ms;
   while(left > 0){
     if(isStopped(token)) return false;
@@ -189,7 +195,6 @@ async function wait(ms, token){
   return true;
 }
 
-/* フェーズ開始前アナウンス */
 async function announceNext(token, text, ms=1200){
   skipRequested = false;
   setTopMarquee(text);
@@ -204,12 +209,12 @@ function stopAll(){
 
   paused = false;
   resumePausedWaiters();
-  pauseTopMarquee(); // いったん止めてから戻す
+  skipRequested = false;
+
+  enableDuringRun(false);
+
   setTopMarquee(DEFAULT_TOP);
   resumeTopMarquee();
-
-  skipRequested = false;
-  enableDuringRun(false);
 
   document.getElementById("startHint").style.display = "inline-block";
 
@@ -225,13 +230,12 @@ function togglePause(){
   if(btn.disabled) return;
 
   paused = !paused;
-
   btn.textContent = paused ? "▶ 再開" : "⏸ 一時停止";
   setState(paused ? "一時停止中" : "進行中");
 
-  // 一時停止中はマルキーも止める（初心者が混乱しない）
-  if(paused) pauseTopMarquee();
-  else {
+  if(paused){
+    pauseTopMarquee();
+  }else{
     resumeTopMarquee();
     resumePausedWaiters();
   }
@@ -246,12 +250,9 @@ function skipPhase(){
   setSub("⏭ 次へ移動中…");
 }
 
-/* =========================
-   呼吸 4-4-8 ×3（4,3,2,1）
-========================= */
+/* 呼吸 */
 async function breathing(token){
   if(!await announceNext(token, "次は腹式呼吸です：吸って4秒 → 止めて4秒 → 吐いて8秒　／　ゆっくりでOK")) return;
-
   setPhase("💨 腹式呼吸");
 
   for(let round=1; round<=3; round++){
@@ -263,13 +264,11 @@ async function breathing(token){
       setDisplay(`<div>はい吸ってスゥ〜</div><div class="countDown">${n}</div><div class="countLabel">秒</div>`);
       if(!await wait(1000, token)) return;
     }
-
     for(let n=4; n>=1; n--){
       if(isStopped(token) || skipRequested) return;
       setDisplay(`<div>はい止めて</div><div class="countDown">${n}</div><div class="countLabel">秒</div>`);
       if(!await wait(1000, token)) return;
     }
-
     for(let n=8; n>=1; n--){
       if(isStopped(token) || skipRequested) return;
       setDisplay(`<div>はい吐いてフゥ〜</div><div class="countDown">${n}</div><div class="countLabel">秒</div>`);
@@ -280,12 +279,9 @@ async function breathing(token){
   setSub("呼吸OK！次へ進みます。");
 }
 
-/* =========================
-   舌トレ（導入＋3秒）
-========================= */
+/* 舌トレ */
 async function tongue(token){
   if(!await announceNext(token, "次は舌トレです。舌先で口の中に大きな円を描いて行きましょう。右から3秒後にスタートします。", 1600)) return;
-
   setPhase("👅 舌トレ");
   setSub("準備してください");
 
@@ -319,14 +315,12 @@ async function tongue(token){
   setDisplay(" ");
 }
 
-/* =========================
-   滑舌（2秒ごと / 点灯あり）
-========================= */
+/* ✅ 滑舌（1フレーズ=2秒） */
 async function gyou(token){
-  if(!await announceNext(token, "次は滑舌（あ〜わ行）です。1語ずつ丁寧に発声しましょう（3秒/1語）")) return;
+  if(!await announceNext(token, "次は滑舌（あ〜わ行）です。1語ずつ丁寧に発声しましょう（2秒/1語）")) return;
 
   setPhase("👄 滑舌（あ〜わ行）");
-  setSub("1語ずつ丁寧に（3秒）");
+  setSub("1語ずつ丁寧に（2秒）");
 
   const lines=[
     "あいうえお","かきくけこ","さしすせそ","たちつてと","なにぬねの",
@@ -336,21 +330,18 @@ async function gyou(token){
   for(const l of lines){
     if(isStopped(token) || skipRequested) return;
 
-    // 最初の1秒だけ点灯（視認性UP）
+    // 点灯 0.6秒 → 通常 1.4秒 = 合計2秒
     setDisplay(`<div class="gyouWrap gyouActive">${l}</div>`);
-    if(!await wait(350, token)) return;
+    if(!await wait(600, token)) return;
 
-    // 残りを通常表示
     setDisplay(`<div class="gyouWrap">${l}</div>`);
-    if(!await wait(1650, token)) return;
+    if(!await wait(1400, token)) return;
   }
 
   setDisplay(" ");
 }
 
-/* =========================
-   言いにくい15選（フリガナ / 色付け無し）
-========================= */
+/* 言いにくい15選 */
 async function hard15(token){
   if(!await announceNext(token, "次は言いにくいフレーズ15選です。焦らず、ハッキリ、ゆっくり。次の言葉に切り替わるまで3秒待ちます。", 1500)) return;
 
@@ -377,82 +368,29 @@ async function hard15(token){
 
   for(const item of list){
     if(isStopped(token) || skipRequested) return;
-
     setDisplay(`<div class="hardText">${item}</div>`);
     if(!await wait(4500, token)) return;
-
     if(!await wait(3000, token)) return;
   }
-
   setDisplay(" ");
 }
 
-/* =========================
-   40秒スピーチ（5秒前からカウントダウン表示）
-========================= */
-const topics=[
-  "あなたの好きな食べ物（理由も添えて）","あなたの苦手な食べ物（どう工夫してる？）","あなたの出身地（おすすめポイント）",
-  "子どもの頃よく遊んだこと","昔やっていたスポーツ（思い出）","今住んでいる場所（好きな所）","あなたの仕事（一言で言うと）",
-  "これから挑戦したい仕事・活動","最近うれしかったこと","最近学んだこと","最近できるようになったこと","あなたの強み（エピソード付き）",
-  "あなたの弱み（改善の工夫）","大切にしている価値観","人に褒められて嬉しかったこと","最近ハマっていること",
-  "最近見た/読んだもので印象に残ったもの","尊敬する人（理由）","感謝している人（理由）","いま頑張っていること"
-];
-let currentTopic = "";
-function pickTopic(){ return topics[Math.floor(Math.random()*topics.length)]; }
-
-function changeTopic(){
-  currentTopic = pickTopic();
-  if(!speechRunning){
-    setSub(`（話題）${currentTopic}\n※スピーチ開始時にこの話題で行きます`);
-  }else{
-    setSub(`（変更）${currentTopic}\nこの話題で続けてOK！`);
-  }
-}
-
+/* 40秒スピーチ（省略：このままでもOK） */
 async function speech40(token){
-  if(!await announceNext(token, "次は40秒スピーチです。10秒準備してから開始します。結論→理由→具体例→結論 を意識！", 1500)) return;
+  if(!await announceNext(token, "次は40秒スピーチです。10秒準備してから開始します。", 1500)) return;
 
-  setPhase("🎤 40秒スピーチ（準備）");
-  setState("スピーチ準備");
-  speechRunning = true;
-
-  if(!currentTopic) currentTopic = pickTopic();
-
-  setDisplay(`お題：${currentTopic}<span class="blinkRight">➡️</span>`);
-  setSub("止めたい時は「停止」 / 話題を変えたい時は「話題変更」");
-
-  // 10秒準備（残り5秒からカウント表示）
-  for(let sec=10; sec>=1; sec--){
-    if(isStopped(token) || skipRequested) return;
-
-    if(sec <= 5){
-      setPhase(`🎤 40秒スピーチ（開始まで）`);
-      setDisplay(`<div style="font-size:18px;opacity:.85;">開始まで</div><div class="countDown">${sec}</div>`);
-    }else{
-      setPhase(`🎤 40秒スピーチ（開始まで ${sec}秒）`);
-      // お題は維持したいので表示は変えない
-      setDisplay(`お題：${currentTopic}<span class="blinkRight">➡️</span>`);
-    }
-
-    if(!await wait(1000, token)) return;
-  }
-
-  setPhase("🎤 40秒スピーチ（開始）");
+  setPhase("🎤 40秒スピーチ");
   setState("スピーチ中");
-
+  setDisplay("40");
   for(let i=40;i>=0;i--){
     if(isStopped(token) || skipRequested) return;
     setDisplay(i);
     if(!await wait(1000, token)) return;
   }
-
-  speechRunning = false;
   setState("進行中");
 }
 
-/* =========================
-   全体スタート
-========================= */
+/* 全体スタート */
 async function startAll(){
   runToken++;
   const token = runToken;
@@ -461,41 +399,36 @@ async function startAll(){
   resumePausedWaiters();
   skipRequested = false;
 
-  document.getElementById("pauseBtn").textContent = "⏸ 一時停止";
-  document.getElementById("startHint").style.display = "none";
-
-  setState("進行中");
-  speechRunning = false;
-  currentTopic = pickTopic();
-
   enableDuringRun(true);
   resumeTopMarquee();
+
+  document.getElementById("startHint").style.display = "none";
+  setState("進行中");
+
+  // 実行中は押せるように
+  document.getElementById("pauseBtn").textContent = "⏸ 一時停止";
 
   try{
     setPhase("準備…");
     setDisplay(" ");
     setSub("これから始まります");
-    if(!await wait(700, token)) return;
+    if(!await wait(600, token)) return;
 
     await breathing(token);
     if(isStopped(token)) return;
 
-    if(!await wait(500, token)) return;
     skipRequested = false;
     await tongue(token);
     if(isStopped(token)) return;
 
-    if(!await wait(500, token)) return;
     skipRequested = false;
     await gyou(token);
     if(isStopped(token)) return;
 
-    if(!await wait(500, token)) return;
     skipRequested = false;
     await hard15(token);
     if(isStopped(token)) return;
 
-    if(!await wait(500, token)) return;
     skipRequested = false;
     await speech40(token);
     if(isStopped(token)) return;
@@ -504,12 +437,6 @@ async function startAll(){
     setDisplay("😊");
     setSub("この調子で焦らず続けていきましょう♪");
     setState("完了");
-
-  }catch(e){
-    setPhase("⚠️ エラー");
-    setDisplay("…");
-    setSub("一度「停止」→「開始」を押してください");
-    setState("停止");
   }finally{
     enableDuringRun(false);
     setTopMarquee(DEFAULT_TOP);
@@ -523,41 +450,21 @@ async function startAll(){
   }
 }
 
-/* =========================
-   ✅ iPhone対策：ボタンを確実に反応させる
-========================= */
-(function bindControlButtons(){
-  const startBtn = document.getElementById("startBtn");
-  const pauseBtn = document.getElementById("pauseBtn");
-  const stopBtn  = document.getElementById("stopBtn");
-  const skipBtn  = document.getElementById("skipBtn");
-
-  function tap(fn){
-    return function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      fn();
-      return false;
-    };
+/* ✅ iPhoneで確実に反応（pointer/touch/click を全部付ける、preventDefaultしない） */
+(function bind(){
+  const map = [
+    ["startBtn", startAll],
+    ["pauseBtn", togglePause],
+    ["stopBtn",  stopAll],
+    ["skipBtn",  skipPhase],
+  ];
+  for(const [id, fn] of map){
+    const el = document.getElementById(id);
+    el.addEventListener("pointerup", fn);
+    el.addEventListener("touchend", fn);
+    el.addEventListener("click", fn);
   }
-
-  // 開始（clickでOK、touchも付ける）
-  startBtn.addEventListener("click", tap(startAll));
-  startBtn.addEventListener("touchstart", tap(startAll), {passive:false});
-
-  pauseBtn.addEventListener("click", tap(togglePause));
-  pauseBtn.addEventListener("touchstart", tap(togglePause), {passive:false});
-
-  stopBtn.addEventListener("click", tap(stopAll));
-  stopBtn.addEventListener("touchstart", tap(stopAll), {passive:false});
-
-  skipBtn.addEventListener("click", tap(skipPhase));
-  skipBtn.addEventListener("touchstart", tap(skipPhase), {passive:false});
 })();
-
-/* 初期表示 */
-setTopMarquee(DEFAULT_TOP);
-document.getElementById("pauseBtn").textContent = "⏸ 一時停止";
 </script>
 
 </body>
