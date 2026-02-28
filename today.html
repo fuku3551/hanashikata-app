@@ -323,10 +323,10 @@ async function tongue(token){
    滑舌（2秒ごと / 点灯あり）
 ========================= */
 async function gyou(token){
-  if(!await announceNext(token, "次は滑舌（あ〜わ行）です。1語ずつ丁寧に発声しましょう（2秒/1語）")) return;
+  if(!await announceNext(token, "次は滑舌（あ〜わ行）です。1語ずつ丁寧に発声しましょう（3秒/1語）")) return;
 
   setPhase("👄 滑舌（あ〜わ行）");
-  setSub("1語ずつ丁寧に（2秒）");
+  setSub("1語ずつ丁寧に（3秒）");
 
   const lines=[
     "あいうえお","かきくけこ","さしすせそ","たちつてと","なにぬねの",
@@ -336,7 +336,7 @@ async function gyou(token){
   for(const l of lines){
     if(isStopped(token) || skipRequested) return;
 
-    // 最初の0.35秒だけ点灯（視認性UP）
+    // 最初の1秒だけ点灯（視認性UP）
     setDisplay(`<div class="gyouWrap gyouActive">${l}</div>`);
     if(!await wait(350, token)) return;
 
