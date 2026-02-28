@@ -15,6 +15,7 @@
     margin:10px 0;
     line-height:1.35;
     word-break:break-word;
+    color:#111; /* ✅ 基本文字は黒 */
   }
   .mid{
     font-size:24px;
@@ -25,11 +26,10 @@
   .small{
     text-align:center;
     opacity:.88;
-    font-size:18px;         /* ✅ 案内文も大きく統一 */
+    font-size:18px;
     line-height:1.8;
     white-space:pre-wrap;
   }
-  .highlight{color:#e60033;font-weight:900;}
 
   /* ===== スタート誘導（点滅⬇️） ===== */
   .blinkArrow{
@@ -40,7 +40,7 @@
   }
   @keyframes blink { 50% { opacity:0; } }
 
-  /* ===== 横スクロール（開始前・スピーチ前の案内） ===== */
+  /* ===== 横スクロール（開始前・各項目切替の案内） ===== */
   .marqueeBox{
     width:100%;
     overflow:hidden;
@@ -65,30 +65,9 @@
   .marquee.paused{ animation-play-state: paused; }
   .marquee.hidden{ display:none; }
 
-  /* ===== カラオケ表示（波：3秒で点灯→消灯） ===== */
-  .karaWrap{
-    display:inline-block;
-    padding:4px 7px;
-    border-radius:12px;
-    transition: opacity .2s ease;
-  }
-  .karaWrap.done{opacity:.35;}
-  .karaWrap.skip{opacity:.65;} /* 空白等 */
-
-  /* ✅ 波っぽい点灯（3秒） */
-  .karaWrap.active{
-    animation: waveOn 3s ease-in-out forwards;
-  }
-  @keyframes waveOn{
-    0%   { background: rgba(239,68,68,0.00); color: inherit; transform: scale(1.00); }
-    35%  { background: rgba(239,68,68,0.14); color:#ef4444; transform: scale(1.02); }
-    60%  { background: rgba(239,68,68,0.22); color:#ef4444; transform: scale(1.02); }
-    100% { background: rgba(239,68,68,0.00); color: inherit; transform: scale(1.00); }
-  }
-
   /* ふりがな */
   ruby{ruby-position: over;}
-  rt{font-size:11px; opacity:.9;} /* 少し大きめ */
+  rt{font-size:11px; opacity:.9;}
 
   .center{text-align:center;}
   .btnRow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
@@ -122,6 +101,13 @@
     font-size:20px;
     animation: blink 1s steps(2, start) infinite;
   }
+
+  /* ✅ 言いにくい言葉だけ少し小さく */
+  .hardText{
+    font-size:32px; /* ←ここで微調整OK（30〜34くらいが気持ち良い） */
+    font-weight:900;
+    line-height:1.35;
+  }
 </style>
 </head>
 
@@ -146,7 +132,6 @@
     </div>
 
     <div class="center" style="margin-top:12px;">
-      <!-- ✅② 点滅⬇️ -->
       <div id="startHint" class="blinkArrow">⬇️⬇️⬇️</div>
 
       <div class="btnRow">
@@ -164,7 +149,6 @@
   <div class="card">
     <div id="phase" class="mid">準備OK</div>
 
-    <!-- ✅ ここも横スクロール案内に使う（スピーチ前など） -->
     <div class="marqueeBox" style="margin:10px 0;">
       <span id="infoMarquee" class="marquee hidden">案内</span>
     </div>
@@ -177,19 +161,18 @@
 
 <script>
 /* =========================
-   全体制御（中断できる設計）
+   全体制御
 ========================= */
-let runToken = 0;            // 開始ごとに増える（古い処理を無効化）
-let speechToken = 0;         // スピーチだけ別トークン
+let runToken = 0;
+let speechToken = 0;
 let speechRunning = false;
 
 function wait(ms){ return new Promise(res=>setTimeout(res,ms)); }
 
 function setPhase(t){ document.getElementById("phase").textContent=t; }
-function setDisplay(t){ document.getElementById("display").innerHTML=t; }
+function setDisplay(html){ document.getElementById("display").innerHTML=html; }
 function setSub(t){ document.getElementById("sub").textContent=t; }
 function setState(t){ document.getElementById("statePill").textContent=t; }
-
 function isStopped(token){ return token !== runToken; }
 
 /* ===== 横スクロール制御 ===== */
@@ -200,16 +183,13 @@ function showInfoMarquee(text){
   el.classList.remove("paused");
 }
 function hideInfoMarquee(){
-  const el = document.getElementById("infoMarquee");
-  el.classList.add("hidden");
+  document.getElementById("infoMarquee").classList.add("hidden");
 }
 function pausePreMarquee(){
-  const pre = document.getElementById("preMarquee");
-  pre.classList.add("paused");
+  document.getElementById("preMarquee").classList.add("paused");
 }
 function resumePreMarquee(){
-  const pre = document.getElementById("preMarquee");
-  pre.classList.remove("paused");
+  document.getElementById("preMarquee").classList.remove("paused");
 }
 
 /* ===== 停止 ===== */
@@ -219,9 +199,7 @@ function stopAll(){
   speechRunning = false;
 
   hideInfoMarquee();
-  resumePreMarquee(); // 待機に戻ったらまた案内流す
-
-  // スタート誘導を戻す
+  resumePreMarquee();
   document.getElementById("startHint").style.display = "inline-block";
 
   setState("停止");
@@ -231,52 +209,68 @@ function stopAll(){
 }
 
 /* =========================
-   呼吸 4-4-8 ×3
-   ✅③ 「吸って/止めて/吐いて」を大きく分かりやすく
+   ✅① 呼吸 4-4-8 ×3
+   - 文字は黒
+   - 文言は初期のまま
+   - カウントはそのまま
 ========================= */
 async function breathing(token){
   setPhase("💨 腹式呼吸");
+  showInfoMarquee("腹式呼吸：吸って4秒 → 止めて4秒 → 吐いて8秒　／　ゆっくりでOK");
+  await wait(900);
+  if(isStopped(token)) return;
+  hideInfoMarquee();
+
   for(let round=1; round<=3; round++){
     if(isStopped(token)) return;
 
-    // 吸う
     setSub(`ラウンド ${round}/3`);
-    setDisplay(`<div class="highlight">吸って</div><div style="font-size:18px;opacity:.9;">4秒</div>`);
+
+    // はい吸ってスゥ〜（4秒）
+    setDisplay(`<div>はい吸ってスゥ〜</div><div style="font-size:18px;opacity:.9;">4秒</div>`);
     for(let i=1;i<=4;i++){
       if(isStopped(token)) return;
       await wait(1000);
     }
 
-    // 止める
-    setDisplay(`<div class="highlight">止めて</div><div style="font-size:18px;opacity:.9;">4秒</div>`);
+    // はい止めて（4秒）
+    setDisplay(`<div>はい止めて</div><div style="font-size:18px;opacity:.9;">4秒</div>`);
     for(let i=1;i<=4;i++){
       if(isStopped(token)) return;
       await wait(1000);
     }
 
-    // 吐く
-    setDisplay(`<div class="highlight">吐いて</div><div style="font-size:18px;opacity:.9;">8秒</div>`);
+    // はい吐いてフゥ〜（8秒）
+    setDisplay(`<div>はい吐いてフゥ〜</div><div style="font-size:18px;opacity:.9;">8秒</div>`);
     for(let i=1;i<=8;i++){
       if(isStopped(token)) return;
       await wait(1000);
     }
   }
+
   setDisplay(" ");
   setSub("呼吸OK！次へ進みます。");
 }
 
 /* =========================
-   舌トレ（3秒で1回 / 7回）
-   ✅③ 案内は大きめのまま
+   ✅② 舌トレ（導入フレーズ＋3秒後開始）
 ========================= */
 async function tongue(token){
   setPhase("👅 舌トレ");
-  setSub("舌先で口の中を大きく回します（ゆっくり）。");
-  setDisplay(" ");
-  await wait(1200);
+  showInfoMarquee("次は舌トレが始まります。舌先で口の中に大きな円を描いて行きましょう。右から3秒後にスタートします。");
+  setSub("準備してください");
+  setDisplay("3");
+  for(let c=3;c>=1;c--){
+    if(isStopped(token)) return;
+    setDisplay(String(c));
+    await wait(1000);
+  }
+  hideInfoMarquee();
 
   setSub("右回り 7回（1回＝3秒）");
+  setDisplay(" ");
   await wait(900);
+
   for(let i=1;i<=7;i++){
     if(isStopped(token)) return;
     setDisplay(i);
@@ -286,6 +280,7 @@ async function tongue(token){
   setSub("左回り 7回（1回＝3秒）");
   setDisplay(" ");
   await wait(900);
+
   for(let i=1;i<=7;i++){
     if(isStopped(token)) return;
     setDisplay(i);
@@ -297,10 +292,9 @@ async function tongue(token){
 }
 
 /* =========================
-   カラオケ（ruby対応 / 空白スルー）
-   ✅⑤ 波のように3秒で点灯→消灯（CSS waveOn）
+   カラオケDOM生成（滑舌用）
 ========================= */
-function buildKaraokeDOMFromHTML(htmlText){
+function buildCharTargetsFromText(text){
   const display = document.getElementById("display");
   display.className = "big";
   display.innerHTML = "";
@@ -309,80 +303,40 @@ function buildKaraokeDOMFromHTML(htmlText){
   wrapper.style.display = "inline-block";
   wrapper.style.textAlign = "center";
 
-  const temp = document.createElement("div");
-  temp.innerHTML = htmlText;
-
   const targets = [];
-
-  function appendNode(node){
-    if(node.nodeType === Node.TEXT_NODE){
-      const txt = node.textContent || "";
-      for(const ch of Array.from(txt)){
-        const sp = document.createElement("span");
-        sp.className = "karaWrap" + (/\s/.test(ch) ? " skip" : "");
-        sp.textContent = ch;
-        wrapper.appendChild(sp);
-        targets.push(sp);
-      }
-      return;
-    }
-
-    if(node.nodeType === Node.ELEMENT_NODE){
-      const tag = node.tagName.toLowerCase();
-      if(tag === "ruby"){
-        const sp = document.createElement("span");
-        sp.className = "karaWrap";
-        sp.appendChild(node.cloneNode(true));
-        wrapper.appendChild(sp);
-        targets.push(sp);
-        return;
-      }
-      for(const child of Array.from(node.childNodes)){
-        appendNode(child);
-      }
-    }
+  for(const ch of Array.from(text)){
+    const sp = document.createElement("span");
+    sp.textContent = ch;
+    wrapper.appendChild(sp);
+    targets.push(sp);
   }
-
-  for(const n of Array.from(temp.childNodes)) appendNode(n);
 
   display.appendChild(wrapper);
   return targets;
 }
 
-async function karaokeHTML(token, htmlText, unitMs){
-  const targets = buildKaraokeDOMFromHTML(htmlText);
-
+async function simpleStepText(token, text, unitMs){
+  const targets = buildCharTargetsFromText(text);
   for(let i=0;i<targets.length;i++){
     if(isStopped(token)) return;
-
-    const el = targets[i];
-
-    if(el.classList.contains("skip")){
-      el.classList.add("done");
-      await wait(Math.max(80, Math.floor(unitMs*0.25)));
-      continue;
-    }
-
-    el.classList.add("active");
-    // ✅波アニメ3秒に合わせる（unitMsは基本3000で使う想定）
+    // 色付け等なし：単純に時間で進める（滑舌はテンポ重視）
     await wait(unitMs);
-    el.classList.remove("active");
-    el.classList.add("done");
   }
-
-  await wait(350);
+  await wait(250);
 }
 
 /* =========================
-   滑舌（あ行〜わ行）
-   ✅④ 1秒/1語 に変更
+   滑舌（あ行〜わ行）1秒/1語
 ========================= */
 async function gyou(token){
-  await wait(2500);
+  await wait(1800);
   if(isStopped(token)) return;
 
   setPhase("👄 滑舌（あ〜わ行）");
-  setSub("1語ずつ丁寧に発声（1秒/1語）");
+  showInfoMarquee("次は滑舌です。1語ずつ丁寧に発声しましょう（1秒/1語）");
+  await wait(900);
+  if(isStopped(token)) return;
+  hideInfoMarquee();
 
   const lines=[
     "あいうえお",
@@ -399,58 +353,68 @@ async function gyou(token){
 
   for(const l of lines){
     if(isStopped(token)) return;
-    await karaokeHTML(token, `<span>${l}</span>`, 1000);
+    setSub("1語ずつ丁寧に");
+    setDisplay(l);
+    await wait(1000);
   }
+  setDisplay(" ");
 }
 
 /* =========================
-   言いにくい15選（ruby）
-   ✅⑤ 10→15、次へ行く前に3秒待つ
-   ✅⑤ 波色付け＝3秒（unitMs=3000）
+   ✅③ 言いにくい15選
+   - カラオケ色付け無し
+   - 文字は少し小さめ（hardText）
+   - 切り替え時は横スクロール案内 継続
 ========================= */
 async function hard15(token){
-  await wait(2500);
+  await wait(1800);
   if(isStopped(token)) return;
 
   setPhase("📢 言いにくいフレーズ15選");
-  setSub("フリガナ付き。ゆっくり丁寧に（波ハイライト3秒）");
+  showInfoMarquee("次は言いにくい言葉です。焦らず、ハッキリ、ゆっくり。次の言葉に切り替わるまで3秒待ちます。");
+  await wait(1000);
+  if(isStopped(token)) return;
+  hideInfoMarquee();
 
   const list=[
-    `<ruby>東京<rt>とうきょう</rt></ruby><ruby>特許<rt>とっきょ</rt></ruby><ruby>許可局<rt>きょかきょく</rt></ruby>`,
-    `<ruby>生麦<rt>なまむぎ</rt></ruby>　<ruby>生米<rt>なまごめ</rt></ruby>　<ruby>生卵<rt>なまたまご</rt></ruby>`,
-    `<ruby>赤巻紙<rt>あかまきがみ</rt></ruby>　<ruby>青巻紙<rt>あおまきがみ</rt></ruby>　<ruby>黄巻紙<rt>きまきがみ</rt></ruby>`,
-    `<ruby>隣<rt>となり</rt></ruby>の<ruby>客<rt>きゃく</rt></ruby>はよく<ruby>柿<rt>かき</rt></ruby><ruby>食<rt>く</rt></ruby>う<ruby>客<rt>きゃく</rt></ruby>だ`,
-    `<ruby>打者<rt>だしゃ</rt></ruby><ruby>走者<rt>そうしゃ</rt></ruby><ruby>勝者<rt>しょうしゃ</rt></ruby>`,
-    `<ruby>魔術師<rt>まじゅつし</rt></ruby><ruby>手術中<rt>しゅじゅつちゅう</rt></ruby>`,
-    `<ruby>旅客機<rt>りょかっき</rt></ruby>　<ruby>旅客船<rt>りょかくせん</rt></ruby>　<ruby>旅館<rt>りょかん</rt></ruby>`,
-    `<ruby>取捨選択<rt>しゅしゃせんたく</rt></ruby>　<ruby>試写室<rt>ししゃしつ</rt></ruby>　<ruby>支社視察<rt>ししゃしさつ</rt></ruby>`,
-    `<ruby>最終手段<rt>さいしゅうしゅだん</rt></ruby>　<ruby>収集<rt>しゅうしゅう</rt></ruby>　<ruby>集中<rt>しゅうちゅう</rt></ruby>`,
-    `<ruby>特急列車<rt>とっきゅうれっしゃ</rt></ruby>　<ruby>普通列車<rt>ふつうれっしゃ</rt></ruby>`,
-    `<ruby>新春<rt>しんしゅん</rt></ruby><ruby>シャンソンショー<rt>しゃんそんしょー</rt></ruby>`,
-    `<ruby>貨客船<rt>かきゃくせん</rt></ruby>と<ruby>旅客船<rt>りょかくせん</rt></ruby>`,
-    `<ruby>隣町<rt>となりまち</rt></ruby>の<ruby>客<rt>きゃく</rt></ruby>が<ruby>柿<rt>かき</rt></ruby>を<ruby>買<rt>か</rt></ruby>う`,
-    `<ruby>早口言葉<rt>はやくちことば</rt></ruby>は<ruby>焦<rt>あせ</rt></ruby>らず<ruby>正確<rt>せいかく</rt></ruby>に`,
-    `<ruby>発声<rt>はっせい</rt></ruby>と<ruby>滑舌<rt>かつぜつ</rt></ruby>は<ruby>毎日<rt>まいにち</rt></ruby>の<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>ね`
+    "東京特許許可局",
+    "生麦 生米 生卵",
+    "赤巻紙 青巻紙 黄巻紙",
+    "隣の客はよく柿食う客だ",
+    "打者走者勝者",
+    "魔術師手術中",
+    "旅客機 旅客船 旅館",
+    "取捨選択 試写室 支社視察",
+    "最終手段 収集 集中",
+    "特急列車 普通列車",
+    "新春シャンソンショー",
+    "貨客船と旅客船",
+    "隣町の客が柿を買う",
+    "早口言葉は焦らず正確に",
+    "発声と滑舌は毎日の積み重ね"
   ];
-
-  const unitMs = 3000; // ✅波3秒
 
   for(const item of list){
     if(isStopped(token)) return;
 
-    await karaokeHTML(token, item, unitMs);
+    setSub("はっきり発声（ゆっくり）");
+    setDisplay(`<div class="hardText">${item}</div>`);
 
-    // ✅ 次の言葉に切り替わるまで3秒待つ
+    // 表示キープ（読みの時間）
+    await wait(4500);
+
+    // 次の言葉まで3秒待つ
     for(let i=0;i<3;i++){
       if(isStopped(token)) return;
       await wait(1000);
     }
   }
+
+  setDisplay(" ");
 }
 
 /* =========================
-   40秒スピーチ（停止＆話題変更）
-   ✅⑥ スピーチ前：➡️点滅 + 10秒後開始の横スクロール案内
+   40秒スピーチ（準備10秒 → 開始40秒）
 ========================= */
 const topics=[
   "あなたの好きな食べ物（理由も添えて）",
@@ -484,7 +448,6 @@ const topics=[
   "自分を一言で表すと？（理由も）",
   "自己紹介（名前/仕事/最近のテーマ）"
 ];
-
 let currentTopic = "";
 function pickTopic(){ return topics[Math.floor(Math.random()*topics.length)]; }
 
@@ -506,14 +469,11 @@ async function speech40(token){
 
   if(!currentTopic) currentTopic = pickTopic();
 
-  // ✅⑥ お題の横に➡️点滅
   setDisplay(`お題：${currentTopic}<span class="blinkRight">➡️</span>`);
   setSub("止めたい時は「停止」 / 話題を変えたい時は「話題変更」");
 
-  // ✅⑥ 10秒後開始の横スクロール案内
-  showInfoMarquee("10秒後にスピーチを開始します　／　今のうちに構成を決めましょう（結論→理由→具体例→結論）");
+  showInfoMarquee("10秒後にスピーチを開始します　／　結論→理由→具体例→結論 を意識してみましょう");
 
-  // ✅⑥ 10秒待つ（途中停止対応）
   const mySpeechToken = ++speechToken;
   for(let sec=10; sec>=1; sec--){
     if(isStopped(token)) return;
@@ -529,7 +489,6 @@ async function speech40(token){
   setPhase("🎤 40秒スピーチ（開始）");
   setState("スピーチ中");
 
-  // 40秒カウント
   setDisplay("40");
   for(let i=40;i>=0;i--){
     if(isStopped(token)) return;
@@ -549,14 +508,12 @@ async function startAll(){
   runToken++;
   const token = runToken;
 
-  // ✅① スタートしたら開始前スクロールは止める（待機中のみ流す）
   pausePreMarquee();
   document.getElementById("startHint").style.display = "none";
 
   setState("進行中");
   speechRunning = false;
   currentTopic = pickTopic();
-
   hideInfoMarquee();
 
   try{
@@ -568,7 +525,7 @@ async function startAll(){
     await breathing(token);
     if(isStopped(token)) return;
 
-    await wait(1500);
+    await wait(1200);
     await tongue(token);
     if(isStopped(token)) return;
 
@@ -578,7 +535,6 @@ async function startAll(){
     await hard15(token);
     if(isStopped(token)) return;
 
-    // ✅⑥ 40秒スピーチ
     await speech40(token);
     if(isStopped(token)) return;
 
@@ -587,7 +543,6 @@ async function startAll(){
     setSub("この調子で焦らず続けていきましょう♪");
     setState("完了");
 
-    // 完了後：待機スクロール再開してもOKならここで戻す
     resumePreMarquee();
     document.getElementById("startHint").style.display = "inline-block";
 
