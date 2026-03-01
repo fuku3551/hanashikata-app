@@ -1,453 +1,1143 @@
 <!doctype html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔰 今日のおすすめ練習</title>
-<link rel="stylesheet" href="style.css">
-
+<title>🔰 今日のおすすめ練習｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  .big{
-    font-size:40px;font-weight:900;text-align:center;margin:10px 0;line-height:1.35;
-    word-break:break-word;color:#111;
-  }
-  .mid{font-size:24px;font-weight:900;text-align:center;margin:6px 0;}
-  .small{text-align:center;opacity:.88;font-size:18px;line-height:1.8;white-space:pre-wrap;}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .blinkArrow{display:inline-block;font-size:26px;animation: blink 1s steps(2,start) infinite;margin-bottom:6px;}
-  @keyframes blink{50%{opacity:0;}}
+:root {
+–bg: #f5f0e8;
+–bg-card: #fffdf7;
+–text: #2c2520;
+–text-sub: #7a6e62;
+–accent: #c0392b;
+–accent-light: rgba(192, 57, 43, .08);
+–blue: #2980b9;
+–blue-light: rgba(41, 128, 185, .1);
+–green: #27ae60;
+–green-light: rgba(39, 174, 96, .1);
+–orange: #e67e22;
+–orange-light: rgba(230, 126, 34, .1);
+–border: rgba(44, 37, 32, .1);
+–shadow: 0 2px 12px rgba(44, 37, 32, .06);
+–radius: 16px;
+–radius-sm: 10px;
+–font-body: ‘Zen Kaku Gothic New’, ‘Hiragino Sans’, sans-serif;
+–font-serif: ‘Noto Serif JP’, ‘游明朝’, serif;
+}
 
-  .marqueeBox{
-    width:100%;overflow:hidden;border-radius:12px;border:1px solid rgba(0,0,0,.12);
-    background:rgba(255,255,255,.85);padding:8px 10px;box-sizing:border-box;
-  }
-  .marquee{
-    display:inline-block;white-space:nowrap;will-change:transform;animation: marqueeMove 9s linear infinite;
-    font-weight:900;font-size:18px;
-  }
-  @keyframes marqueeMove{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}
-  .marquee.paused{animation-play-state:paused;}
+body {
+font-family: var(–font-body);
+background: var(–bg);
+color: var(–text);
+line-height: 1.7;
+min-height: 100vh;
+-webkit-font-smoothing: antialiased;
+}
 
-  ruby{ruby-position:over;}
-  rt{font-size:11px;opacity:.92;}
-  .rtMini rt{font-size:10px;opacity:.9;}
+/* ===== HEADER ===== */
+.header {
+background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+color: #fff;
+padding: 20px 20px 18px;
+text-align: center;
+position: relative;
+overflow: hidden;
+}
+.header::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: radial-gradient(ellipse at 30% 0%, rgba(41,128,185,.15) 0%, transparent 60%);
+pointer-events: none;
+}
+.header h1 {
+font-family: var(–font-serif);
+font-size: 22px;
+font-weight: 700;
+letter-spacing: .08em;
+position: relative;
+}
+.header .sub {
+font-size: 12px;
+opacity: .65;
+margin-top: 4px;
+letter-spacing: .04em;
+position: relative;
+}
+.header .back-link {
+display: inline-block;
+margin-top: 8px;
+color: rgba(255,255,255,.7);
+text-decoration: none;
+font-size: 13px;
+transition: color .2s;
+position: relative;
+}
+.header .back-link:hover { color: #fff; }
 
-  .center{text-align:center;}
-  .controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px;}
+.container {
+max-width: 700px;
+margin: 0 auto;
+padding: 16px;
+}
 
-  .btn{
-    padding:14px 16px;border-radius:14px;border:1px solid rgba(0,0,0,.10);
-    font-weight:900;font-size:16px;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.06);
-    transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease;min-width:150px;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-    touch-action: manipulation; /* ✅ iPhoneのタップ最適化 */
-  }
-  .btn:active{transform:scale(.98);box-shadow:0 4px 10px rgba(0,0,0,.06);}
-  .primary{background:#0ea5e9;color:#fff;border:none;}
-  .danger{background:#ef4444;color:#fff;border:none;}
-  .ghost{background:#fff;}
-  .warn{background:#111;color:#fff;border:none;}
-  .disabled{opacity:.45;} /* pointer-events は使わない（disabled属性だけで制御） */
+/* ===== ONBOARDING ===== */
+.onboarding {
+background: linear-gradient(135deg, var(–blue-light), var(–green-light));
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 16px 18px;
+margin-bottom: 16px;
+position: relative;
+animation: slideDown .5s ease-out;
+}
+@keyframes slideDown {
+from { opacity: 0; transform: translateY(-12px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.onboarding-title {
+font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(–blue);
+}
+.onboarding-steps { display: flex; flex-direction: column; gap: 6px; }
+.onboarding-step {
+display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6;
+}
+.step-num {
+flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+background: var(–blue); color: #fff;
+display: flex; align-items: center; justify-content: center;
+font-size: 11px; font-weight: 700; margin-top: 1px;
+}
+.onboarding .close-btn {
+position: absolute; top: 10px; right: 12px;
+background: none; border: none; font-size: 18px;
+color: var(–text-sub); cursor: pointer; line-height: 1; padding: 4px;
+}
 
-  .pill{
-    display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid rgba(0,0,0,.12);
-    background:rgba(255,255,255,.75);font-size:14px;font-weight:900;
-  }
-  .blinkRight{display:inline-block;margin-left:8px;font-size:20px;animation: blink 1s steps(2,start) infinite;}
+/* ===== CARD ===== */
+.card {
+background: var(–bg-card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+box-shadow: var(–shadow);
+margin-bottom: 16px;
+overflow: hidden;
+}
+.card-header {
+padding: 14px 18px 10px;
+border-bottom: 1px solid var(–border);
+display: flex; align-items: center; gap: 8px;
+}
+.card-header .icon { font-size: 18px; }
+.card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
+.card-body { padding: 16px 18px; }
 
-  .hardText{font-size:32px;font-weight:900;line-height:1.35;}
+/* ===== STEP INDICATOR ===== */
+.steps-indicator {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 0;
+padding: 14px 10px;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+}
+.step-item {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+min-width: 52px;
+position: relative;
+}
+.step-circle {
+width: 32px; height: 32px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 13px;
+border: 2px solid var(–border);
+background: #fff;
+color: var(–text-sub);
+transition: all .3s ease;
+position: relative;
+z-index: 1;
+}
+.step-circle.active {
+border-color: var(–green);
+background: var(–green);
+color: #fff;
+box-shadow: 0 2px 8px rgba(39, 174, 96, .3);
+animation: stepPulse 1.5s ease infinite;
+}
+@keyframes stepPulse {
+0%, 100% { box-shadow: 0 2px 8px rgba(39, 174, 96, .3); }
+50% { box-shadow: 0 2px 16px rgba(39, 174, 96, .5); }
+}
+.step-circle.done {
+border-color: var(–green);
+background: var(–green-light);
+color: var(–green);
+}
+.step-label {
+font-size: 10px;
+font-weight: 600;
+color: var(–text-sub);
+white-space: nowrap;
+transition: color .3s;
+}
+.step-item.active .step-label { color: var(–green); font-weight: 700; }
+.step-item.done .step-label { color: var(–green); }
 
-  .countDown{font-size:56px;font-weight:1000;letter-spacing:.02em;line-height:1.1;}
-  .countLabel{font-size:20px;opacity:.9;margin-top:6px;}
+.step-connector {
+width: 20px; height: 2px;
+background: var(–border);
+margin-bottom: 18px;
+flex-shrink: 0;
+transition: background .3s;
+}
+.step-connector.done { background: var(–green); }
 
-  .gyouWrap{
-    display:inline-block;
-    padding:10px 18px;
-    border-radius:16px;
-    background:rgba(14,165,233,.10);
-    border:1px solid rgba(14,165,233,.20);
-  }
-  .gyouActive{
-    background:rgba(239,68,68,.14);
-    border-color:rgba(239,68,68,.35);
-  }
+/* ===== ANNOUNCE BAR ===== */
+.announce-bar {
+background: var(–blue-light);
+border: 1px solid rgba(41, 128, 185, .15);
+border-radius: var(–radius-sm);
+padding: 10px 14px;
+margin-bottom: 14px;
+font-size: 13px;
+font-weight: 600;
+color: var(–blue);
+text-align: center;
+line-height: 1.6;
+min-height: 42px;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all .3s ease;
+}
+.announce-bar.phase-info {
+background: var(–orange-light);
+border-color: rgba(230, 126, 34, .15);
+color: var(–orange);
+}
 
-  /* ===================================================
-     ✅✅✅ ここが「確実に直す」核心（被さり除去＋最前面）
-     透明な要素がボタンの上に被さってもタップを奪わない
-  =================================================== */
-  .marqueeBox, .marquee, #topMarquee { pointer-events:none; } /* 被さりがあってもボタンが押せる */
+/* ===== MAIN DISPLAY ===== */
+.display-area {
+min-height: 180px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 20px 10px;
+text-align: center;
+}
+.display-phase {
+font-size: 14px;
+font-weight: 700;
+color: var(–text-sub);
+margin-bottom: 8px;
+letter-spacing: .03em;
+}
+.display-main {
+font-family: var(–font-serif);
+font-size: 38px;
+font-weight: 700;
+line-height: 1.4;
+color: var(–text);
+word-break: break-word;
+transition: opacity .2s;
+}
+.display-sub {
+font-size: 14px;
+color: var(–text-sub);
+margin-top: 10px;
+line-height: 1.7;
+white-space: pre-wrap;
+}
 
-  .controls{ position:relative; z-index:9999; }
-  .controls .btn{ position:relative; z-index:10000; pointer-events:auto; }
+.countdown {
+font-size: 56px;
+font-weight: 900;
+letter-spacing: .02em;
+line-height: 1.1;
+font-family: var(–font-serif);
+}
+.countdown-label {
+font-size: 16px;
+color: var(–text-sub);
+margin-top: 4px;
+}
 
-  /* style.css側でtransform等が入ってもボタンだけ最前面に出す保険 */
-  header.top, main.menu, .card{ position:relative; z-index:1; }
+/* ===== CONTROLS ===== */
+.controls-main {
+display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+}
+.btn {
+display: inline-flex; align-items: center; gap: 6px;
+padding: 11px 20px; border-radius: var(–radius-sm);
+border: 1px solid var(–border); background: #fff;
+font-family: var(–font-body); font-size: 14px; font-weight: 600;
+cursor: pointer; transition: all .15s ease; white-space: nowrap;
+-webkit-tap-highlight-color: transparent;
+touch-action: manipulation;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled {
+opacity: .4;
+cursor: default;
+}
+.btn:disabled:active { transform: none; }
+.btn-start {
+background: var(–green); color: #fff; border-color: var(–green);
+box-shadow: 0 2px 8px rgba(39, 174, 96, .25);
+min-width: 160px;
+font-size: 16px;
+padding: 13px 24px;
+}
+.btn-start:hover:not(:disabled) { background: #219a52; }
+.btn-pause {
+background: var(–blue); color: #fff; border-color: var(–blue);
+box-shadow: 0 2px 8px rgba(41, 128, 185, .2);
+}
+.btn-stop {
+background: var(–accent); color: #fff; border-color: var(–accent);
+box-shadow: 0 2px 8px rgba(192, 57, 43, .2);
+}
+.btn-skip {
+background: #2c2520; color: #fff; border-color: #2c2520;
+}
+.btn-ghost {
+background: #fff; color: var(–text);
+}
+
+.controls-secondary {
+display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+margin-top: 8px;
+}
+
+/* ===== STATUS ===== */
+.status-bar {
+display: flex; align-items: center; justify-content: center;
+gap: 10px; padding: 10px 0 4px; font-size: 12px; color: var(–text-sub);
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.status-dot.idle { background: #bbb; }
+.status-dot.playing { background: var(–green); animation: pulse 1.2s infinite; }
+.status-dot.paused { background: var(–orange); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+
+.progress-wrap {
+margin-top: 10px; background: rgba(0,0,0,.06);
+border-radius: 4px; height: 5px; overflow: hidden;
+}
+.progress-bar {
+height: 100%; width: 0%; background: var(–green);
+border-radius: 4px; transition: width .5s ease;
+}
+
+/* ===== GYOU / PHRASE STYLES ===== */
+.gyou-wrap {
+display: inline-block;
+padding: 10px 20px;
+border-radius: var(–radius-sm);
+background: var(–blue-light);
+border: 1px solid rgba(41, 128, 185, .2);
+font-family: var(–font-serif);
+font-size: 32px;
+font-weight: 700;
+transition: all .2s;
+}
+.gyou-wrap.highlight {
+background: var(–accent-light);
+border-color: rgba(192, 57, 43, .25);
+color: var(–accent);
+}
+
+.phrase-text {
+font-family: var(–font-serif);
+font-size: 28px;
+font-weight: 700;
+line-height: 1.5;
+}
+.phrase-text ruby rt {
+font-size: .48em;
+color: var(–accent);
+opacity: .85;
+}
+
+/* ===== WELCOME STATE ===== */
+.welcome-icon {
+font-size: 48px;
+margin-bottom: 8px;
+}
+.welcome-title {
+font-family: var(–font-serif);
+font-size: 20px;
+font-weight: 700;
+margin-bottom: 6px;
+}
+.welcome-desc {
+font-size: 13px;
+color: var(–text-sub);
+line-height: 1.7;
+}
+.welcome-route {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+flex-wrap: wrap;
+margin-top: 12px;
+font-size: 12px;
+color: var(–text-sub);
+}
+.route-chip {
+background: var(–bg);
+border: 1px solid var(–border);
+border-radius: 999px;
+padding: 4px 10px;
+font-weight: 600;
+font-size: 11px;
+}
+.route-arrow { opacity: .4; }
+
+/* ===== COMPLETE STATE ===== */
+.complete-wrap {
+text-align: center;
+padding: 10px 0;
+}
+.complete-icon { font-size: 52px; margin-bottom: 8px; }
+.complete-title {
+font-family: var(–font-serif);
+font-size: 22px; font-weight: 700;
+margin-bottom: 6px;
+}
+.complete-msg {
+font-size: 14px;
+color: var(–text-sub);
+line-height: 1.8;
+}
+.complete-actions {
+display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap;
+}
+
+/* ===== TIPS ===== */
+.tips {
+background: var(–accent-light); border-radius: var(–radius-sm);
+padding: 12px 14px; margin-top: 14px;
+}
+.tips-title { font-size: 13px; font-weight: 700; color: var(–accent); margin-bottom: 6px; }
+.tips-text { font-size: 12px; line-height: 1.8; color: var(–text-sub); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+.container { padding: 10px; }
+.card-body { padding: 12px 14px; }
+.display-main { font-size: 30px; }
+.countdown { font-size: 48px; }
+.gyou-wrap { font-size: 26px; padding: 8px 16px; }
+.phrase-text { font-size: 22px; }
+.btn { padding: 10px 14px; font-size: 13px; }
+.btn-start { padding: 12px 20px; font-size: 15px; }
+.steps-indicator { gap: 0; padding: 10px 4px; }
+.step-circle { width: 28px; height: 28px; font-size: 11px; }
+.step-connector { width: 14px; }
+.step-label { font-size: 9px; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+.display-area { min-height: 140px; padding: 12px 10px; }
+.header { padding: 10px 20px; }
+.header h1 { font-size: 18px; }
+}
 </style>
-</head>
 
+</head>
 <body>
 
-<header class="top">
+<div class="header">
   <h1>🔰 今日のおすすめ練習</h1>
-  <p><a href="index.html">← ホームへ</a></p>
-</header>
+  <p class="sub">迷ったらこれだけでOK ｜ 約4〜6分</p>
+  <a href="index.html" class="back-link">← ホームへ戻る</a>
+</div>
 
-<main class="menu">
+<div class="container">
 
-  <div class="card">
-    <div class="title">一本道ルート（約4〜6分）</div>
-    <div class="desc small">
-呼吸 → 舌トレ → 滑舌（あ〜わ行）→ 言いにくい15選 → 40秒スピーチ
-    </div>
+  <!-- 初回ガイド -->
 
-    <div class="marqueeBox" style="margin-top:10px;">
-      <span id="topMarquee" class="marquee">
-        スタートを押したら腹式呼吸から始まります　／　スマホは横向き推奨　／　途中で止めたい時は「停止」　／　「一時停止」も使えます
-      </span>
-    </div>
-
-    <div class="center" style="margin-top:12px;">
-      <div id="startHint" class="blinkArrow">⬇️⬇️⬇️</div>
-
-      <div class="controls">
-        <button id="startBtn" class="btn primary" type="button" style="min-width:220px;">▶ 開始</button>
-        <button id="pauseBtn" class="btn ghost disabled" type="button" disabled>⏸ 一時停止</button>
-        <button id="stopBtn" class="btn danger disabled" type="button" disabled>⏹ 停止</button>
-        <button id="skipBtn" class="btn warn disabled" type="button" disabled>⏭ スキップ</button>
-        <button id="topicBtn" class="btn ghost" type="button">🎲 話題変更</button>
+  <div class="onboarding" id="onboarding">
+    <button class="close-btn" onclick="closeOnboarding()" aria-label="閉じる">✕</button>
+    <div class="onboarding-title">🎯 はじめての方へ</div>
+    <div class="onboarding-steps">
+      <div class="onboarding-step">
+        <span class="step-num">1</span>
+        <span><strong>「▶ スタート」</strong>を押すだけ。呼吸から順番に案内します</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="step-num">2</span>
+        <span>画面の指示に合わせて、<strong>声に出して</strong>練習しましょう</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="step-num">3</span>
+        <span>途中で<strong>一時停止・スキップ</strong>も自由にできます</span>
       </div>
     </div>
+  </div>
 
-    <div class="center" style="margin-top:10px;">
-      <span class="pill" id="statePill">待機中</span>
+  <!-- ステップインジケーター -->
+
+  <div class="card">
+    <div class="card-body" style="padding: 8px 12px;">
+      <div class="steps-indicator" id="stepsIndicator">
+        <div class="step-item" id="step-0">
+          <div class="step-circle">💨</div>
+          <span class="step-label">呼吸</span>
+        </div>
+        <div class="step-connector" id="conn-0"></div>
+        <div class="step-item" id="step-1">
+          <div class="step-circle">👅</div>
+          <span class="step-label">舌トレ</span>
+        </div>
+        <div class="step-connector" id="conn-1"></div>
+        <div class="step-item" id="step-2">
+          <div class="step-circle">👄</div>
+          <span class="step-label">滑舌</span>
+        </div>
+        <div class="step-connector" id="conn-2"></div>
+        <div class="step-item" id="step-3">
+          <div class="step-circle">📢</div>
+          <span class="step-label">フレーズ</span>
+        </div>
+        <div class="step-connector" id="conn-3"></div>
+        <div class="step-item" id="step-4">
+          <div class="step-circle">🎤</div>
+          <span class="step-label">スピーチ</span>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- メインエリア -->
+
   <div class="card">
-    <div id="phase" class="mid">準備OK</div>
-    <div id="display" class="big">00</div>
-    <div id="sub" class="small">スタートを押してください</div>
+    <div class="card-header">
+      <span class="icon">🎛️</span>
+      <span class="label">練習エリア</span>
+    </div>
+    <div class="card-body">
+
+```
+  <!-- アナウンスバー -->
+  <div class="announce-bar" id="announceBar">
+    「▶ スタート」を押すと、呼吸から順番にガイドします
   </div>
 
-</main>
+  <!-- ステータス -->
+  <div class="status-bar">
+    <span><span class="status-dot idle" id="statusDot"></span></span>
+    <span id="statusText">待機中</span>
+  </div>
+
+  <!-- メイン表示 -->
+  <div class="display-area" id="displayArea">
+    <div class="welcome-icon">🏋️</div>
+    <div class="welcome-title">今日のウォームアップ</div>
+    <div class="welcome-desc">5つのメニューを一本道で練習します</div>
+    <div class="welcome-route">
+      <span class="route-chip">💨 呼吸</span>
+      <span class="route-arrow">→</span>
+      <span class="route-chip">👅 舌トレ</span>
+      <span class="route-arrow">→</span>
+      <span class="route-chip">👄 滑舌</span>
+      <span class="route-arrow">→</span>
+      <span class="route-chip">📢 フレーズ</span>
+      <span class="route-arrow">→</span>
+      <span class="route-chip">🎤 スピーチ</span>
+    </div>
+  </div>
+
+  <!-- プログレスバー -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- コントロール -->
+  <div style="margin-top: 14px;">
+    <div class="controls-main" id="controlsMain">
+      <button class="btn btn-start" id="startBtn" type="button">▶ スタート</button>
+    </div>
+    <div class="controls-secondary" id="controlsSec" style="display:none;">
+      <button class="btn btn-pause" id="pauseBtn" type="button">⏸ 一時停止</button>
+      <button class="btn btn-stop" id="stopBtn" type="button">⏹ 停止</button>
+      <button class="btn btn-skip" id="skipBtn" type="button">⏭ スキップ</button>
+    </div>
+    <div class="controls-secondary" id="controlsTopic" style="display:none;">
+      <button class="btn btn-ghost" id="topicBtn" type="button">🎲 話題を変える</button>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="tips" id="tipsArea">
+    <div class="tips-title">💡 このメニューについて</div>
+    <div class="tips-text">
+      話し方の基礎となる「呼吸・舌・滑舌」をウォームアップし、<br>
+      最後に40秒スピーチで実践する一本道コースです。<br>
+      毎日続けることで、声の通りと滑舌が改善されます。
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+</div>
 
 <script>
-/* =========================
-   状態
-========================= */
+/* ======================================================
+   状態管理
+====================================================== */
 let runToken = 0;
-
 let paused = false;
 let pauseResolvers = [];
-function waitWhilePaused(){
-  if(!paused) return Promise.resolve();
-  return new Promise(res => pauseResolvers.push(res));
-}
-function resumePausedWaiters(){
-  pauseResolvers.splice(0).forEach(r=>r());
-}
-
 let skipRequested = false;
 let speechRunning = false;
+let currentPhaseIndex = -1;
 
-/* =========================
-   UI
-========================= */
-const $ = (id)=>document.getElementById(id);
-
-function setPhase(t){ $("phase").textContent=t; }
-function setDisplay(html){ $("display").innerHTML=html; }
-function setSub(t){ $("sub").textContent=t; }
-function setState(t){ $("statePill").textContent=t; }
-function isStopped(token){ return token !== runToken; }
-
-/* 上段マルキー */
-const topMarquee = $("topMarquee");
-const DEFAULT_TOP = topMarquee.textContent;
-
-function setTopMarquee(text){
-  topMarquee.textContent = text;
-  // iOSで差し替え確実化（アニメ再スタート）
-  topMarquee.style.animation = "none";
-  void topMarquee.offsetWidth;
-  topMarquee.style.animation = "";
+function waitWhilePaused() {
+  if (!paused) return Promise.resolve();
+  return new Promise(res => pauseResolvers.push(res));
 }
-function pauseTopMarquee(){ topMarquee.classList.add("paused"); }
-function resumeTopMarquee(){ topMarquee.classList.remove("paused"); }
-
-/* ボタン有効/無効 */
-function setBtnEnabled(btn, enabled){
-  btn.disabled = !enabled;
-  btn.classList.toggle("disabled", !enabled);
-}
-function enableDuringRun(on){
-  setBtnEnabled($("pauseBtn"), on);
-  setBtnEnabled($("stopBtn"),  on);
-  setBtnEnabled($("skipBtn"),  on);
+function resumePausedWaiters() {
+  pauseResolvers.splice(0).forEach(r => r());
 }
 
-/* =========================
-   待ち（止められる）
-========================= */
-async function wait(ms, token){
-  const step = 60; // 反応を良くする
+/* ======================================================
+   DOM helpers
+====================================================== */
+const $ = id => document.getElementById(id);
+
+function setAnnounce(text, type = '') {
+  const bar = $('announceBar');
+  bar.textContent = text;
+  bar.className = 'announce-bar' + (type ? ' ' + type : '');
+}
+
+function setDisplayHTML(html) {
+  $('displayArea').innerHTML = html;
+}
+
+function setStatus(state) {
+  const dot = $('statusDot');
+  const txt = $('statusText');
+  if (state === 'playing') {
+    dot.className = 'status-dot playing';
+    txt.textContent = '進行中 — 声に出して練習しましょう';
+  } else if (state === 'paused') {
+    dot.className = 'status-dot paused';
+    txt.textContent = '一時停止中';
+  } else if (state === 'complete') {
+    dot.className = 'status-dot idle';
+    txt.textContent = '完了';
+  } else {
+    dot.className = 'status-dot idle';
+    txt.textContent = '待機中';
+  }
+}
+
+function setProgress(pct) {
+  $('progressBar').style.width = Math.min(100, pct) + '%';
+}
+
+function isStopped(token) { return token !== runToken; }
+
+/* ======================================================
+   Step Indicator
+====================================================== */
+const PHASES = ['呼吸', '舌トレ', '滑舌', 'フレーズ', 'スピーチ'];
+
+function updateStepIndicator(activeIndex, doneUpTo) {
+  for (let i = 0; i < 5; i++) {
+    const item = $('step-' + i);
+    const circle = item.querySelector('.step-circle');
+    item.className = 'step-item';
+    circle.className = 'step-circle';
+
+    if (i < doneUpTo) {
+      item.classList.add('done');
+      circle.classList.add('done');
+      circle.textContent = '✓';
+    } else if (i === activeIndex) {
+      item.classList.add('active');
+      circle.classList.add('active');
+      // restore emoji
+      const emojis = ['💨', '👅', '👄', '📢', '🎤'];
+      circle.textContent = emojis[i];
+    } else {
+      const emojis = ['💨', '👅', '👄', '📢', '🎤'];
+      circle.textContent = emojis[i];
+    }
+
+    if (i < 4) {
+      const conn = $('conn-' + i);
+      conn.className = 'step-connector' + (i < doneUpTo ? ' done' : '');
+    }
+  }
+}
+
+function resetStepIndicator() {
+  const emojis = ['💨', '👅', '👄', '📢', '🎤'];
+  for (let i = 0; i < 5; i++) {
+    const item = $('step-' + i);
+    const circle = item.querySelector('.step-circle');
+    item.className = 'step-item';
+    circle.className = 'step-circle';
+    circle.textContent = emojis[i];
+    if (i < 4) $('conn-' + i).className = 'step-connector';
+  }
+}
+
+/* ======================================================
+   Controls visibility
+====================================================== */
+function showControls(mode) {
+  // mode: 'start', 'running', 'speech', 'complete'
+  const main = $('controlsMain');
+  const sec = $('controlsSec');
+  const topic = $('controlsTopic');
+
+  if (mode === 'start') {
+    main.style.display = 'flex';
+    main.innerHTML = '<button class="btn btn-start" id="startBtn" type="button">▶ スタート</button>';
+    $('startBtn').addEventListener('click', startAll);
+    sec.style.display = 'none';
+    topic.style.display = 'none';
+  } else if (mode === 'running') {
+    main.style.display = 'none';
+    sec.style.display = 'flex';
+    topic.style.display = 'none';
+  } else if (mode === 'speech') {
+    main.style.display = 'none';
+    sec.style.display = 'flex';
+    topic.style.display = 'flex';
+  } else if (mode === 'complete') {
+    main.style.display = 'none';
+    sec.style.display = 'none';
+    topic.style.display = 'none';
+  }
+}
+
+/* ======================================================
+   Interruptible wait
+====================================================== */
+async function wait(ms, token) {
+  const step = 60;
   let left = ms;
-  while(left > 0){
-    if(isStopped(token)) return false;
-    if(skipRequested) return false;
+  while (left > 0) {
+    if (isStopped(token) || skipRequested) return false;
     await waitWhilePaused();
     const chunk = Math.min(step, left);
-    await new Promise(res=>setTimeout(res, chunk));
+    await new Promise(res => setTimeout(res, chunk));
     left -= chunk;
   }
   return true;
 }
 
-/* フェーズ開始前アナウンス */
-async function announceNext(token, text, ms=1200){
+async function announceNext(token, text, ms = 1200) {
   skipRequested = false;
-  setTopMarquee(text);
-  if(paused) pauseTopMarquee(); else resumeTopMarquee();
+  setAnnounce(text, 'phase-info');
   return await wait(ms, token);
 }
 
-/* =========================
-   コントロール
-========================= */
-function stopAll(){
+/* ======================================================
+   Onboarding
+====================================================== */
+function closeOnboarding() {
+  const el = $('onboarding');
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(-10px)';
+  el.style.transition = 'all .3s ease';
+  setTimeout(() => el.style.display = 'none', 300);
+  try { localStorage.setItem('today_onboarding_closed', '1'); } catch (e) {}
+}
+try {
+  if (localStorage.getItem('today_onboarding_closed') === '1') {
+    $('onboarding').style.display = 'none';
+  }
+} catch (e) {}
+
+/* ======================================================
+   Phase 1: Breathing
+====================================================== */
+async function breathing(token) {
+  currentPhaseIndex = 0;
+  updateStepIndicator(0, 0);
+  setProgress(0);
+
+  if (!await announceNext(token, '腹式呼吸で体をリラックスさせましょう', 1400)) return;
+  setAnnounce('💨 腹式呼吸 — 吸って4秒 → 止めて4秒 → 吐いて8秒');
+
+  for (let round = 1; round <= 3; round++) {
+    if (isStopped(token) || skipRequested) return;
+
+    for (let n = 4; n >= 1; n--) {
+      if (isStopped(token) || skipRequested) return;
+      setDisplayHTML(`
+        <div class="display-phase">ラウンド ${round}/3</div>
+        <div style="font-size:16px; color:var(--blue); font-weight:600; margin-bottom:6px;">鼻からスゥ〜っと吸って</div>
+        <div class="countdown">${n}</div>
+        <div class="countdown-label">秒</div>
+      `);
+      if (!await wait(1000, token)) return;
+    }
+
+    for (let n = 4; n >= 1; n--) {
+      if (isStopped(token) || skipRequested) return;
+      setDisplayHTML(`
+        <div class="display-phase">ラウンド ${round}/3</div>
+        <div style="font-size:16px; color:var(--orange); font-weight:600; margin-bottom:6px;">そのまま止めて</div>
+        <div class="countdown">${n}</div>
+        <div class="countdown-label">秒</div>
+      `);
+      if (!await wait(1000, token)) return;
+    }
+
+    for (let n = 8; n >= 1; n--) {
+      if (isStopped(token) || skipRequested) return;
+      setDisplayHTML(`
+        <div class="display-phase">ラウンド ${round}/3</div>
+        <div style="font-size:16px; color:var(--green); font-weight:600; margin-bottom:6px;">口からフゥ〜っと吐いて</div>
+        <div class="countdown">${n}</div>
+        <div class="countdown-label">秒</div>
+      `);
+      if (!await wait(1000, token)) return;
+    }
+
+    setProgress((round / 3) * 20);
+  }
+}
+
+/* ======================================================
+   Phase 2: Tongue
+====================================================== */
+async function tongue(token) {
+  currentPhaseIndex = 1;
+  updateStepIndicator(1, 1);
+  setProgress(20);
+
+  if (!await announceNext(token, '舌の柔軟性を上げると滑舌が良くなります', 1600)) return;
+  setAnnounce('👅 舌トレ — 舌先で口の中に大きな円を描きましょう');
+
+  // countdown
+  for (let c = 3; c >= 1; c--) {
+    if (isStopped(token) || skipRequested) return;
+    setDisplayHTML(`
+      <div class="display-phase">準備してください</div>
+      <div class="countdown">${c}</div>
+    `);
+    if (!await wait(1000, token)) return;
+  }
+
+  // right
+  setAnnounce('👅 舌トレ — 右回り 7回（1回＝3秒）');
+  for (let i = 1; i <= 7; i++) {
+    if (isStopped(token) || skipRequested) return;
+    setDisplayHTML(`
+      <div class="display-phase">右回り</div>
+      <div class="display-main" style="font-size:48px;">🔄 ${i}<span style="font-size:20px; opacity:.6;">/7</span></div>
+    `);
+    if (!await wait(3000, token)) return;
+    setProgress(20 + (i / 14) * 20);
+  }
+
+  if (!await wait(500, token)) return;
+
+  // left
+  setAnnounce('👅 舌トレ — 左回り 7回（1回＝3秒）');
+  for (let i = 1; i <= 7; i++) {
+    if (isStopped(token) || skipRequested) return;
+    setDisplayHTML(`
+      <div class="display-phase">左回り</div>
+      <div class="display-main" style="font-size:48px;">🔃 ${i}<span style="font-size:20px; opacity:.6;">/7</span></div>
+    `);
+    if (!await wait(3000, token)) return;
+    setProgress(30 + (i / 14) * 20);
+  }
+}
+
+/* ======================================================
+   Phase 3: Gyou (50 sounds)
+====================================================== */
+async function gyou(token) {
+  currentPhaseIndex = 2;
+  updateStepIndicator(2, 2);
+  setProgress(40);
+
+  if (!await announceNext(token, '口をしっかり開けて、一語ずつ丁寧に発声しましょう')) return;
+  setAnnounce('👄 滑舌（あ〜わ行）— 1語ずつハッキリと');
+
+  const lines = [
+    'あいうえお', 'かきくけこ', 'さしすせそ', 'たちつてと', 'なにぬねの',
+    'はひふへほ', 'まみむめも', 'やゆよ', 'らりるれろ', 'わをん'
+  ];
+
+  for (let idx = 0; idx < lines.length; idx++) {
+    const l = lines[idx];
+    if (isStopped(token) || skipRequested) return;
+
+    setDisplayHTML(`
+      <div class="display-phase">${idx + 1}/${lines.length}</div>
+      <div class="gyou-wrap highlight">${l}</div>
+    `);
+    if (!await wait(600, token)) return;
+
+    setDisplayHTML(`
+      <div class="display-phase">${idx + 1}/${lines.length}</div>
+      <div class="gyou-wrap">${l}</div>
+    `);
+    if (!await wait(1400, token)) return;
+
+    setProgress(40 + ((idx + 1) / lines.length) * 15);
+  }
+}
+
+/* ======================================================
+   Phase 4: Hard phrases (7 selected)
+====================================================== */
+async function hardPhrases(token) {
+  currentPhaseIndex = 3;
+  updateStepIndicator(3, 3);
+  setProgress(55);
+
+  if (!await announceNext(token, '焦らず、ハッキリ、ゆっくり発声しましょう', 1500)) return;
+  setAnnounce('📢 言いにくいフレーズ — ゆっくり正確に');
+
+  const list = [
+    '<ruby>東京<rt>とうきょう</rt></ruby><ruby>特許<rt>とっきょ</rt></ruby><ruby>許可局<rt>きょかきょく</rt></ruby>',
+    '<ruby>生麦<rt>なまむぎ</rt></ruby> <ruby>生米<rt>なまごめ</rt></ruby> <ruby>生卵<rt>なまたまご</rt></ruby>',
+    '<ruby>赤巻紙<rt>あかまきがみ</rt></ruby> <ruby>青巻紙<rt>あおまきがみ</rt></ruby> <ruby>黄巻紙<rt>きまきがみ</rt></ruby>',
+    '<ruby>打者<rt>だしゃ</rt></ruby> <ruby>走者<rt>そうしゃ</rt></ruby> <ruby>勝者<rt>しょうしゃ</rt></ruby>',
+    '<ruby>魔術師<rt>まじゅつし</rt></ruby> <ruby>手術中<rt>しゅじゅつちゅう</rt></ruby>',
+    '<ruby>旅客機<rt>りょかっき</rt></ruby> <ruby>旅客船<rt>りょかくせん</rt></ruby>',
+    '<ruby>発声<rt>はっせい</rt></ruby>と<ruby>滑舌<rt>かつぜつ</rt></ruby>は<ruby>毎日<rt>まいにち</rt></ruby>の<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>ね',
+  ];
+
+  for (let idx = 0; idx < list.length; idx++) {
+    if (isStopped(token) || skipRequested) return;
+
+    setDisplayHTML(`
+      <div class="display-phase">${idx + 1}/${list.length}</div>
+      <div class="phrase-text">${list[idx]}</div>
+      <div class="display-sub">ゆっくり、ハッキリ声に出しましょう</div>
+    `);
+    if (!await wait(5000, token)) return;
+
+    setProgress(55 + ((idx + 1) / list.length) * 20);
+  }
+}
+
+/* ======================================================
+   Phase 5: 40-sec Speech
+====================================================== */
+const topics = [
+  'あなたの好きな食べ物（理由も添えて）',
+  '子どもの頃よく遊んだこと',
+  '最近うれしかったこと',
+  '最近学んだこと',
+  'あなたの強み（エピソード付き）',
+  '最近ハマっていること',
+  'いま頑張っていること',
+  'あなたの出身地のおすすめ',
+  '大切にしている価値観',
+  '感謝している人（理由）',
+  '今住んでいる場所の好きなところ',
+  'これから挑戦したいこと',
+  '最近できるようになったこと',
+  '人に褒められて嬉しかったこと',
+  '尊敬する人（理由）',
+  '最近見たもので印象に残ったもの',
+  'あなたの苦手な食べ物（どう工夫してる？）',
+  'あなたの仕事（一言で言うと）',
+  'あなたの弱み（改善の工夫）',
+  '昔やっていたスポーツの思い出',
+];
+
+let currentTopic = '';
+
+function pickTopic() {
+  return topics[Math.floor(Math.random() * topics.length)];
+}
+
+function changeTopic() {
+  currentTopic = pickTopic();
+  // Update display if in speech phase
+  if (speechRunning) {
+    const area = $('displayArea');
+    const phase = area.querySelector('.display-phase');
+    if (phase && phase.textContent.includes('お題')) {
+      // re-render topic
+    }
+  }
+  setAnnounce('🎲 話題を変更しました：' + currentTopic);
+}
+
+async function speech40(token) {
+  currentPhaseIndex = 4;
+  updateStepIndicator(4, 4);
+  setProgress(75);
+  showControls('speech');
+
+  if (!await announceNext(token, '最後は40秒スピーチ！結論→理由→具体例→結論を意識', 1500)) return;
+
+  speechRunning = true;
+  if (!currentTopic) currentTopic = pickTopic();
+
+  setAnnounce('🎤 40秒スピーチ — 10秒間で考えをまとめましょう');
+
+  setDisplayHTML(`
+    <div class="display-phase">お題</div>
+    <div class="display-main" style="font-size:22px; line-height:1.6;">${currentTopic}</div>
+    <div class="display-sub">10秒間で話す内容を考えましょう\n「🎲 話題を変える」で別のお題に変更できます</div>
+  `);
+
+  // 10 sec prep
+  for (let sec = 10; sec >= 1; sec--) {
+    if (isStopped(token) || skipRequested) return;
+
+    if (sec <= 5) {
+      setDisplayHTML(`
+        <div class="display-phase">まもなく開始</div>
+        <div class="countdown">${sec}</div>
+        <div class="countdown-label">お題：${currentTopic}</div>
+      `);
+    } else {
+      setDisplayHTML(`
+        <div class="display-phase">お題：${currentTopic}</div>
+        <div class="countdown" style="font-size:42px;">${sec}</div>
+        <div class="countdown-label">準備時間</div>
+      `);
+    }
+    if (!await wait(1000, token)) return;
+  }
+
+  // Speech
+  setAnnounce('🎤 スピーチ中！ — 結論→理由→具体例→結論');
+  setStatus('playing');
+
+  for (let i = 40; i >= 0; i--) {
+    if (isStopped(token) || skipRequested) return;
+
+    const color = i <= 5 ? 'var(--accent)' : i <= 10 ? 'var(--orange)' : 'var(--text)';
+    const label = i <= 5 ? 'まとめましょう！' : i <= 10 ? 'そろそろまとめへ' : '話しましょう！';
+
+    setDisplayHTML(`
+      <div class="display-phase">${label}</div>
+      <div class="countdown" style="color:${color};">${i}</div>
+      <div class="countdown-label">秒</div>
+    `);
+
+    setProgress(75 + ((40 - i) / 40) * 25);
+    if (!await wait(1000, token)) return;
+  }
+
+  speechRunning = false;
+}
+
+/* ======================================================
+   Complete
+====================================================== */
+function showComplete() {
+  updateStepIndicator(-1, 5);
+  setProgress(100);
+  setStatus('complete');
+  setAnnounce('すべてのメニューが完了しました！');
+
+  setDisplayHTML(`
+    <div class="complete-wrap">
+      <div class="complete-icon">🎉</div>
+      <div class="complete-title">お疲れさまでした！</div>
+      <div class="complete-msg">
+        今日のウォームアップ完了です。<br>
+        この調子で毎日続けていきましょう！
+      </div>
+      <div class="complete-actions">
+        <button class="btn btn-start" onclick="startAll()" type="button">🔄 もう一度</button>
+        <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">🏠 ホームへ</a>
+      </div>
+    </div>
+  `);
+
+  showControls('complete');
+}
+
+/* ======================================================
+   Stop
+====================================================== */
+function stopAll() {
   runToken++;
   paused = false;
   resumePausedWaiters();
   skipRequested = false;
   speechRunning = false;
+  currentPhaseIndex = -1;
 
-  enableDuringRun(false);
+  resetStepIndicator();
+  setProgress(0);
+  setStatus('idle');
+  setAnnounce('「▶ スタート」を押すと、呼吸から順番にガイドします');
+  showControls('start');
 
-  setTopMarquee(DEFAULT_TOP);
-  resumeTopMarquee();
+  $('pauseBtn').textContent = '⏸ 一時停止';
+  $('pauseBtn').className = 'btn btn-pause';
 
-  $("startHint").style.display = "inline-block";
-  $("pauseBtn").textContent = "⏸ 一時停止";
-
-  setState("停止");
-  setPhase("⏹ 停止しました");
-  setDisplay("00");
-  setSub("再開する場合は「開始」を押してください");
+  setDisplayHTML(`
+    <div class="welcome-icon">🏋️</div>
+    <div class="welcome-title">今日のウォームアップ</div>
+    <div class="welcome-desc">5つのメニューを一本道で練習します</div>
+    <div class="welcome-route">
+      <span class="route-chip">💨 呼吸</span>
+      <span class="route-arrow">→</span>
+      <span class="route-chip">👅 舌トレ</span>
+      <span class="route-arrow">→</span>
+      <span class="route-chip">👄 滑舌</span>
+      <span class="route-arrow">→</span>
+      <span class="route-chip">📢 フレーズ</span>
+      <span class="route-arrow">→</span>
+      <span class="route-chip">🎤 スピーチ</span>
+    </div>
+  `);
 }
 
-function togglePause(){
-  const btn = $("pauseBtn");
-  if(btn.disabled) return;
-
+/* ======================================================
+   Pause / Skip
+====================================================== */
+function togglePause() {
   paused = !paused;
-  btn.textContent = paused ? "▶ 再開" : "⏸ 一時停止";
-  setState(paused ? "一時停止中" : "進行中");
-
-  // 一時停止中はマルキーも止める（混乱防止）
-  if(paused){
-    pauseTopMarquee();
-  }else{
-    resumeTopMarquee();
+  const btn = $('pauseBtn');
+  if (paused) {
+    btn.textContent = '▶ 再開';
+    btn.className = 'btn btn-start';
+    setStatus('paused');
+  } else {
+    btn.textContent = '⏸ 一時停止';
+    btn.className = 'btn btn-pause';
+    setStatus('playing');
     resumePausedWaiters();
   }
 }
 
-function skipPhase(){
-  const btn = $("skipBtn");
-  if(btn.disabled) return;
-
-  // ✅ スキップ押した瞬間に、待機中でも止まらないように解除
+function skipPhase() {
   skipRequested = true;
   resumePausedWaiters();
-
-  setSub("⏭ 次へ移動中…");
 }
 
-/* =========================
-   メニュー内容
-========================= */
-async function breathing(token){
-  if(!await announceNext(token, "次は腹式呼吸です：吸って4秒 → 止めて4秒 → 吐いて8秒　／　ゆっくりでOK")) return;
-  setPhase("💨 腹式呼吸");
-
-  for(let round=1; round<=3; round++){
-    if(isStopped(token) || skipRequested) return;
-    setSub(`ラウンド ${round}/3`);
-
-    for(let n=4; n>=1; n--){
-      if(isStopped(token) || skipRequested) return;
-      setDisplay(`<div>はい吸ってスゥ〜</div><div class="countDown">${n}</div><div class="countLabel">秒</div>`);
-      if(!await wait(1000, token)) return;
-    }
-
-    for(let n=4; n>=1; n--){
-      if(isStopped(token) || skipRequested) return;
-      setDisplay(`<div>はい止めて</div><div class="countDown">${n}</div><div class="countLabel">秒</div>`);
-      if(!await wait(1000, token)) return;
-    }
-
-    for(let n=8; n>=1; n--){
-      if(isStopped(token) || skipRequested) return;
-      setDisplay(`<div>はい吐いてフゥ〜</div><div class="countDown">${n}</div><div class="countLabel">秒</div>`);
-      if(!await wait(1000, token)) return;
-    }
-  }
-  setDisplay(" ");
-  setSub("呼吸OK！次へ進みます。");
-}
-
-async function tongue(token){
-  if(!await announceNext(token, "次は舌トレです。舌先で口の中に大きな円を描いて行きましょう。右から3秒後にスタートします。", 1600)) return;
-  setPhase("👅 舌トレ");
-  setSub("準備してください");
-
-  for(let c=3;c>=1;c--){
-    if(isStopped(token) || skipRequested) return;
-    setDisplay(`<div class="countDown">${c}</div>`);
-    if(!await wait(1000, token)) return;
-  }
-
-  setSub("右回り 7回（1回＝3秒）");
-  setDisplay(" ");
-  if(!await wait(700, token)) return;
-
-  for(let i=1;i<=7;i++){
-    if(isStopped(token) || skipRequested) return;
-    setDisplay(i);
-    if(!await wait(3000, token)) return;
-  }
-
-  setSub("左回り 7回（1回＝3秒）");
-  setDisplay(" ");
-  if(!await wait(700, token)) return;
-
-  for(let i=1;i<=7;i++){
-    if(isStopped(token) || skipRequested) return;
-    setDisplay(i);
-    if(!await wait(3000, token)) return;
-  }
-
-  setSub("OK！舌が動きやすくなりました。");
-  setDisplay(" ");
-}
-
-/* ✅ 五十音：1フレーズ=2秒（点灯0.6秒 + 通常1.4秒） */
-async function gyou(token){
-  if(!await announceNext(token, "次は滑舌（あ〜わ行）です。1語ずつ丁寧に発声しましょう（2秒/1語）")) return;
-
-  setPhase("👄 滑舌（あ〜わ行）");
-  setSub("1語ずつ丁寧に（2秒）");
-
-  const lines=[
-    "あいうえお","かきくけこ","さしすせそ","たちつてと","なにぬねの",
-    "はひふへほ","まみむめも","やゆよ","らりるれろ","わをん"
-  ];
-
-  for(const l of lines){
-    if(isStopped(token) || skipRequested) return;
-
-    setDisplay(`<div class="gyouWrap gyouActive">${l}</div>`);
-    if(!await wait(600, token)) return;
-
-    setDisplay(`<div class="gyouWrap">${l}</div>`);
-    if(!await wait(1400, token)) return;
-  }
-
-  setDisplay(" ");
-}
-
-async function hard15(token){
-  if(!await announceNext(token, "次は言いにくいフレーズ15選です。焦らず、ハッキリ、ゆっくり。次の言葉に切り替わるまで2秒待ちます。", 1500)) return;
-
-  setPhase("📢 言いにくいフレーズ15選");
-  setSub("はっきり発声（ゆっくり）");
-
-  const list=[
-    `<span class="rtMini"><ruby>東京<rt>とうきょう</rt></ruby><ruby>特許<rt>とっきょ</rt></ruby><ruby>許可局<rt>きょかきょく</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>生麦<rt>なまむぎ</rt></ruby> <ruby>生米<rt>なまごめ</rt></ruby> <ruby>生卵<rt>なまたまご</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>赤巻紙<rt>あかまきがみ</rt></ruby> <ruby>青巻紙<rt>あおまきがみ</rt></ruby> <ruby>黄巻紙<rt>きまきがみ</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>隣<rt>となり</rt></ruby>の<ruby>客<rt>きゃく</rt></ruby>はよく<ruby>柿<rt>かき</rt></ruby><ruby>食<rt>く</rt></ruby>う<ruby>客<rt>きゃく</rt></ruby>だ</span>`,
-    `<span class="rtMini"><ruby>打者<rt>だしゃ</rt></ruby><ruby>走者<rt>そうしゃ</rt></ruby><ruby>勝者<rt>しょうしゃ</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>魔術師<rt>まじゅつし</rt></ruby><ruby>手術中<rt>しゅじゅつちゅう</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>旅客機<rt>りょかっき</rt></ruby> <ruby>旅客船<rt>りょかくせん</rt></ruby> <ruby>旅館<rt>りょかん</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>取捨選択<rt>しゅしゃせんたく</rt></ruby> <ruby>試写室<rt>ししゃしつ</rt></ruby> <ruby>支社視察<rt>ししゃしさつ</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>最終手段<rt>さいしゅうしゅだん</rt></ruby> <ruby>収集<rt>しゅうしゅう</rt></ruby> <ruby>集中<rt>しゅうちゅう</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>特急列車<rt>とっきゅうれっしゃ</rt></ruby> <ruby>普通列車<rt>ふつうれっしゃ</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>新春<rt>しんしゅん</rt></ruby> <ruby>唱歌<rt>しょうか</rt></ruby> <ruby>奨学金<rt>しょうがくきん</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>貨客船<rt>かきゃくせん</rt></ruby>と<ruby>旅客船<rt>りょかくせん</rt></ruby></span>`,
-    `<span class="rtMini"><ruby>隣町<rt>となりまち</rt></ruby>の<ruby>客<rt>きゃく</rt></ruby>が<ruby>柿<rt>かき</rt></ruby>を<ruby>買<rt>か</rt></ruby>う</span>`,
-    `<span class="rtMini"><ruby>早口言葉<rt>はやくちことば</rt></ruby>は<ruby>焦<rt>あせ</rt></ruby>らず<ruby>正確<rt>せいかく</rt></ruby>に</span>`,
-    `<span class="rtMini"><ruby>発声<rt>はっせい</rt></ruby>と<ruby>滑舌<rt>かつぜつ</rt></ruby>は<ruby>毎日<rt>まいにち</rt></ruby>の<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>ね</span>`
-  ];
-
-  for(const item of list){
-    if(isStopped(token) || skipRequested) return;
-
-    setDisplay(`<div class="hardText">${item}</div>`);
-    if(!await wait(4500, token)) return;
-
-    if(!await wait(3000, token)) return;
-  }
-  setDisplay(" ");
-}
-
-/* 40秒スピーチ（10秒準備→残り5秒はカウント表示） */
-const topics=[
-  "あなたの好きな食べ物（理由も添えて）","あなたの苦手な食べ物（どう工夫してる？）","あなたの出身地（おすすめポイント）",
-  "子どもの頃よく遊んだこと","昔やっていたスポーツ（思い出）","今住んでいる場所（好きな所）","あなたの仕事（一言で言うと）",
-  "これから挑戦したい仕事・活動","最近うれしかったこと","最近学んだこと","最近できるようになったこと","あなたの強み（エピソード付き）",
-  "あなたの弱み（改善の工夫）","大切にしている価値観","人に褒められて嬉しかったこと","最近ハマっていること",
-  "最近見た/読んだもので印象に残ったもの","尊敬する人（理由）","感謝している人（理由）","いま頑張っていること"
-];
-let currentTopic = "";
-function pickTopic(){ return topics[Math.floor(Math.random()*topics.length)]; }
-function changeTopic(){
-  currentTopic = pickTopic();
-  setSub(speechRunning ? `（変更）${currentTopic}\nこの話題で続けてOK！` : `（話題）${currentTopic}\n※スピーチ開始時にこの話題で行きます`);
-}
-
-async function speech40(token){
-  if(!await announceNext(token, "次は40秒スピーチです。10秒準備してから開始します。結論→理由→具体例→結論 を意識！", 1500)) return;
-
-  setPhase("🎤 40秒スピーチ（準備）");
-  setState("スピーチ準備");
-  speechRunning = true;
-
-  if(!currentTopic) currentTopic = pickTopic();
-  setDisplay(`お題：${currentTopic}<span class="blinkRight">➡️</span>`);
-  setSub("止めたい時は「停止」 / スキップで次へ / 話題変更もOK");
-
-  for(let sec=10; sec>=1; sec--){
-    if(isStopped(token) || skipRequested) return;
-
-    if(sec <= 5){
-      setPhase("🎤 40秒スピーチ（開始まで）");
-      setDisplay(`<div style="font-size:18px;opacity:.85;">開始まで</div><div class="countDown">${sec}</div>`);
-    }else{
-      setPhase(`🎤 40秒スピーチ（開始まで ${sec}秒）`);
-      setDisplay(`お題：${currentTopic}<span class="blinkRight">➡️</span>`);
-    }
-    if(!await wait(1000, token)) return;
-  }
-
-  setPhase("🎤 40秒スピーチ（開始）");
-  setState("スピーチ中");
-
-  for(let i=40;i>=0;i--){
-    if(isStopped(token) || skipRequested) return;
-    setDisplay(i);
-    if(!await wait(1000, token)) return;
-  }
-
-  speechRunning = false;
-  setState("進行中");
-}
-
-/* =========================
-   全体スタート
-========================= */
-async function startAll(){
+/* ======================================================
+   Main flow
+====================================================== */
+async function startAll() {
   runToken++;
   const token = runToken;
 
@@ -455,66 +1145,71 @@ async function startAll(){
   resumePausedWaiters();
   skipRequested = false;
   speechRunning = false;
+  currentTopic = '';
 
-  $("pauseBtn").textContent = "⏸ 一時停止";
-  $("startHint").style.display = "none";
+  $('pauseBtn').textContent = '⏸ 一時停止';
+  $('pauseBtn').className = 'btn btn-pause';
 
-  enableDuringRun(true);
-  resumeTopMarquee();
+  showControls('running');
+  setStatus('playing');
+  setAnnounce('これから始まります…');
 
-  setState("進行中");
-  setPhase("準備…");
-  setDisplay(" ");
-  setSub("これから始まります");
-  if(!await wait(600, token)) return;
+  setDisplayHTML(`
+    <div class="display-phase">準備中</div>
+    <div class="display-main" style="font-size: 32px;">始めましょう！</div>
+  `);
 
-  try{
-    await breathing(token); if(isStopped(token)) return;
+  if (!await wait(800, token)) return resetOnStop();
+
+  try {
+    // Phase 1
+    await breathing(token);
+    if (isStopped(token)) return resetOnStop();
     skipRequested = false;
 
-    await tongue(token); if(isStopped(token)) return;
+    // Phase 2
+    await tongue(token);
+    if (isStopped(token)) return resetOnStop();
     skipRequested = false;
 
-    await gyou(token); if(isStopped(token)) return;
+    // Phase 3
+    await gyou(token);
+    if (isStopped(token)) return resetOnStop();
     skipRequested = false;
 
-    await hard15(token); if(isStopped(token)) return;
+    // Phase 4
+    await hardPhrases(token);
+    if (isStopped(token)) return resetOnStop();
     skipRequested = false;
 
+    // Phase 5
     currentTopic = pickTopic();
-    await speech40(token); if(isStopped(token)) return;
+    await speech40(token);
+    if (isStopped(token)) return resetOnStop();
 
-    setPhase("✨ お疲れ様でした");
-    setDisplay("😊");
-    setSub("この調子で焦らず続けていきましょう♪");
-    setState("完了");
-  } finally {
-    enableDuringRun(false);
-    setTopMarquee(DEFAULT_TOP);
-    resumeTopMarquee();
-    $("startHint").style.display = "inline-block";
-    paused = false;
-    resumePausedWaiters();
-    skipRequested = false;
-    speechRunning = false;
-    $("pauseBtn").textContent = "⏸ 一時停止";
+    // Complete!
+    showComplete();
+
+  } catch (e) {
+    console.error(e);
+    resetOnStop();
   }
 }
 
-/* =========================
-   ✅ ボタンイベント：これだけで統一（clickだけ）
-   iPhoneはbuttonならclickで確実に動きます。
-   （touch系を重ねると二重発火/無反応の原因になりやすい）
-========================= */
-document.addEventListener("DOMContentLoaded", ()=>{
-  $("startBtn").addEventListener("click", startAll);
-  $("pauseBtn").addEventListener("click", togglePause);
-  $("stopBtn").addEventListener("click", stopAll);
-  $("skipBtn").addEventListener("click", skipPhase);
-  $("topicBtn").addEventListener("click", changeTopic);
+function resetOnStop() {
+  // already handled by stopAll, just ensure clean state
+  showControls('start');
+}
 
-  // 初期表示
-  setTopMarquee(DEFAULT_TOP);
+/* ======================================================
+   Event listeners
+====================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  $('startBtn').addEventListener('click', startAll);
+  $('pauseBtn').addEventListener('click', togglePause);
+  $('stopBtn').addEventListener('click', stopAll);
+  $('skipBtn').addEventListener('click', skipPhase);
+  $('topicBtn').addEventListener('click', changeTopic);
 });
 </script>
 
