@@ -1,133 +1,541 @@
-
-
-
-
-
-
 <!doctype html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>一人話し方GYM</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎤 一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–bg: #f5f0e8;
+–bg-card: #fffdf7;
+–text: #2c2520;
+–text-sub: #7a6e62;
+–accent: #c0392b;
+–accent-light: rgba(192, 57, 43, .08);
+–blue: #2980b9;
+–blue-light: rgba(41, 128, 185, .1);
+–green: #27ae60;
+–green-light: rgba(39, 174, 96, .1);
+–orange: #e67e22;
+–orange-light: rgba(230, 126, 34, .1);
+–purple: #8e44ad;
+–purple-light: rgba(142, 68, 173, .08);
+–border: rgba(44, 37, 32, .1);
+–shadow: 0 2px 12px rgba(44, 37, 32, .06);
+–radius: 16px;
+–radius-sm: 10px;
+–font-body: ‘Zen Kaku Gothic New’, ‘Hiragino Sans’, sans-serif;
+–font-serif: ‘Noto Serif JP’, ‘游明朝’, serif;
+}
+
+body {
+font-family: var(–font-body);
+background: var(–bg);
+color: var(–text);
+line-height: 1.7;
+min-height: 100vh;
+-webkit-font-smoothing: antialiased;
+}
+
+/* ===== HEADER ===== */
+.header {
+background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+color: #fff;
+padding: 28px 20px 24px;
+text-align: center;
+position: relative;
+overflow: hidden;
+}
+.header::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: radial-gradient(ellipse at 30% 0%, rgba(192,57,43,.12) 0%, transparent 60%),
+radial-gradient(ellipse at 70% 100%, rgba(41,128,185,.1) 0%, transparent 50%);
+pointer-events: none;
+}
+.header h1 {
+font-family: var(–font-serif);
+font-size: 26px;
+font-weight: 700;
+letter-spacing: .1em;
+position: relative;
+}
+.header .sub {
+font-size: 13px;
+opacity: .6;
+margin-top: 6px;
+letter-spacing: .06em;
+position: relative;
+}
+
+.container {
+max-width: 700px;
+margin: 0 auto;
+padding: 16px;
+}
+
+/* ===== TODAY’S PICK (Hero Card) ===== */
+.hero-card {
+background: linear-gradient(135deg, var(–green-light), var(–blue-light));
+border: 1.5px solid rgba(39, 174, 96, .2);
+border-radius: var(–radius);
+box-shadow: var(–shadow), 0 4px 20px rgba(39, 174, 96, .08);
+padding: 20px;
+margin-bottom: 20px;
+text-align: center;
+position: relative;
+overflow: hidden;
+}
+.hero-card::after {
+content: ‘’;
+position: absolute;
+top: -30px; right: -30px;
+width: 100px; height: 100px;
+background: radial-gradient(circle, rgba(39,174,96,.08) 0%, transparent 70%);
+pointer-events: none;
+}
+.hero-badge {
+display: inline-block;
+background: var(–green);
+color: #fff;
+font-size: 11px;
+font-weight: 700;
+padding: 3px 12px;
+border-radius: 999px;
+letter-spacing: .05em;
+margin-bottom: 10px;
+}
+.hero-title {
+font-family: var(–font-serif);
+font-size: 20px;
+font-weight: 700;
+margin-bottom: 6px;
+}
+.hero-desc {
+font-size: 13px;
+color: var(–text-sub);
+line-height: 1.7;
+margin-bottom: 14px;
+}
+.hero-route {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 4px;
+flex-wrap: wrap;
+margin-bottom: 16px;
+}
+.hero-chip {
+font-size: 11px;
+font-weight: 600;
+background: rgba(255,255,255,.7);
+border: 1px solid var(–border);
+border-radius: 999px;
+padding: 3px 8px;
+color: var(–text-sub);
+}
+.hero-arrow { opacity: .3; font-size: 10px; }
+.hero-btn {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 13px 28px;
+border-radius: var(–radius-sm);
+background: var(–green);
+color: #fff;
+font-family: var(–font-body);
+font-size: 16px;
+font-weight: 700;
+text-decoration: none;
+border: none;
+box-shadow: 0 3px 10px rgba(39, 174, 96, .25);
+transition: all .15s ease;
+-webkit-tap-highlight-color: transparent;
+}
+.hero-btn:active { transform: scale(.97); }
+.hero-btn:hover { background: #219a52; }
+.hero-time {
+font-size: 12px;
+color: var(–text-sub);
+margin-top: 10px;
+opacity: .8;
+}
+
+/* ===== CATEGORY SECTION ===== */
+.category {
+margin-bottom: 20px;
+}
+.category-header {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 0 4px;
+margin-bottom: 10px;
+}
+.category-icon {
+width: 28px; height: 28px;
+border-radius: 8px;
+display: flex; align-items: center; justify-content: center;
+font-size: 14px;
+flex-shrink: 0;
+}
+.category-icon.basics { background: var(–blue-light); }
+.category-icon.speech { background: var(–orange-light); }
+.category-icon.guide { background: var(–purple-light); }
+.category-icon.tools { background: var(–accent-light); }
+
+.category-title {
+font-weight: 700;
+font-size: 14px;
+letter-spacing: .03em;
+}
+.category-sub {
+font-size: 11px;
+color: var(–text-sub);
+}
+
+/* ===== MENU CARDS ===== */
+.menu-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+
+.menu-card {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+background: var(–bg-card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+box-shadow: var(–shadow);
+padding: 16px 10px 14px;
+text-decoration: none;
+color: var(–text);
+transition: all .15s ease;
+-webkit-tap-highlight-color: transparent;
+text-align: center;
+}
+.menu-card:active {
+transform: scale(.97);
+box-shadow: 0 1px 6px rgba(44, 37, 32, .08);
+}
+.menu-card:hover {
+border-color: rgba(44, 37, 32, .18);
+box-shadow: 0 4px 16px rgba(44, 37, 32, .1);
+}
+
+.menu-card-icon {
+font-size: 28px;
+line-height: 1;
+margin-bottom: 2px;
+}
+.menu-card-title {
+font-weight: 700;
+font-size: 14px;
+letter-spacing: .02em;
+}
+.menu-card-desc {
+font-size: 11px;
+color: var(–text-sub);
+line-height: 1.5;
+}
+.menu-card-level {
+display: inline-block;
+font-size: 10px;
+font-weight: 600;
+padding: 1px 8px;
+border-radius: 999px;
+margin-top: 2px;
+}
+.level-beginner {
+background: var(–green-light);
+color: var(–green);
+}
+.level-intermediate {
+background: var(–blue-light);
+color: var(–blue);
+}
+.level-advanced {
+background: var(–orange-light);
+color: var(–orange);
+}
+
+/* ===== LIST CARDS (for guide items) ===== */
+.menu-list {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+.list-card {
+display: flex;
+align-items: center;
+gap: 12px;
+background: var(–bg-card);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+box-shadow: var(–shadow);
+padding: 12px 14px;
+text-decoration: none;
+color: var(–text);
+transition: all .15s ease;
+-webkit-tap-highlight-color: transparent;
+}
+.list-card:active {
+transform: scale(.98);
+}
+.list-card:hover {
+border-color: rgba(44, 37, 32, .18);
+}
+.list-card-icon {
+font-size: 22px;
+flex-shrink: 0;
+width: 36px;
+text-align: center;
+}
+.list-card-body { flex: 1; min-width: 0; }
+.list-card-title {
+font-weight: 700;
+font-size: 14px;
+letter-spacing: .02em;
+}
+.list-card-desc {
+font-size: 11px;
+color: var(–text-sub);
+}
+.list-card-arrow {
+color: var(–text-sub);
+opacity: .4;
+font-size: 14px;
+flex-shrink: 0;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+text-align: center;
+padding: 20px 16px 32px;
+font-size: 11px;
+color: var(–text-sub);
+opacity: .6;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 420px) {
+.container { padding: 12px; }
+.menu-grid { gap: 8px; }
+.menu-card { padding: 14px 8px 12px; }
+.menu-card-icon { font-size: 24px; }
+.menu-card-title { font-size: 13px; }
+.hero-title { font-size: 18px; }
+.hero-btn { padding: 12px 22px; font-size: 15px; }
+.header h1 { font-size: 22px; }
+}
+
+@media (min-width: 600px) {
+.menu-grid {
+grid-template-columns: 1fr 1fr 1fr;
+}
+}
+</style>
+
 </head>
-
 <body>
-  <header class="top">
-    <h1>🎤 一人話し方GYM</h1>
-    <p class="sub">滑舌・舌トレ・呼吸・文章・スピーチ</p>
-  </header>
 
-  <main class="menu">
-    
-    <div class="card" style="display:block;">
-  <div class="title">🔰 今日のおすすめ（3分）</div>
-  <div class="desc" style="opacity:0.9;">
-    迷ったらこれだけでOK。呼吸→舌→滑舌→40秒スピーチの一本道ルートです。
-    <div style="margin-top:10px;">
-      <a href="today.html" style="display:inline-block; padding:12px 14px; border-radius:12px; background:#0ea5e9; color:#fff; text-decoration:none; font-weight:800;">
-        ▶ 今日のおすすめを開始
+<!-- ===== HEADER ===== -->
+
+<div class="header">
+  <h1>🎤 一人話し方GYM</h1>
+  <p class="sub">滑舌・舌トレ・呼吸・スピーチ・話法</p>
+</div>
+
+<div class="container">
+
+  <!-- ===== TODAY'S PICK ===== -->
+
+  <div class="hero-card">
+    <div class="hero-badge">🔰 迷ったらこれだけ！</div>
+    <div class="hero-title">今日のおすすめ練習</div>
+    <div class="hero-desc">
+      呼吸→舌トレ→滑舌→フレーズ→スピーチの<br>
+      一本道ルートで基礎を一気にウォームアップ
+    </div>
+    <div class="hero-route">
+      <span class="hero-chip">💨 呼吸</span>
+      <span class="hero-arrow">▸</span>
+      <span class="hero-chip">👅 舌トレ</span>
+      <span class="hero-arrow">▸</span>
+      <span class="hero-chip">👄 滑舌</span>
+      <span class="hero-arrow">▸</span>
+      <span class="hero-chip">📢 フレーズ</span>
+      <span class="hero-arrow">▸</span>
+      <span class="hero-chip">🎤 スピーチ</span>
+    </div>
+    <a href="today.html" class="hero-btn">▶ スタート</a>
+    <div class="hero-time">所要時間：約4〜6分</div>
+  </div>
+
+  <!-- ===== 基礎トレーニング ===== -->
+
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon basics">💪</div>
+      <div>
+        <div class="category-title">基礎トレーニング</div>
+        <div class="category-sub">声と口の基本を鍛える</div>
+      </div>
+    </div>
+    <div class="menu-grid">
+      <a class="menu-card" href="kokyu.html">
+        <div class="menu-card-icon">💨</div>
+        <div class="menu-card-title">呼吸練習</div>
+        <div class="menu-card-desc">4-4-8 / カウント</div>
+        <span class="menu-card-level level-beginner">初級</span>
+      </a>
+      <a class="menu-card" href="shitatore.html">
+        <div class="menu-card-icon">👅</div>
+        <div class="menu-card-title">舌トレ</div>
+        <div class="menu-card-desc">ラ行・リズム反復</div>
+        <span class="menu-card-level level-beginner">初級</span>
+      </a>
+      <a class="menu-card" href="katsuzetsu.html">
+        <div class="menu-card-icon">👄</div>
+        <div class="menu-card-title">滑舌練習</div>
+        <div class="menu-card-desc">母音・行別・リズム</div>
+        <span class="menu-card-level level-beginner">初級</span>
+      </a>
+      <a class="menu-card" href="yomi.html">
+        <div class="menu-card-icon">📖</div>
+        <div class="menu-card-title">読み練習</div>
+        <div class="menu-card-desc">早口言葉・外郎売</div>
+        <span class="menu-card-level level-intermediate">中級</span>
       </a>
     </div>
-    <div style="font-size:14px; opacity:0.75; margin-top:8px;">
-      おすすめ所要時間：3分
+  </div>
+
+  <!-- ===== スピーチ実践 ===== -->
+
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon speech">🎤</div>
+      <div>
+        <div class="category-title">スピーチ実践</div>
+        <div class="category-sub">制限時間で話す力を磨く</div>
+      </div>
+    </div>
+    <div class="menu-grid">
+      <a class="menu-card" href="40sec.html">
+        <div class="menu-card-icon">⏱</div>
+        <div class="menu-card-title">40秒スピーチ</div>
+        <div class="menu-card-desc">制限時間トレーニング</div>
+        <span class="menu-card-level level-beginner">初級</span>
+      </a>
+      <a class="menu-card" href="80sec.html">
+        <div class="menu-card-icon">⏱️</div>
+        <div class="menu-card-title">80秒スピーチ</div>
+        <div class="menu-card-desc">おすすめ30お題</div>
+        <span class="menu-card-level level-intermediate">中級</span>
+      </a>
+      <a class="menu-card" href="2min.html">
+        <div class="menu-card-icon">⏱️</div>
+        <div class="menu-card-title">2分スピーチ</div>
+        <div class="menu-card-desc">ランダムお題+120秒</div>
+        <span class="menu-card-level level-advanced">上級</span>
+      </a>
     </div>
   </div>
+
+  <!-- ===== 話法ガイド ===== -->
+
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon guide">📚</div>
+      <div>
+        <div class="category-title">話法ガイド</div>
+        <div class="category-sub">場面に合った話し方の型を学ぶ</div>
+      </div>
+    </div>
+    <div class="menu-list">
+      <a class="list-card" href="talk-guide.html">
+        <div class="list-card-icon">📘</div>
+        <div class="list-card-body">
+          <div class="list-card-title">話法ガイド</div>
+          <div class="list-card-desc">使い分け早見表</div>
+        </div>
+        <div class="list-card-arrow">›</div>
+      </a>
+      <a class="list-card" href="prep.html">
+        <div class="list-card-icon">📢</div>
+        <div class="list-card-body">
+          <div class="list-card-title">PREP話法</div>
+          <div class="list-card-desc">説明・報告の型</div>
+        </div>
+        <div class="list-card-arrow">›</div>
+      </a>
+      <a class="list-card" href="area.html">
+        <div class="list-card-icon">🗣</div>
+        <div class="list-card-body">
+          <div class="list-card-title">AREA話法</div>
+          <div class="list-card-desc">信頼される話し方</div>
+        </div>
+        <div class="list-card-arrow">›</div>
+      </a>
+      <a class="list-card" href="story.html">
+        <div class="list-card-icon">📙</div>
+        <div class="list-card-body">
+          <div class="list-card-title">感情ストーリー</div>
+          <div class="list-card-desc">共感・体験談の型</div>
+        </div>
+        <div class="list-card-arrow">›</div>
+      </a>
+      <a class="list-card" href="work-talk.html">
+        <div class="list-card-icon">📕</div>
+        <div class="list-card-body">
+          <div class="list-card-title">仕事トーク術</div>
+          <div class="list-card-desc">交渉・調整・報告</div>
+        </div>
+        <div class="list-card-arrow">›</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ===== ツール ===== -->
+
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon tools">🧠</div>
+      <div>
+        <div class="category-title">ツール</div>
+        <div class="category-sub">練習を振り返る</div>
+      </div>
+    </div>
+    <div class="menu-list">
+      <a class="list-card" href="ai.html">
+        <div class="list-card-icon">🧠</div>
+        <div class="list-card-body">
+          <div class="list-card-title">AI評価（簡易）</div>
+          <div class="list-card-desc">テキスト/文字起こしでフィードバック</div>
+        </div>
+        <div class="list-card-arrow">›</div>
+      </a>
+    </div>
+  </div>
+
 </div>
-    <a class="card" href="katsuzetsu.html">
-      <div class="icon">👄</div>
-      <div>
-        <div class="title">滑舌練習</div>
-        <div class="desc">母音・行別・リズム</div>
-      </div>
-    </a>
 
-    <a class="card" href="shitatore.html">
-      <div class="icon">👅</div>
-      <div>
-        <div class="title">舌トレ</div>
-        <div class="desc">ラ行・リズム反復</div>
-      </div>
-    </a>
+<div class="footer">
+  一人話し方GYM — 毎日の声トレで自信をつけよう
+</div>
 
-    <a class="card" href="yomi.html">
-      <div class="icon">📖</div>
-      <div>
-        <div class="title">読み練習</div>
-        <div class="desc">早口言葉・発音</div>
-      </div>
-    </a>
-
-    <a class="card" href="kokyu.html">
-      <div class="icon">💨</div>
-      <div>
-        <div class="title">呼吸練習</div>
-        <div class="desc">4-4-8 / カウント</div>
-      </div>
-    </a>
-  </main>
 </body>
 </html>
-<a class="card" href="40sec.html">
-  <div class="icon">⏱</div>
-  <div class="title">40秒スピーチ</div>
-  <div class="desc">制限時間トレーニング</div>
-</a>
-<a class="card" href="80sec.html">
-  <div class="icon">⏱️</div>
-  <div>
-    <div class="title">80秒スピーチ</div>
-    <div class="desc">おすすめシリーズ（30お題）</div>
-  </div>
-</a>
-<a class="card" href="2min.html">
-  <div class="icon">⏱️</div>
-  <div>
-    <div class="title">2分スピーチ</div>
-    <div class="desc">ランダムお題＋120秒</div>
-  </div>
-</a>
-<a class="card" href="ai.html">
-  <div class="icon">🧠</div>
-  <div>
-    <div class="title">AI評価（簡易）</div>
-    <div class="desc">テキスト/文字起こしでフィードバック</div>
-  </div>
-</a>
-<a class="card" href="talk-guide.html">
-  <div class="icon">📘</div>
-  <div>
-    <div class="title">話法ガイド</div>
-    <div class="desc">使い分け早見表</div>
-  </div>
-</a>
-<a class="card" href="area.html">
-  <div class="icon">🗣</div>
-  <div>
-    <div class="title">AREA話法</div>
-    <div class="desc">信頼される話し方</div>
-  </div>
-</a>
-<a class="card" href="prep.html">
-  <div class="icon">📢</div>
-  <div>
-    <div class="title">PREP話法</div>
-    <div class="desc">説明・報告の型</div>
-  </div>
-</a>
-<a class="card" href="story.html">
-  <div class="icon">📙</div>
-  <div>
-    <div class="title">感情ストーリー</div>
-    <div class="desc">共感・体験談の型</div>
-  </div>
-</a>
-<a class="card" href="work-talk.html">
-  <div class="icon">📕</div>
-  <div>
-    <div class="title">仕事トーク術</div>
-    <div class="desc">交渉・調整・報告</div>
-  </div>
-</a>
-<a href="training.html">🧠 話法別トレーニング</a>
+
+
+
+
+
