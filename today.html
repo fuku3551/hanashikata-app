@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -10,511 +9,518 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-–bg: #f5f0e8;
-–bg-card: #fffdf7;
-–text: #2c2520;
-–text-sub: #7a6e62;
-–accent: #c0392b;
-–accent-light: rgba(192, 57, 43, .08);
-–blue: #2980b9;
-–blue-light: rgba(41, 128, 185, .1);
-–green: #27ae60;
-–green-light: rgba(39, 174, 96, .1);
-–orange: #e67e22;
-–orange-light: rgba(230, 126, 34, .1);
-–border: rgba(44, 37, 32, .1);
-–shadow: 0 2px 12px rgba(44, 37, 32, .06);
-–radius: 16px;
-–radius-sm: 10px;
-–font-body: ‘Zen Kaku Gothic New’, ‘Hiragino Sans’, sans-serif;
-–font-serif: ‘Noto Serif JP’, ‘游明朝’, serif;
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', '游明朝', serif;
 }
 
 body {
-font-family: var(–font-body);
-background: var(–bg);
-color: var(–text);
-line-height: 1.7;
-min-height: 100vh;
--webkit-font-smoothing: antialiased;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ===== HEADER ===== */
 .header {
-background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
-color: #fff;
-padding: 20px 20px 18px;
-text-align: center;
-position: relative;
-overflow: hidden;
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff;
+  padding: 20px 20px 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 .header::before {
-content: ‘’;
-position: absolute;
-inset: 0;
-background: radial-gradient(ellipse at 30% 0%, rgba(41,128,185,.15) 0%, transparent 60%);
-pointer-events: none;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, rgba(41,128,185,.15) 0%, transparent 60%);
+  pointer-events: none;
 }
 .header h1 {
-font-family: var(–font-serif);
-font-size: 22px;
-font-weight: 700;
-letter-spacing: .08em;
-position: relative;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  position: relative;
 }
 .header .sub {
-font-size: 12px;
-opacity: .65;
-margin-top: 4px;
-letter-spacing: .04em;
-position: relative;
+  font-size: 12px;
+  opacity: .65;
+  margin-top: 4px;
+  letter-spacing: .04em;
+  position: relative;
 }
 .header .back-link {
-display: inline-block;
-margin-top: 8px;
-color: rgba(255,255,255,.7);
-text-decoration: none;
-font-size: 13px;
-transition: color .2s;
-position: relative;
+  display: inline-block;
+  margin-top: 8px;
+  color: rgba(255,255,255,.7);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color .2s;
+  position: relative;
+  z-index: 10;
+  padding: 6px 12px;
+  -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
 }
 .header .back-link:hover { color: #fff; }
 
 .container {
-max-width: 700px;
-margin: 0 auto;
-padding: 16px;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
 /* ===== ONBOARDING ===== */
 .onboarding {
-background: linear-gradient(135deg, var(–blue-light), var(–green-light));
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 16px 18px;
-margin-bottom: 16px;
-position: relative;
-animation: slideDown .5s ease-out;
+  background: linear-gradient(135deg, var(--blue-light), var(--green-light));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  position: relative;
+  animation: slideDown .5s ease-out;
 }
 @keyframes slideDown {
-from { opacity: 0; transform: translateY(-12px); }
-to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .onboarding-title {
-font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(–blue);
+  font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(--blue);
 }
 .onboarding-steps { display: flex; flex-direction: column; gap: 6px; }
 .onboarding-step {
-display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6;
+  display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6;
 }
-.step-num {
-flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
-background: var(–blue); color: #fff;
-display: flex; align-items: center; justify-content: center;
-font-size: 11px; font-weight: 700; margin-top: 1px;
+.ob-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--blue); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; margin-top: 1px;
 }
 .onboarding .close-btn {
-position: absolute; top: 10px; right: 12px;
-background: none; border: none; font-size: 18px;
-color: var(–text-sub); cursor: pointer; line-height: 1; padding: 4px;
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none; font-size: 18px;
+  color: var(--text-sub); cursor: pointer; line-height: 1; padding: 4px;
 }
 
 /* ===== CARD ===== */
 .card {
-background: var(–bg-card);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-box-shadow: var(–shadow);
-margin-bottom: 16px;
-overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
 }
 .card-header {
-padding: 14px 18px 10px;
-border-bottom: 1px solid var(–border);
-display: flex; align-items: center; gap: 8px;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
 }
-.card-header .icon { font-size: 18px; }
+.card-header .icon { font-size: 16px; }
 .card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
 .card-body { padding: 16px 18px; }
 
-/* ===== STEP INDICATOR ===== */
+/* ===== STEP INDICATOR (text-based, no emoji) ===== */
 .steps-indicator {
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 0;
-padding: 14px 10px;
-overflow-x: auto;
--webkit-overflow-scrolling: touch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 14px 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .step-item {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 4px;
-min-width: 52px;
-position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 50px;
+  position: relative;
 }
 .step-circle {
-width: 32px; height: 32px;
-border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-font-size: 13px;
-border: 2px solid var(–border);
-background: #fff;
-color: var(–text-sub);
-transition: all .3s ease;
-position: relative;
-z-index: 1;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid var(--border);
+  background: #fff;
+  color: var(--text-sub);
+  transition: all .3s ease;
+  position: relative;
+  z-index: 1;
 }
 .step-circle.active {
-border-color: var(–green);
-background: var(–green);
-color: #fff;
-box-shadow: 0 2px 8px rgba(39, 174, 96, .3);
-animation: stepPulse 1.5s ease infinite;
+  border-color: var(--green);
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(39, 174, 96, .3);
+  animation: stepPulse 1.5s ease infinite;
 }
 @keyframes stepPulse {
-0%, 100% { box-shadow: 0 2px 8px rgba(39, 174, 96, .3); }
-50% { box-shadow: 0 2px 16px rgba(39, 174, 96, .5); }
+  0%, 100% { box-shadow: 0 2px 8px rgba(39, 174, 96, .3); }
+  50% { box-shadow: 0 2px 16px rgba(39, 174, 96, .5); }
 }
 .step-circle.done {
-border-color: var(–green);
-background: var(–green-light);
-color: var(–green);
+  border-color: var(--green);
+  background: var(--green-light);
+  color: var(--green);
+  font-size: 14px;
 }
 .step-label {
-font-size: 10px;
-font-weight: 600;
-color: var(–text-sub);
-white-space: nowrap;
-transition: color .3s;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-sub);
+  white-space: nowrap;
+  transition: color .3s;
 }
-.step-item.active .step-label { color: var(–green); font-weight: 700; }
-.step-item.done .step-label { color: var(–green); }
+.step-item.active .step-label { color: var(--green); font-weight: 700; }
+.step-item.done .step-label { color: var(--green); }
 
 .step-connector {
-width: 20px; height: 2px;
-background: var(–border);
-margin-bottom: 18px;
-flex-shrink: 0;
-transition: background .3s;
+  width: 18px; height: 2px;
+  background: var(--border);
+  margin-bottom: 18px;
+  flex-shrink: 0;
+  transition: background .3s;
 }
-.step-connector.done { background: var(–green); }
+.step-connector.done { background: var(--green); }
 
 /* ===== ANNOUNCE BAR ===== */
 .announce-bar {
-background: var(–blue-light);
-border: 1px solid rgba(41, 128, 185, .15);
-border-radius: var(–radius-sm);
-padding: 10px 14px;
-margin-bottom: 14px;
-font-size: 13px;
-font-weight: 600;
-color: var(–blue);
-text-align: center;
-line-height: 1.6;
-min-height: 42px;
-display: flex;
-align-items: center;
-justify-content: center;
-transition: all .3s ease;
+  background: var(--blue-light);
+  border: 1px solid rgba(41, 128, 185, .15);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  text-align: center;
+  line-height: 1.6;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .announce-bar.phase-info {
-background: var(–orange-light);
-border-color: rgba(230, 126, 34, .15);
-color: var(–orange);
-}
-
-/* ===== MAIN DISPLAY ===== */
-.display-area {
-min-height: 180px;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-padding: 20px 10px;
-text-align: center;
-}
-.display-phase {
-font-size: 14px;
-font-weight: 700;
-color: var(–text-sub);
-margin-bottom: 8px;
-letter-spacing: .03em;
-}
-.display-main {
-font-family: var(–font-serif);
-font-size: 38px;
-font-weight: 700;
-line-height: 1.4;
-color: var(–text);
-word-break: break-word;
-transition: opacity .2s;
-}
-.display-sub {
-font-size: 14px;
-color: var(–text-sub);
-margin-top: 10px;
-line-height: 1.7;
-white-space: pre-wrap;
-}
-
-.countdown {
-font-size: 56px;
-font-weight: 900;
-letter-spacing: .02em;
-line-height: 1.1;
-font-family: var(–font-serif);
-}
-.countdown-label {
-font-size: 16px;
-color: var(–text-sub);
-margin-top: 4px;
-}
-
-/* ===== CONTROLS ===== */
-.controls-main {
-display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
-}
-.btn {
-display: inline-flex; align-items: center; gap: 6px;
-padding: 11px 20px; border-radius: var(–radius-sm);
-border: 1px solid var(–border); background: #fff;
-font-family: var(–font-body); font-size: 14px; font-weight: 600;
-cursor: pointer; transition: all .15s ease; white-space: nowrap;
--webkit-tap-highlight-color: transparent;
-touch-action: manipulation;
-}
-.btn:active { transform: scale(.97); }
-.btn:disabled {
-opacity: .4;
-cursor: default;
-}
-.btn:disabled:active { transform: none; }
-.btn-start {
-background: var(–green); color: #fff; border-color: var(–green);
-box-shadow: 0 2px 8px rgba(39, 174, 96, .25);
-min-width: 160px;
-font-size: 16px;
-padding: 13px 24px;
-}
-.btn-start:hover:not(:disabled) { background: #219a52; }
-.btn-pause {
-background: var(–blue); color: #fff; border-color: var(–blue);
-box-shadow: 0 2px 8px rgba(41, 128, 185, .2);
-}
-.btn-stop {
-background: var(–accent); color: #fff; border-color: var(–accent);
-box-shadow: 0 2px 8px rgba(192, 57, 43, .2);
-}
-.btn-skip {
-background: #2c2520; color: #fff; border-color: #2c2520;
-}
-.btn-ghost {
-background: #fff; color: var(–text);
-}
-
-.controls-secondary {
-display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
-margin-top: 8px;
+  background: var(--orange-light);
+  border-color: rgba(230, 126, 34, .15);
+  color: var(--orange);
 }
 
 /* ===== STATUS ===== */
 .status-bar {
-display: flex; align-items: center; justify-content: center;
-gap: 10px; padding: 10px 0 4px; font-size: 12px; color: var(–text-sub);
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 8px 0 4px; font-size: 12px; color: var(--text-sub);
 }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .status-dot.idle { background: #bbb; }
-.status-dot.playing { background: var(–green); animation: pulse 1.2s infinite; }
-.status-dot.paused { background: var(–orange); animation: pulse 1.5s infinite; }
+.status-dot.playing { background: var(--green); animation: pulse 1.2s infinite; }
+.status-dot.paused { background: var(--orange); animation: pulse 1.5s infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
 
+/* ===== MAIN DISPLAY ===== */
+.display-area {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 10px;
+  text-align: center;
+}
+.display-phase {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+  letter-spacing: .03em;
+}
+.display-main {
+  font-family: var(--font-serif);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text);
+  word-break: break-word;
+}
+.display-sub {
+  font-size: 14px;
+  color: var(--text-sub);
+  margin-top: 10px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.countdown {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: .02em;
+  line-height: 1.1;
+  font-family: var(--font-serif);
+}
+.countdown-label {
+  font-size: 16px;
+  color: var(--text-sub);
+  margin-top: 4px;
+}
+
+.breath-label {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* ===== PROGRESS ===== */
 .progress-wrap {
-margin-top: 10px; background: rgba(0,0,0,.06);
-border-radius: 4px; height: 5px; overflow: hidden;
+  margin-top: 10px; background: rgba(0,0,0,.06);
+  border-radius: 4px; height: 5px; overflow: hidden;
 }
 .progress-bar {
-height: 100%; width: 0%; background: var(–green);
-border-radius: 4px; transition: width .5s ease;
+  height: 100%; width: 0%; background: var(--green);
+  border-radius: 4px; transition: width .5s ease;
 }
 
-/* ===== GYOU / PHRASE STYLES ===== */
+/* ===== CONTROLS ===== */
+.controls-wrap {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.controls-main {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 20px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: #fff;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .15s ease; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:disabled:active { transform: none; }
+
+.btn-start {
+  background: var(--green); color: #fff; border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(39, 174, 96, .25);
+  min-width: 180px;
+  font-size: 16px;
+  padding: 14px 28px;
+}
+.btn-start:hover:not(:disabled) { background: #219a52; }
+.btn-pause {
+  background: var(--blue); color: #fff; border-color: var(--blue);
+  box-shadow: 0 2px 8px rgba(41, 128, 185, .2);
+}
+.btn-resume {
+  background: var(--green); color: #fff; border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(39, 174, 96, .25);
+}
+.btn-stop {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(192, 57, 43, .2);
+}
+.btn-skip {
+  background: #2c2520; color: #fff; border-color: #2c2520;
+}
+.btn-ghost {
+  background: #fff; color: var(--text);
+}
+.controls-secondary {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* ===== GYOU / PHRASE ===== */
 .gyou-wrap {
-display: inline-block;
-padding: 10px 20px;
-border-radius: var(–radius-sm);
-background: var(–blue-light);
-border: 1px solid rgba(41, 128, 185, .2);
-font-family: var(–font-serif);
-font-size: 32px;
-font-weight: 700;
-transition: all .2s;
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  background: var(--blue-light);
+  border: 1px solid rgba(41, 128, 185, .2);
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 700;
+  transition: all .2s;
 }
 .gyou-wrap.highlight {
-background: var(–accent-light);
-border-color: rgba(192, 57, 43, .25);
-color: var(–accent);
+  background: var(--accent-light);
+  border-color: rgba(192, 57, 43, .25);
+  color: var(--accent);
 }
-
 .phrase-text {
-font-family: var(–font-serif);
-font-size: 28px;
-font-weight: 700;
-line-height: 1.5;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 .phrase-text ruby rt {
-font-size: .48em;
-color: var(–accent);
-opacity: .85;
+  font-size: .48em;
+  color: var(--accent);
+  opacity: .85;
 }
 
-/* ===== WELCOME STATE ===== */
-.welcome-icon {
-font-size: 48px;
-margin-bottom: 8px;
-}
+/* ===== WELCOME ===== */
 .welcome-title {
-font-family: var(–font-serif);
-font-size: 20px;
-font-weight: 700;
-margin-bottom: 6px;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
 .welcome-desc {
-font-size: 13px;
-color: var(–text-sub);
-line-height: 1.7;
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.7;
+  margin-bottom: 14px;
 }
 .welcome-route {
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 6px;
-flex-wrap: wrap;
-margin-top: 12px;
-font-size: 12px;
-color: var(–text-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-sub);
 }
 .route-chip {
-background: var(–bg);
-border: 1px solid var(–border);
-border-radius: 999px;
-padding: 4px 10px;
-font-weight: 600;
-font-size: 11px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 600;
+  font-size: 11px;
 }
-.route-arrow { opacity: .4; }
+.route-arrow { opacity: .4; font-size: 10px; }
 
-/* ===== COMPLETE STATE ===== */
-.complete-wrap {
-text-align: center;
-padding: 10px 0;
-}
-.complete-icon { font-size: 52px; margin-bottom: 8px; }
+/* ===== COMPLETE ===== */
+.complete-wrap { text-align: center; padding: 10px 0; }
 .complete-title {
-font-family: var(–font-serif);
-font-size: 22px; font-weight: 700;
-margin-bottom: 6px;
+  font-family: var(--font-serif);
+  font-size: 22px; font-weight: 700;
+  margin-bottom: 6px;
 }
 .complete-msg {
-font-size: 14px;
-color: var(–text-sub);
-line-height: 1.8;
+  font-size: 14px;
+  color: var(--text-sub);
+  line-height: 1.8;
+  margin-bottom: 16px;
 }
 .complete-actions {
-display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap;
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
 }
 
 /* ===== TIPS ===== */
 .tips {
-background: var(–accent-light); border-radius: var(–radius-sm);
-padding: 12px 14px; margin-top: 14px;
+  background: var(--accent-light); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-top: 14px;
 }
-.tips-title { font-size: 13px; font-weight: 700; color: var(–accent); margin-bottom: 6px; }
-.tips-text { font-size: 12px; line-height: 1.8; color: var(–text-sub); }
+.tips-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.tips-text { font-size: 12px; line-height: 1.8; color: var(--text-sub); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
-.container { padding: 10px; }
-.card-body { padding: 12px 14px; }
-.display-main { font-size: 30px; }
-.countdown { font-size: 48px; }
-.gyou-wrap { font-size: 26px; padding: 8px 16px; }
-.phrase-text { font-size: 22px; }
-.btn { padding: 10px 14px; font-size: 13px; }
-.btn-start { padding: 12px 20px; font-size: 15px; }
-.steps-indicator { gap: 0; padding: 10px 4px; }
-.step-circle { width: 28px; height: 28px; font-size: 11px; }
-.step-connector { width: 14px; }
-.step-label { font-size: 9px; }
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .display-area { min-height: 180px; padding: 20px 8px; }
+  .display-main { font-size: 30px; }
+  .countdown { font-size: 48px; }
+  .gyou-wrap { font-size: 26px; padding: 8px 16px; }
+  .phrase-text { font-size: 22px; }
+  .btn { padding: 10px 14px; font-size: 13px; }
+  .btn-start { padding: 13px 24px; font-size: 15px; min-width: 160px; }
+  .steps-indicator { padding: 10px 2px; }
+  .step-circle { width: 28px; height: 28px; font-size: 11px; }
+  .step-connector { width: 14px; }
+  .step-label { font-size: 9px; }
 }
 @media (orientation: landscape) and (max-height: 500px) {
-.display-area { min-height: 140px; padding: 12px 10px; }
-.header { padding: 10px 20px; }
-.header h1 { font-size: 18px; }
+  .display-area { min-height: 140px; padding: 12px 10px; }
+  .header { padding: 10px 20px; }
+  .header h1 { font-size: 18px; }
 }
 </style>
-
 </head>
 <body>
 
 <div class="header">
-  <h1>🔰 今日のおすすめ練習</h1>
+  <h1>今日のおすすめ練習</h1>
   <p class="sub">迷ったらこれだけでOK ｜ 約4〜6分</p>
-  <a href="index.html" class="back-link">← ホームへ戻る</a>
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
 </div>
 
 <div class="container">
 
   <!-- 初回ガイド -->
-
   <div class="onboarding" id="onboarding">
-    <button class="close-btn" onclick="closeOnboarding()" aria-label="閉じる">✕</button>
-    <div class="onboarding-title">🎯 はじめての方へ</div>
+    <button class="close-btn" onclick="closeOnboarding()" aria-label="閉じる">&times;</button>
+    <div class="onboarding-title">はじめての方へ</div>
     <div class="onboarding-steps">
       <div class="onboarding-step">
-        <span class="step-num">1</span>
-        <span><strong>「▶ スタート」</strong>を押すだけ。呼吸から順番に案内します</span>
+        <span class="ob-num">1</span>
+        <span><strong>スタート</strong>を押すだけ。呼吸から順番に案内します</span>
       </div>
       <div class="onboarding-step">
-        <span class="step-num">2</span>
+        <span class="ob-num">2</span>
         <span>画面の指示に合わせて、<strong>声に出して</strong>練習しましょう</span>
       </div>
       <div class="onboarding-step">
-        <span class="step-num">3</span>
+        <span class="ob-num">3</span>
         <span>途中で<strong>一時停止・スキップ</strong>も自由にできます</span>
       </div>
     </div>
   </div>
 
   <!-- ステップインジケーター -->
-
   <div class="card">
-    <div class="card-body" style="padding: 8px 12px;">
+    <div class="card-body" style="padding: 6px 10px;">
       <div class="steps-indicator" id="stepsIndicator">
         <div class="step-item" id="step-0">
-          <div class="step-circle">💨</div>
+          <div class="step-circle" id="circle-0">1</div>
           <span class="step-label">呼吸</span>
         </div>
         <div class="step-connector" id="conn-0"></div>
         <div class="step-item" id="step-1">
-          <div class="step-circle">👅</div>
+          <div class="step-circle" id="circle-1">2</div>
           <span class="step-label">舌トレ</span>
         </div>
         <div class="step-connector" id="conn-1"></div>
         <div class="step-item" id="step-2">
-          <div class="step-circle">👄</div>
+          <div class="step-circle" id="circle-2">3</div>
           <span class="step-label">滑舌</span>
         </div>
         <div class="step-connector" id="conn-2"></div>
         <div class="step-item" id="step-3">
-          <div class="step-circle">📢</div>
+          <div class="step-circle" id="circle-3">4</div>
           <span class="step-label">フレーズ</span>
         </div>
         <div class="step-connector" id="conn-3"></div>
         <div class="step-item" id="step-4">
-          <div class="step-circle">🎤</div>
+          <div class="step-circle" id="circle-4">5</div>
           <span class="step-label">スピーチ</span>
         </div>
       </div>
@@ -522,76 +528,71 @@ padding: 12px 14px; margin-top: 14px;
   </div>
 
   <!-- メインエリア -->
-
   <div class="card">
     <div class="card-header">
-      <span class="icon">🎛️</span>
+      <span class="icon">&#9881;</span>
       <span class="label">練習エリア</span>
     </div>
     <div class="card-body">
 
-```
-  <!-- アナウンスバー -->
-  <div class="announce-bar" id="announceBar">
-    「▶ スタート」を押すと、呼吸から順番にガイドします
-  </div>
+      <!-- アナウンスバー -->
+      <div class="announce-bar" id="announceBar">
+        スタートを押すと、呼吸から順番にガイドします
+      </div>
 
-  <!-- ステータス -->
-  <div class="status-bar">
-    <span><span class="status-dot idle" id="statusDot"></span></span>
-    <span id="statusText">待機中</span>
-  </div>
+      <!-- ステータス -->
+      <div class="status-bar">
+        <span><span class="status-dot idle" id="statusDot"></span></span>
+        <span id="statusText">待機中</span>
+      </div>
 
-  <!-- メイン表示 -->
-  <div class="display-area" id="displayArea">
-    <div class="welcome-icon">🏋️</div>
-    <div class="welcome-title">今日のウォームアップ</div>
-    <div class="welcome-desc">5つのメニューを一本道で練習します</div>
-    <div class="welcome-route">
-      <span class="route-chip">💨 呼吸</span>
-      <span class="route-arrow">→</span>
-      <span class="route-chip">👅 舌トレ</span>
-      <span class="route-arrow">→</span>
-      <span class="route-chip">👄 滑舌</span>
-      <span class="route-arrow">→</span>
-      <span class="route-chip">📢 フレーズ</span>
-      <span class="route-arrow">→</span>
-      <span class="route-chip">🎤 スピーチ</span>
+      <!-- メイン表示 -->
+      <div class="display-area" id="displayArea">
+        <div class="welcome-title">今日のウォームアップ</div>
+        <div class="welcome-desc">5つのメニューを一本道で練習します</div>
+        <div class="welcome-route">
+          <span class="route-chip">1. 呼吸</span>
+          <span class="route-arrow">&rarr;</span>
+          <span class="route-chip">2. 舌トレ</span>
+          <span class="route-arrow">&rarr;</span>
+          <span class="route-chip">3. 滑舌</span>
+          <span class="route-arrow">&rarr;</span>
+          <span class="route-chip">4. フレーズ</span>
+          <span class="route-arrow">&rarr;</span>
+          <span class="route-chip">5. スピーチ</span>
+        </div>
+      </div>
+
+      <!-- プログレスバー -->
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- コントロール -->
+      <div class="controls-wrap">
+        <div class="controls-main" id="controlsMain">
+          <button class="btn btn-start" id="startBtn" type="button">&#9654; スタート</button>
+        </div>
+        <div class="controls-secondary" id="controlsSec" style="display:none;">
+          <button class="btn btn-pause" id="pauseBtn" type="button">&#9208; 一時停止</button>
+          <button class="btn btn-stop" id="stopBtn" type="button">&#9209; 停止</button>
+          <button class="btn btn-skip" id="skipBtn" type="button">&#9197; スキップ</button>
+        </div>
+        <div class="controls-secondary" id="controlsTopic" style="display:none;">
+          <button class="btn btn-ghost" id="topicBtn" type="button">&#127922; 話題を変える</button>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="tips">
+        <div class="tips-title">練習のコツ</div>
+        <div class="tips-text">
+          話し方の基礎となる「呼吸・舌・滑舌」をウォームアップし、<br>
+          最後に40秒スピーチで実践する一本道コースです。<br>
+          毎日続けることで、声の通りと滑舌が改善されます。
+        </div>
+      </div>
     </div>
-  </div>
-
-  <!-- プログレスバー -->
-  <div class="progress-wrap">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
-
-  <!-- コントロール -->
-  <div style="margin-top: 14px;">
-    <div class="controls-main" id="controlsMain">
-      <button class="btn btn-start" id="startBtn" type="button">▶ スタート</button>
-    </div>
-    <div class="controls-secondary" id="controlsSec" style="display:none;">
-      <button class="btn btn-pause" id="pauseBtn" type="button">⏸ 一時停止</button>
-      <button class="btn btn-stop" id="stopBtn" type="button">⏹ 停止</button>
-      <button class="btn btn-skip" id="skipBtn" type="button">⏭ スキップ</button>
-    </div>
-    <div class="controls-secondary" id="controlsTopic" style="display:none;">
-      <button class="btn btn-ghost" id="topicBtn" type="button">🎲 話題を変える</button>
-    </div>
-  </div>
-
-  <!-- Tips -->
-  <div class="tips" id="tipsArea">
-    <div class="tips-title">💡 このメニューについて</div>
-    <div class="tips-text">
-      話し方の基礎となる「呼吸・舌・滑舌」をウォームアップし、<br>
-      最後に40秒スピーチで実践する一本道コースです。<br>
-      毎日続けることで、声の通りと滑舌が改善されます。
-    </div>
-  </div>
-</div>
-```
-
   </div>
 
 </div>
@@ -600,28 +601,28 @@ padding: 12px 14px; margin-top: 14px;
 /* ======================================================
    状態管理
 ====================================================== */
-let runToken = 0;
-let paused = false;
-let pauseResolvers = [];
-let skipRequested = false;
-let speechRunning = false;
-let currentPhaseIndex = -1;
+var runToken = 0;
+var paused = false;
+var pauseResolvers = [];
+var skipRequested = false;
+var speechRunning = false;
+var currentPhaseIndex = -1;
 
 function waitWhilePaused() {
   if (!paused) return Promise.resolve();
-  return new Promise(res => pauseResolvers.push(res));
+  return new Promise(function(res) { pauseResolvers.push(res); });
 }
 function resumePausedWaiters() {
-  pauseResolvers.splice(0).forEach(r => r());
+  pauseResolvers.splice(0).forEach(function(r) { r(); });
 }
 
 /* ======================================================
    DOM helpers
 ====================================================== */
-const $ = id => document.getElementById(id);
+function $(id) { return document.getElementById(id); }
 
-function setAnnounce(text, type = '') {
-  const bar = $('announceBar');
+function setAnnounce(text, type) {
+  var bar = $('announceBar');
   bar.textContent = text;
   bar.className = 'announce-bar' + (type ? ' ' + type : '');
 }
@@ -631,11 +632,11 @@ function setDisplayHTML(html) {
 }
 
 function setStatus(state) {
-  const dot = $('statusDot');
-  const txt = $('statusText');
+  var dot = $('statusDot');
+  var txt = $('statusText');
   if (state === 'playing') {
     dot.className = 'status-dot playing';
-    txt.textContent = '進行中 — 声に出して練習しましょう';
+    txt.textContent = '進行中';
   } else if (state === 'paused') {
     dot.className = 'status-dot paused';
     txt.textContent = '一時停止中';
@@ -655,47 +656,41 @@ function setProgress(pct) {
 function isStopped(token) { return token !== runToken; }
 
 /* ======================================================
-   Step Indicator
+   Step Indicator (text-based numbers)
 ====================================================== */
-const PHASES = ['呼吸', '舌トレ', '滑舌', 'フレーズ', 'スピーチ'];
-
 function updateStepIndicator(activeIndex, doneUpTo) {
-  for (let i = 0; i < 5; i++) {
-    const item = $('step-' + i);
-    const circle = item.querySelector('.step-circle');
+  for (var i = 0; i < 5; i++) {
+    var item = $('step-' + i);
+    var circle = $('circle-' + i);
     item.className = 'step-item';
     circle.className = 'step-circle';
 
     if (i < doneUpTo) {
       item.classList.add('done');
       circle.classList.add('done');
-      circle.textContent = '✓';
+      circle.innerHTML = '&#10003;';
     } else if (i === activeIndex) {
       item.classList.add('active');
       circle.classList.add('active');
-      // restore emoji
-      const emojis = ['💨', '👅', '👄', '📢', '🎤'];
-      circle.textContent = emojis[i];
+      circle.textContent = String(i + 1);
     } else {
-      const emojis = ['💨', '👅', '👄', '📢', '🎤'];
-      circle.textContent = emojis[i];
+      circle.textContent = String(i + 1);
     }
 
     if (i < 4) {
-      const conn = $('conn-' + i);
+      var conn = $('conn-' + i);
       conn.className = 'step-connector' + (i < doneUpTo ? ' done' : '');
     }
   }
 }
 
 function resetStepIndicator() {
-  const emojis = ['💨', '👅', '👄', '📢', '🎤'];
-  for (let i = 0; i < 5; i++) {
-    const item = $('step-' + i);
-    const circle = item.querySelector('.step-circle');
+  for (var i = 0; i < 5; i++) {
+    var item = $('step-' + i);
+    var circle = $('circle-' + i);
     item.className = 'step-item';
     circle.className = 'step-circle';
-    circle.textContent = emojis[i];
+    circle.textContent = String(i + 1);
     if (i < 4) $('conn-' + i).className = 'step-connector';
   }
 }
@@ -704,14 +699,13 @@ function resetStepIndicator() {
    Controls visibility
 ====================================================== */
 function showControls(mode) {
-  // mode: 'start', 'running', 'speech', 'complete'
-  const main = $('controlsMain');
-  const sec = $('controlsSec');
-  const topic = $('controlsTopic');
+  var main = $('controlsMain');
+  var sec = $('controlsSec');
+  var topic = $('controlsTopic');
 
   if (mode === 'start') {
     main.style.display = 'flex';
-    main.innerHTML = '<button class="btn btn-start" id="startBtn" type="button">▶ スタート</button>';
+    main.innerHTML = '<button class="btn btn-start" id="startBtn" type="button">&#9654; スタート</button>';
     $('startBtn').addEventListener('click', startAll);
     sec.style.display = 'none';
     topic.style.display = 'none';
@@ -733,34 +727,41 @@ function showControls(mode) {
 /* ======================================================
    Interruptible wait
 ====================================================== */
-async function wait(ms, token) {
-  const step = 60;
-  let left = ms;
-  while (left > 0) {
-    if (isStopped(token) || skipRequested) return false;
-    await waitWhilePaused();
-    const chunk = Math.min(step, left);
-    await new Promise(res => setTimeout(res, chunk));
-    left -= chunk;
-  }
-  return true;
+function wait(ms, token) {
+  var step = 60;
+  var left = ms;
+  return new Promise(function(resolve) {
+    function tick() {
+      if (isStopped(token) || skipRequested) { resolve(false); return; }
+      if (paused) {
+        waitWhilePaused().then(tick);
+        return;
+      }
+      if (left <= 0) { resolve(true); return; }
+      var chunk = Math.min(step, left);
+      left -= chunk;
+      setTimeout(tick, chunk);
+    }
+    tick();
+  });
 }
 
-async function announceNext(token, text, ms = 1200) {
+function announceNext(token, text, ms) {
+  ms = ms || 1200;
   skipRequested = false;
   setAnnounce(text, 'phase-info');
-  return await wait(ms, token);
+  return wait(ms, token);
 }
 
 /* ======================================================
    Onboarding
 ====================================================== */
 function closeOnboarding() {
-  const el = $('onboarding');
+  var el = $('onboarding');
   el.style.opacity = '0';
   el.style.transform = 'translateY(-10px)';
   el.style.transition = 'all .3s ease';
-  setTimeout(() => el.style.display = 'none', 300);
+  setTimeout(function() { el.style.display = 'none'; }, 300);
   try { localStorage.setItem('today_onboarding_closed', '1'); } catch (e) {}
 }
 try {
@@ -772,177 +773,208 @@ try {
 /* ======================================================
    Phase 1: Breathing
 ====================================================== */
-async function breathing(token) {
+function breathing(token) {
   currentPhaseIndex = 0;
   updateStepIndicator(0, 0);
   setProgress(0);
 
-  if (!await announceNext(token, '腹式呼吸で体をリラックスさせましょう', 1400)) return;
-  setAnnounce('💨 腹式呼吸 — 吸って4秒 → 止めて4秒 → 吐いて8秒');
+  return announceNext(token, '腹式呼吸で体をリラックスさせましょう', 1400).then(function(ok) {
+    if (!ok) return;
+    setAnnounce('呼吸：吸って4秒 → 止めて4秒 → 吐いて8秒');
 
-  for (let round = 1; round <= 3; round++) {
-    if (isStopped(token) || skipRequested) return;
+    var round = 0;
+    function nextRound() {
+      round++;
+      if (round > 3 || isStopped(token) || skipRequested) return Promise.resolve();
 
-    for (let n = 4; n >= 1; n--) {
-      if (isStopped(token) || skipRequested) return;
-      setDisplayHTML(`
-        <div class="display-phase">ラウンド ${round}/3</div>
-        <div style="font-size:16px; color:var(--blue); font-weight:600; margin-bottom:6px;">鼻からスゥ〜っと吸って</div>
-        <div class="countdown">${n}</div>
-        <div class="countdown-label">秒</div>
-      `);
-      if (!await wait(1000, token)) return;
+      function inhale(n) {
+        if (n < 1 || isStopped(token) || skipRequested) return Promise.resolve();
+        setDisplayHTML(
+          '<div class="display-phase">ラウンド ' + round + '/3</div>' +
+          '<div class="breath-label" style="color:var(--blue);">鼻からスゥ〜っと吸って</div>' +
+          '<div class="countdown">' + n + '</div>' +
+          '<div class="countdown-label">秒</div>'
+        );
+        return wait(1000, token).then(function(ok) { return ok ? inhale(n - 1) : undefined; });
+      }
+
+      function hold(n) {
+        if (n < 1 || isStopped(token) || skipRequested) return Promise.resolve();
+        setDisplayHTML(
+          '<div class="display-phase">ラウンド ' + round + '/3</div>' +
+          '<div class="breath-label" style="color:var(--orange);">そのまま止めて</div>' +
+          '<div class="countdown">' + n + '</div>' +
+          '<div class="countdown-label">秒</div>'
+        );
+        return wait(1000, token).then(function(ok) { return ok ? hold(n - 1) : undefined; });
+      }
+
+      function exhale(n) {
+        if (n < 1 || isStopped(token) || skipRequested) return Promise.resolve();
+        setDisplayHTML(
+          '<div class="display-phase">ラウンド ' + round + '/3</div>' +
+          '<div class="breath-label" style="color:var(--green);">口からフゥ〜っと吐いて</div>' +
+          '<div class="countdown">' + n + '</div>' +
+          '<div class="countdown-label">秒</div>'
+        );
+        return wait(1000, token).then(function(ok) { return ok ? exhale(n - 1) : undefined; });
+      }
+
+      return inhale(4).then(function() {
+        return hold(4);
+      }).then(function() {
+        return exhale(8);
+      }).then(function() {
+        setProgress((round / 3) * 20);
+        return nextRound();
+      });
     }
 
-    for (let n = 4; n >= 1; n--) {
-      if (isStopped(token) || skipRequested) return;
-      setDisplayHTML(`
-        <div class="display-phase">ラウンド ${round}/3</div>
-        <div style="font-size:16px; color:var(--orange); font-weight:600; margin-bottom:6px;">そのまま止めて</div>
-        <div class="countdown">${n}</div>
-        <div class="countdown-label">秒</div>
-      `);
-      if (!await wait(1000, token)) return;
-    }
-
-    for (let n = 8; n >= 1; n--) {
-      if (isStopped(token) || skipRequested) return;
-      setDisplayHTML(`
-        <div class="display-phase">ラウンド ${round}/3</div>
-        <div style="font-size:16px; color:var(--green); font-weight:600; margin-bottom:6px;">口からフゥ〜っと吐いて</div>
-        <div class="countdown">${n}</div>
-        <div class="countdown-label">秒</div>
-      `);
-      if (!await wait(1000, token)) return;
-    }
-
-    setProgress((round / 3) * 20);
-  }
+    return nextRound();
+  });
 }
 
 /* ======================================================
    Phase 2: Tongue
 ====================================================== */
-async function tongue(token) {
+function tongue(token) {
   currentPhaseIndex = 1;
   updateStepIndicator(1, 1);
   setProgress(20);
 
-  if (!await announceNext(token, '舌の柔軟性を上げると滑舌が良くなります', 1600)) return;
-  setAnnounce('👅 舌トレ — 舌先で口の中に大きな円を描きましょう');
+  return announceNext(token, '舌の柔軟性を上げると滑舌が良くなります', 1600).then(function(ok) {
+    if (!ok) return;
+    setAnnounce('舌トレ：舌先で口の中に大きな円を描きましょう');
 
-  // countdown
-  for (let c = 3; c >= 1; c--) {
-    if (isStopped(token) || skipRequested) return;
-    setDisplayHTML(`
-      <div class="display-phase">準備してください</div>
-      <div class="countdown">${c}</div>
-    `);
-    if (!await wait(1000, token)) return;
-  }
+    function countdown(n) {
+      if (n < 1 || isStopped(token) || skipRequested) return Promise.resolve();
+      setDisplayHTML(
+        '<div class="display-phase">準備してください</div>' +
+        '<div class="countdown">' + n + '</div>'
+      );
+      return wait(1000, token).then(function(ok) { return ok ? countdown(n - 1) : undefined; });
+    }
 
-  // right
-  setAnnounce('👅 舌トレ — 右回り 7回（1回＝3秒）');
-  for (let i = 1; i <= 7; i++) {
-    if (isStopped(token) || skipRequested) return;
-    setDisplayHTML(`
-      <div class="display-phase">右回り</div>
-      <div class="display-main" style="font-size:48px;">🔄 ${i}<span style="font-size:20px; opacity:.6;">/7</span></div>
-    `);
-    if (!await wait(3000, token)) return;
-    setProgress(20 + (i / 14) * 20);
-  }
+    function doRotation(label, startI, maxI, progressBase) {
+      setAnnounce('舌トレ：' + label + ' 7回（1回＝3秒）');
+      function rotateStep(i) {
+        if (i > maxI || isStopped(token) || skipRequested) return Promise.resolve();
+        setDisplayHTML(
+          '<div class="display-phase">' + label + '</div>' +
+          '<div class="display-main" style="font-size:48px;">' + i + '<span style="font-size:20px; opacity:.6;">/7</span></div>'
+        );
+        return wait(3000, token).then(function(ok) {
+          if (!ok) return;
+          setProgress(progressBase + (i / 14) * 20);
+          return rotateStep(i + 1);
+        });
+      }
+      return rotateStep(1);
+    }
 
-  if (!await wait(500, token)) return;
-
-  // left
-  setAnnounce('👅 舌トレ — 左回り 7回（1回＝3秒）');
-  for (let i = 1; i <= 7; i++) {
-    if (isStopped(token) || skipRequested) return;
-    setDisplayHTML(`
-      <div class="display-phase">左回り</div>
-      <div class="display-main" style="font-size:48px;">🔃 ${i}<span style="font-size:20px; opacity:.6;">/7</span></div>
-    `);
-    if (!await wait(3000, token)) return;
-    setProgress(30 + (i / 14) * 20);
-  }
+    return countdown(3).then(function() {
+      return doRotation('右回り', 1, 7, 20);
+    }).then(function() {
+      return wait(500, token);
+    }).then(function() {
+      return doRotation('左回り', 1, 7, 30);
+    });
+  });
 }
 
 /* ======================================================
    Phase 3: Gyou (50 sounds)
 ====================================================== */
-async function gyou(token) {
+function gyou(token) {
   currentPhaseIndex = 2;
   updateStepIndicator(2, 2);
   setProgress(40);
 
-  if (!await announceNext(token, '口をしっかり開けて、一語ずつ丁寧に発声しましょう')) return;
-  setAnnounce('👄 滑舌（あ〜わ行）— 1語ずつハッキリと');
+  return announceNext(token, '口をしっかり開けて、一語ずつ丁寧に発声しましょう').then(function(ok) {
+    if (!ok) return;
+    setAnnounce('滑舌（あ〜わ行）：1語ずつハッキリと');
 
-  const lines = [
-    'あいうえお', 'かきくけこ', 'さしすせそ', 'たちつてと', 'なにぬねの',
-    'はひふへほ', 'まみむめも', 'やゆよ', 'らりるれろ', 'わをん'
-  ];
+    var lines = [
+      'あいうえお', 'かきくけこ', 'さしすせそ', 'たちつてと', 'なにぬねの',
+      'はひふへほ', 'まみむめも', 'やゆよ', 'らりるれろ', 'わをん'
+    ];
+    var idx = 0;
 
-  for (let idx = 0; idx < lines.length; idx++) {
-    const l = lines[idx];
-    if (isStopped(token) || skipRequested) return;
+    function nextLine() {
+      if (idx >= lines.length || isStopped(token) || skipRequested) return Promise.resolve();
+      var l = lines[idx];
+      var num = idx + 1;
 
-    setDisplayHTML(`
-      <div class="display-phase">${idx + 1}/${lines.length}</div>
-      <div class="gyou-wrap highlight">${l}</div>
-    `);
-    if (!await wait(600, token)) return;
+      setDisplayHTML(
+        '<div class="display-phase">' + num + '/' + lines.length + '</div>' +
+        '<div class="gyou-wrap highlight">' + l + '</div>'
+      );
+      return wait(600, token).then(function(ok) {
+        if (!ok) return;
+        setDisplayHTML(
+          '<div class="display-phase">' + num + '/' + lines.length + '</div>' +
+          '<div class="gyou-wrap">' + l + '</div>'
+        );
+        return wait(1400, token);
+      }).then(function(ok) {
+        if (!ok) return;
+        setProgress(40 + (num / lines.length) * 15);
+        idx++;
+        return nextLine();
+      });
+    }
 
-    setDisplayHTML(`
-      <div class="display-phase">${idx + 1}/${lines.length}</div>
-      <div class="gyou-wrap">${l}</div>
-    `);
-    if (!await wait(1400, token)) return;
-
-    setProgress(40 + ((idx + 1) / lines.length) * 15);
-  }
+    return nextLine();
+  });
 }
 
 /* ======================================================
    Phase 4: Hard phrases (7 selected)
 ====================================================== */
-async function hardPhrases(token) {
+function hardPhrases(token) {
   currentPhaseIndex = 3;
   updateStepIndicator(3, 3);
   setProgress(55);
 
-  if (!await announceNext(token, '焦らず、ハッキリ、ゆっくり発声しましょう', 1500)) return;
-  setAnnounce('📢 言いにくいフレーズ — ゆっくり正確に');
+  return announceNext(token, '焦らず、ハッキリ、ゆっくり発声しましょう', 1500).then(function(ok) {
+    if (!ok) return;
+    setAnnounce('言いにくいフレーズ：ゆっくり正確に');
 
-  const list = [
-    '<ruby>東京<rt>とうきょう</rt></ruby><ruby>特許<rt>とっきょ</rt></ruby><ruby>許可局<rt>きょかきょく</rt></ruby>',
-    '<ruby>生麦<rt>なまむぎ</rt></ruby> <ruby>生米<rt>なまごめ</rt></ruby> <ruby>生卵<rt>なまたまご</rt></ruby>',
-    '<ruby>赤巻紙<rt>あかまきがみ</rt></ruby> <ruby>青巻紙<rt>あおまきがみ</rt></ruby> <ruby>黄巻紙<rt>きまきがみ</rt></ruby>',
-    '<ruby>打者<rt>だしゃ</rt></ruby> <ruby>走者<rt>そうしゃ</rt></ruby> <ruby>勝者<rt>しょうしゃ</rt></ruby>',
-    '<ruby>魔術師<rt>まじゅつし</rt></ruby> <ruby>手術中<rt>しゅじゅつちゅう</rt></ruby>',
-    '<ruby>旅客機<rt>りょかっき</rt></ruby> <ruby>旅客船<rt>りょかくせん</rt></ruby>',
-    '<ruby>発声<rt>はっせい</rt></ruby>と<ruby>滑舌<rt>かつぜつ</rt></ruby>は<ruby>毎日<rt>まいにち</rt></ruby>の<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>ね',
-  ];
+    var list = [
+      '<ruby>東京<rt>とうきょう</rt></ruby><ruby>特許<rt>とっきょ</rt></ruby><ruby>許可局<rt>きょかきょく</rt></ruby>',
+      '<ruby>生麦<rt>なまむぎ</rt></ruby> <ruby>生米<rt>なまごめ</rt></ruby> <ruby>生卵<rt>なまたまご</rt></ruby>',
+      '<ruby>赤巻紙<rt>あかまきがみ</rt></ruby> <ruby>青巻紙<rt>あおまきがみ</rt></ruby> <ruby>黄巻紙<rt>きまきがみ</rt></ruby>',
+      '<ruby>打者<rt>だしゃ</rt></ruby> <ruby>走者<rt>そうしゃ</rt></ruby> <ruby>勝者<rt>しょうしゃ</rt></ruby>',
+      '<ruby>魔術師<rt>まじゅつし</rt></ruby> <ruby>手術中<rt>しゅじゅつちゅう</rt></ruby>',
+      '<ruby>旅客機<rt>りょかっき</rt></ruby> <ruby>旅客船<rt>りょかくせん</rt></ruby>',
+      '<ruby>発声<rt>はっせい</rt></ruby>と<ruby>滑舌<rt>かつぜつ</rt></ruby>は<ruby>毎日<rt>まいにち</rt></ruby>の<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>ね'
+    ];
+    var idx = 0;
 
-  for (let idx = 0; idx < list.length; idx++) {
-    if (isStopped(token) || skipRequested) return;
+    function nextPhrase() {
+      if (idx >= list.length || isStopped(token) || skipRequested) return Promise.resolve();
 
-    setDisplayHTML(`
-      <div class="display-phase">${idx + 1}/${list.length}</div>
-      <div class="phrase-text">${list[idx]}</div>
-      <div class="display-sub">ゆっくり、ハッキリ声に出しましょう</div>
-    `);
-    if (!await wait(5000, token)) return;
+      setDisplayHTML(
+        '<div class="display-phase">' + (idx + 1) + '/' + list.length + '</div>' +
+        '<div class="phrase-text">' + list[idx] + '</div>' +
+        '<div class="display-sub">ゆっくり、ハッキリ声に出しましょう</div>'
+      );
+      return wait(5000, token).then(function(ok) {
+        if (!ok) return;
+        setProgress(55 + ((idx + 1) / list.length) * 20);
+        idx++;
+        return nextPhrase();
+      });
+    }
 
-    setProgress(55 + ((idx + 1) / list.length) * 20);
-  }
+    return nextPhrase();
+  });
 }
 
 /* ======================================================
    Phase 5: 40-sec Speech
 ====================================================== */
-const topics = [
+var topics = [
   'あなたの好きな食べ物（理由も添えて）',
   '子どもの頃よく遊んだこと',
   '最近うれしかったこと',
@@ -962,10 +994,10 @@ const topics = [
   'あなたの苦手な食べ物（どう工夫してる？）',
   'あなたの仕事（一言で言うと）',
   'あなたの弱み（改善の工夫）',
-  '昔やっていたスポーツの思い出',
+  '昔やっていたスポーツの思い出'
 ];
 
-let currentTopic = '';
+var currentTopic = '';
 
 function pickTopic() {
   return topics[Math.floor(Math.random() * topics.length)];
@@ -973,77 +1005,82 @@ function pickTopic() {
 
 function changeTopic() {
   currentTopic = pickTopic();
-  // Update display if in speech phase
-  if (speechRunning) {
-    const area = $('displayArea');
-    const phase = area.querySelector('.display-phase');
-    if (phase && phase.textContent.includes('お題')) {
-      // re-render topic
-    }
-  }
-  setAnnounce('🎲 話題を変更しました：' + currentTopic);
+  setAnnounce('話題を変更しました：' + currentTopic);
 }
 
-async function speech40(token) {
+function speech40(token) {
   currentPhaseIndex = 4;
   updateStepIndicator(4, 4);
   setProgress(75);
   showControls('speech');
 
-  if (!await announceNext(token, '最後は40秒スピーチ！結論→理由→具体例→結論を意識', 1500)) return;
+  return announceNext(token, '最後は40秒スピーチ！結論→理由→具体例→結論を意識', 1500).then(function(ok) {
+    if (!ok) return;
 
-  speechRunning = true;
-  if (!currentTopic) currentTopic = pickTopic();
+    speechRunning = true;
+    if (!currentTopic) currentTopic = pickTopic();
 
-  setAnnounce('🎤 40秒スピーチ — 10秒間で考えをまとめましょう');
+    setAnnounce('40秒スピーチ：10秒間で考えをまとめましょう');
 
-  setDisplayHTML(`
-    <div class="display-phase">お題</div>
-    <div class="display-main" style="font-size:22px; line-height:1.6;">${currentTopic}</div>
-    <div class="display-sub">10秒間で話す内容を考えましょう\n「🎲 話題を変える」で別のお題に変更できます</div>
-  `);
+    setDisplayHTML(
+      '<div class="display-phase">お題</div>' +
+      '<div class="display-main" style="font-size:22px; line-height:1.6;">' + currentTopic + '</div>' +
+      '<div class="display-sub">10秒間で話す内容を考えましょう\n話題を変えたい場合は下のボタンから</div>'
+    );
 
-  // 10 sec prep
-  for (let sec = 10; sec >= 1; sec--) {
-    if (isStopped(token) || skipRequested) return;
+    var sec = 10;
+    function prepCountdown() {
+      if (sec < 1 || isStopped(token) || skipRequested) return Promise.resolve();
 
-    if (sec <= 5) {
-      setDisplayHTML(`
-        <div class="display-phase">まもなく開始</div>
-        <div class="countdown">${sec}</div>
-        <div class="countdown-label">お題：${currentTopic}</div>
-      `);
-    } else {
-      setDisplayHTML(`
-        <div class="display-phase">お題：${currentTopic}</div>
-        <div class="countdown" style="font-size:42px;">${sec}</div>
-        <div class="countdown-label">準備時間</div>
-      `);
+      if (sec <= 5) {
+        setDisplayHTML(
+          '<div class="display-phase">まもなく開始</div>' +
+          '<div class="countdown">' + sec + '</div>' +
+          '<div class="countdown-label">お題：' + currentTopic + '</div>'
+        );
+      } else {
+        setDisplayHTML(
+          '<div class="display-phase">お題：' + currentTopic + '</div>' +
+          '<div class="countdown" style="font-size:42px;">' + sec + '</div>' +
+          '<div class="countdown-label">準備時間</div>'
+        );
+      }
+      sec--;
+      return wait(1000, token).then(function(ok) {
+        return ok ? prepCountdown() : undefined;
+      });
     }
-    if (!await wait(1000, token)) return;
-  }
 
-  // Speech
-  setAnnounce('🎤 スピーチ中！ — 結論→理由→具体例→結論');
-  setStatus('playing');
+    return prepCountdown().then(function() {
+      if (isStopped(token) || skipRequested) return;
 
-  for (let i = 40; i >= 0; i--) {
-    if (isStopped(token) || skipRequested) return;
+      setAnnounce('スピーチ中！ 結論→理由→具体例→結論');
+      setStatus('playing');
 
-    const color = i <= 5 ? 'var(--accent)' : i <= 10 ? 'var(--orange)' : 'var(--text)';
-    const label = i <= 5 ? 'まとめましょう！' : i <= 10 ? 'そろそろまとめへ' : '話しましょう！';
+      var remaining = 40;
+      function speechCountdown() {
+        if (remaining < 0 || isStopped(token) || skipRequested) return Promise.resolve();
 
-    setDisplayHTML(`
-      <div class="display-phase">${label}</div>
-      <div class="countdown" style="color:${color};">${i}</div>
-      <div class="countdown-label">秒</div>
-    `);
+        var color = remaining <= 5 ? 'var(--accent)' : remaining <= 10 ? 'var(--orange)' : 'var(--text)';
+        var label = remaining <= 5 ? 'まとめましょう！' : remaining <= 10 ? 'そろそろまとめへ' : '話しましょう！';
 
-    setProgress(75 + ((40 - i) / 40) * 25);
-    if (!await wait(1000, token)) return;
-  }
+        setDisplayHTML(
+          '<div class="display-phase">' + label + '</div>' +
+          '<div class="countdown" style="color:' + color + ';">' + remaining + '</div>' +
+          '<div class="countdown-label">秒</div>'
+        );
+        setProgress(75 + ((40 - remaining) / 40) * 25);
+        remaining--;
+        return wait(1000, token).then(function(ok) {
+          return ok ? speechCountdown() : undefined;
+        });
+      }
 
-  speechRunning = false;
+      return speechCountdown();
+    }).then(function() {
+      speechRunning = false;
+    });
+  });
 }
 
 /* ======================================================
@@ -1055,20 +1092,20 @@ function showComplete() {
   setStatus('complete');
   setAnnounce('すべてのメニューが完了しました！');
 
-  setDisplayHTML(`
-    <div class="complete-wrap">
-      <div class="complete-icon">🎉</div>
-      <div class="complete-title">お疲れさまでした！</div>
-      <div class="complete-msg">
-        今日のウォームアップ完了です。<br>
-        この調子で毎日続けていきましょう！
-      </div>
-      <div class="complete-actions">
-        <button class="btn btn-start" onclick="startAll()" type="button">🔄 もう一度</button>
-        <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">🏠 ホームへ</a>
-      </div>
-    </div>
-  `);
+  setDisplayHTML(
+    '<div class="complete-wrap">' +
+      '<div style="font-size:52px; margin-bottom:8px;">&#127881;</div>' +
+      '<div class="complete-title">お疲れさまでした！</div>' +
+      '<div class="complete-msg">' +
+        '今日のウォームアップ完了です。<br>' +
+        'この調子で毎日続けていきましょう！' +
+      '</div>' +
+      '<div class="complete-actions">' +
+        '<button class="btn btn-start" onclick="startAll()" type="button" style="min-width:auto;">もう一度</button>' +
+        '<a href="index.html" class="btn btn-ghost" style="text-decoration:none;">ホームへ</a>' +
+      '</div>' +
+    '</div>'
+  );
 
   showControls('complete');
 }
@@ -1087,28 +1124,27 @@ function stopAll() {
   resetStepIndicator();
   setProgress(0);
   setStatus('idle');
-  setAnnounce('「▶ スタート」を押すと、呼吸から順番にガイドします');
+  setAnnounce('スタートを押すと、呼吸から順番にガイドします');
   showControls('start');
 
-  $('pauseBtn').textContent = '⏸ 一時停止';
+  $('pauseBtn').textContent = '\u23F8 一時停止';
   $('pauseBtn').className = 'btn btn-pause';
 
-  setDisplayHTML(`
-    <div class="welcome-icon">🏋️</div>
-    <div class="welcome-title">今日のウォームアップ</div>
-    <div class="welcome-desc">5つのメニューを一本道で練習します</div>
-    <div class="welcome-route">
-      <span class="route-chip">💨 呼吸</span>
-      <span class="route-arrow">→</span>
-      <span class="route-chip">👅 舌トレ</span>
-      <span class="route-arrow">→</span>
-      <span class="route-chip">👄 滑舌</span>
-      <span class="route-arrow">→</span>
-      <span class="route-chip">📢 フレーズ</span>
-      <span class="route-arrow">→</span>
-      <span class="route-chip">🎤 スピーチ</span>
-    </div>
-  `);
+  setDisplayHTML(
+    '<div class="welcome-title">今日のウォームアップ</div>' +
+    '<div class="welcome-desc">5つのメニューを一本道で練習します</div>' +
+    '<div class="welcome-route">' +
+      '<span class="route-chip">1. 呼吸</span>' +
+      '<span class="route-arrow">&rarr;</span>' +
+      '<span class="route-chip">2. 舌トレ</span>' +
+      '<span class="route-arrow">&rarr;</span>' +
+      '<span class="route-chip">3. 滑舌</span>' +
+      '<span class="route-arrow">&rarr;</span>' +
+      '<span class="route-chip">4. フレーズ</span>' +
+      '<span class="route-arrow">&rarr;</span>' +
+      '<span class="route-chip">5. スピーチ</span>' +
+    '</div>'
+  );
 }
 
 /* ======================================================
@@ -1116,13 +1152,13 @@ function stopAll() {
 ====================================================== */
 function togglePause() {
   paused = !paused;
-  const btn = $('pauseBtn');
+  var btn = $('pauseBtn');
   if (paused) {
-    btn.textContent = '▶ 再開';
-    btn.className = 'btn btn-start';
+    btn.textContent = '\u25B6 再開';
+    btn.className = 'btn btn-resume';
     setStatus('paused');
   } else {
-    btn.textContent = '⏸ 一時停止';
+    btn.textContent = '\u23F8 一時停止';
     btn.className = 'btn btn-pause';
     setStatus('playing');
     resumePausedWaiters();
@@ -1137,9 +1173,9 @@ function skipPhase() {
 /* ======================================================
    Main flow
 ====================================================== */
-async function startAll() {
+function startAll() {
   runToken++;
-  const token = runToken;
+  var token = runToken;
 
   paused = false;
   resumePausedWaiters();
@@ -1147,64 +1183,60 @@ async function startAll() {
   speechRunning = false;
   currentTopic = '';
 
-  $('pauseBtn').textContent = '⏸ 一時停止';
+  $('pauseBtn').textContent = '\u23F8 一時停止';
   $('pauseBtn').className = 'btn btn-pause';
 
   showControls('running');
   setStatus('playing');
   setAnnounce('これから始まります…');
 
-  setDisplayHTML(`
-    <div class="display-phase">準備中</div>
-    <div class="display-main" style="font-size: 32px;">始めましょう！</div>
-  `);
+  setDisplayHTML(
+    '<div class="display-phase">準備中</div>' +
+    '<div class="display-main" style="font-size:28px;">始めましょう！</div>'
+  );
 
-  if (!await wait(800, token)) return resetOnStop();
+  wait(800, token).then(function(ok) {
+    if (!ok) return resetOnStop();
 
-  try {
-    // Phase 1
-    await breathing(token);
-    if (isStopped(token)) return resetOnStop();
-    skipRequested = false;
+    return breathing(token).then(function() {
+      if (isStopped(token)) return resetOnStop();
+      skipRequested = false;
 
-    // Phase 2
-    await tongue(token);
-    if (isStopped(token)) return resetOnStop();
-    skipRequested = false;
+      return tongue(token);
+    }).then(function() {
+      if (isStopped(token)) return resetOnStop();
+      skipRequested = false;
 
-    // Phase 3
-    await gyou(token);
-    if (isStopped(token)) return resetOnStop();
-    skipRequested = false;
+      return gyou(token);
+    }).then(function() {
+      if (isStopped(token)) return resetOnStop();
+      skipRequested = false;
 
-    // Phase 4
-    await hardPhrases(token);
-    if (isStopped(token)) return resetOnStop();
-    skipRequested = false;
+      return hardPhrases(token);
+    }).then(function() {
+      if (isStopped(token)) return resetOnStop();
+      skipRequested = false;
 
-    // Phase 5
-    currentTopic = pickTopic();
-    await speech40(token);
-    if (isStopped(token)) return resetOnStop();
-
-    // Complete!
-    showComplete();
-
-  } catch (e) {
+      currentTopic = pickTopic();
+      return speech40(token);
+    }).then(function() {
+      if (isStopped(token)) return resetOnStop();
+      showComplete();
+    });
+  }).catch(function(e) {
     console.error(e);
     resetOnStop();
-  }
+  });
 }
 
 function resetOnStop() {
-  // already handled by stopAll, just ensure clean state
   showControls('start');
 }
 
 /* ======================================================
    Event listeners
 ====================================================== */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
   $('startBtn').addEventListener('click', startAll);
   $('pauseBtn').addEventListener('click', togglePause);
   $('stopBtn').addEventListener('click', stopAll);
@@ -1212,6 +1244,5 @@ document.addEventListener('DOMContentLoaded', () => {
   $('topicBtn').addEventListener('click', changeTopic);
 });
 </script>
-
 </body>
 </html>
