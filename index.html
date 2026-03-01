@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -10,345 +9,343 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-–bg: #f5f0e8;
-–bg-card: #fffdf7;
-–text: #2c2520;
-–text-sub: #7a6e62;
-–accent: #c0392b;
-–accent-light: rgba(192, 57, 43, .08);
-–blue: #2980b9;
-–blue-light: rgba(41, 128, 185, .1);
-–green: #27ae60;
-–green-light: rgba(39, 174, 96, .1);
-–orange: #e67e22;
-–orange-light: rgba(230, 126, 34, .1);
-–purple: #8e44ad;
-–purple-light: rgba(142, 68, 173, .08);
-–border: rgba(44, 37, 32, .1);
-–shadow: 0 2px 12px rgba(44, 37, 32, .06);
-–radius: 16px;
-–radius-sm: 10px;
-–font-body: ‘Zen Kaku Gothic New’, ‘Hiragino Sans’, sans-serif;
-–font-serif: ‘Noto Serif JP’, ‘游明朝’, serif;
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --purple: #8e44ad;
+  --purple-light: rgba(142, 68, 173, .08);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', '游明朝', serif;
 }
 
 body {
-font-family: var(–font-body);
-background: var(–bg);
-color: var(–text);
-line-height: 1.7;
-min-height: 100vh;
--webkit-font-smoothing: antialiased;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ===== HEADER ===== */
 .header {
-background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
-color: #fff;
-padding: 28px 20px 24px;
-text-align: center;
-position: relative;
-overflow: hidden;
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff;
+  padding: 28px 20px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 .header::before {
-content: ‘’;
-position: absolute;
-inset: 0;
-background: radial-gradient(ellipse at 30% 0%, rgba(192,57,43,.12) 0%, transparent 60%),
-radial-gradient(ellipse at 70% 100%, rgba(41,128,185,.1) 0%, transparent 50%);
-pointer-events: none;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, rgba(192,57,43,.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 100%, rgba(41,128,185,.1) 0%, transparent 50%);
+  pointer-events: none;
 }
 .header h1 {
-font-family: var(–font-serif);
-font-size: 26px;
-font-weight: 700;
-letter-spacing: .1em;
-position: relative;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  position: relative;
 }
 .header .sub {
-font-size: 13px;
-opacity: .6;
-margin-top: 6px;
-letter-spacing: .06em;
-position: relative;
+  font-size: 13px;
+  opacity: .6;
+  margin-top: 6px;
+  letter-spacing: .06em;
+  position: relative;
 }
 
 .container {
-max-width: 700px;
-margin: 0 auto;
-padding: 16px;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
-/* ===== TODAY’S PICK (Hero Card) ===== */
+/* ===== TODAY'S PICK (Hero Card) ===== */
 .hero-card {
-background: linear-gradient(135deg, var(–green-light), var(–blue-light));
-border: 1.5px solid rgba(39, 174, 96, .2);
-border-radius: var(–radius);
-box-shadow: var(–shadow), 0 4px 20px rgba(39, 174, 96, .08);
-padding: 20px;
-margin-bottom: 20px;
-text-align: center;
-position: relative;
-overflow: hidden;
+  background: linear-gradient(135deg, var(--green-light), var(--blue-light));
+  border: 1.5px solid rgba(39, 174, 96, .2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow), 0 4px 20px rgba(39, 174, 96, .08);
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 .hero-card::after {
-content: ‘’;
-position: absolute;
-top: -30px; right: -30px;
-width: 100px; height: 100px;
-background: radial-gradient(circle, rgba(39,174,96,.08) 0%, transparent 70%);
-pointer-events: none;
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 100px; height: 100px;
+  background: radial-gradient(circle, rgba(39,174,96,.08) 0%, transparent 70%);
+  pointer-events: none;
 }
 .hero-badge {
-display: inline-block;
-background: var(–green);
-color: #fff;
-font-size: 11px;
-font-weight: 700;
-padding: 3px 12px;
-border-radius: 999px;
-letter-spacing: .05em;
-margin-bottom: 10px;
+  display: inline-block;
+  background: var(--green);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+  letter-spacing: .05em;
+  margin-bottom: 10px;
 }
 .hero-title {
-font-family: var(–font-serif);
-font-size: 20px;
-font-weight: 700;
-margin-bottom: 6px;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
 .hero-desc {
-font-size: 13px;
-color: var(–text-sub);
-line-height: 1.7;
-margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.7;
+  margin-bottom: 14px;
 }
 .hero-route {
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 4px;
-flex-wrap: wrap;
-margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 .hero-chip {
-font-size: 11px;
-font-weight: 600;
-background: rgba(255,255,255,.7);
-border: 1px solid var(–border);
-border-radius: 999px;
-padding: 3px 8px;
-color: var(–text-sub);
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255,255,255,.7);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: var(--text-sub);
 }
 .hero-arrow { opacity: .3; font-size: 10px; }
 .hero-btn {
-display: inline-flex;
-align-items: center;
-gap: 6px;
-padding: 13px 28px;
-border-radius: var(–radius-sm);
-background: var(–green);
-color: #fff;
-font-family: var(–font-body);
-font-size: 16px;
-font-weight: 700;
-text-decoration: none;
-border: none;
-box-shadow: 0 3px 10px rgba(39, 174, 96, .25);
-transition: all .15s ease;
--webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 13px 28px;
+  border-radius: var(--radius-sm);
+  background: var(--green);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  box-shadow: 0 3px 10px rgba(39, 174, 96, .25);
+  transition: all .15s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 .hero-btn:active { transform: scale(.97); }
 .hero-btn:hover { background: #219a52; }
 .hero-time {
-font-size: 12px;
-color: var(–text-sub);
-margin-top: 10px;
-opacity: .8;
+  font-size: 12px;
+  color: var(--text-sub);
+  margin-top: 10px;
+  opacity: .8;
 }
 
 /* ===== CATEGORY SECTION ===== */
 .category {
-margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 .category-header {
-display: flex;
-align-items: center;
-gap: 8px;
-padding: 0 4px;
-margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+  margin-bottom: 10px;
 }
 .category-icon {
-width: 28px; height: 28px;
-border-radius: 8px;
-display: flex; align-items: center; justify-content: center;
-font-size: 14px;
-flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
 }
-.category-icon.basics { background: var(–blue-light); }
-.category-icon.speech { background: var(–orange-light); }
-.category-icon.guide { background: var(–purple-light); }
-.category-icon.tools { background: var(–accent-light); }
+.category-icon.basics { background: var(--blue-light); }
+.category-icon.speech { background: var(--orange-light); }
+.category-icon.guide { background: var(--purple-light); }
+.category-icon.tools { background: var(--accent-light); }
 
 .category-title {
-font-weight: 700;
-font-size: 14px;
-letter-spacing: .03em;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .03em;
 }
 .category-sub {
-font-size: 11px;
-color: var(–text-sub);
+  font-size: 11px;
+  color: var(--text-sub);
 }
 
 /* ===== MENU CARDS ===== */
 .menu-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .menu-card {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 4px;
-background: var(–bg-card);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-box-shadow: var(–shadow);
-padding: 16px 10px 14px;
-text-decoration: none;
-color: var(–text);
-transition: all .15s ease;
--webkit-tap-highlight-color: transparent;
-text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 10px 14px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all .15s ease;
+  -webkit-tap-highlight-color: transparent;
+  text-align: center;
 }
 .menu-card:active {
-transform: scale(.97);
-box-shadow: 0 1px 6px rgba(44, 37, 32, .08);
+  transform: scale(.97);
+  box-shadow: 0 1px 6px rgba(44, 37, 32, .08);
 }
 .menu-card:hover {
-border-color: rgba(44, 37, 32, .18);
-box-shadow: 0 4px 16px rgba(44, 37, 32, .1);
+  border-color: rgba(44, 37, 32, .18);
+  box-shadow: 0 4px 16px rgba(44, 37, 32, .1);
 }
 
 .menu-card-icon {
-font-size: 28px;
-line-height: 1;
-margin-bottom: 2px;
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 2px;
 }
 .menu-card-title {
-font-weight: 700;
-font-size: 14px;
-letter-spacing: .02em;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .02em;
 }
 .menu-card-desc {
-font-size: 11px;
-color: var(–text-sub);
-line-height: 1.5;
+  font-size: 11px;
+  color: var(--text-sub);
+  line-height: 1.5;
 }
 .menu-card-level {
-display: inline-block;
-font-size: 10px;
-font-weight: 600;
-padding: 1px 8px;
-border-radius: 999px;
-margin-top: 2px;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-top: 2px;
 }
 .level-beginner {
-background: var(–green-light);
-color: var(–green);
+  background: var(--green-light);
+  color: var(--green);
 }
 .level-intermediate {
-background: var(–blue-light);
-color: var(–blue);
+  background: var(--blue-light);
+  color: var(--blue);
 }
 .level-advanced {
-background: var(–orange-light);
-color: var(–orange);
+  background: var(--orange-light);
+  color: var(--orange);
 }
 
 /* ===== LIST CARDS (for guide items) ===== */
 .menu-list {
-display: flex;
-flex-direction: column;
-gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .list-card {
-display: flex;
-align-items: center;
-gap: 12px;
-background: var(–bg-card);
-border: 1px solid var(–border);
-border-radius: var(–radius-sm);
-box-shadow: var(–shadow);
-padding: 12px 14px;
-text-decoration: none;
-color: var(–text);
-transition: all .15s ease;
--webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  padding: 12px 14px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all .15s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 .list-card:active {
-transform: scale(.98);
+  transform: scale(.98);
 }
 .list-card:hover {
-border-color: rgba(44, 37, 32, .18);
+  border-color: rgba(44, 37, 32, .18);
 }
 .list-card-icon {
-font-size: 22px;
-flex-shrink: 0;
-width: 36px;
-text-align: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 36px;
+  text-align: center;
 }
 .list-card-body { flex: 1; min-width: 0; }
 .list-card-title {
-font-weight: 700;
-font-size: 14px;
-letter-spacing: .02em;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .02em;
 }
 .list-card-desc {
-font-size: 11px;
-color: var(–text-sub);
+  font-size: 11px;
+  color: var(--text-sub);
 }
 .list-card-arrow {
-color: var(–text-sub);
-opacity: .4;
-font-size: 14px;
-flex-shrink: 0;
+  color: var(--text-sub);
+  opacity: .4;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 /* ===== FOOTER ===== */
 .footer {
-text-align: center;
-padding: 20px 16px 32px;
-font-size: 11px;
-color: var(–text-sub);
-opacity: .6;
+  text-align: center;
+  padding: 20px 16px 32px;
+  font-size: 11px;
+  color: var(--text-sub);
+  opacity: .6;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 420px) {
-.container { padding: 12px; }
-.menu-grid { gap: 8px; }
-.menu-card { padding: 14px 8px 12px; }
-.menu-card-icon { font-size: 24px; }
-.menu-card-title { font-size: 13px; }
-.hero-title { font-size: 18px; }
-.hero-btn { padding: 12px 22px; font-size: 15px; }
-.header h1 { font-size: 22px; }
+  .container { padding: 12px; }
+  .menu-grid { gap: 8px; }
+  .menu-card { padding: 14px 8px 12px; }
+  .menu-card-icon { font-size: 24px; }
+  .menu-card-title { font-size: 13px; }
+  .hero-title { font-size: 18px; }
+  .hero-btn { padding: 12px 22px; font-size: 15px; }
+  .header h1 { font-size: 22px; }
 }
 
 @media (min-width: 600px) {
-.menu-grid {
-grid-template-columns: 1fr 1fr 1fr;
-}
+  .menu-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
 </style>
-
 </head>
 <body>
 
 <!-- ===== HEADER ===== -->
-
 <div class="header">
   <h1>🎤 一人話し方GYM</h1>
   <p class="sub">滑舌・舌トレ・呼吸・スピーチ・話法</p>
@@ -357,7 +354,6 @@ grid-template-columns: 1fr 1fr 1fr;
 <div class="container">
 
   <!-- ===== TODAY'S PICK ===== -->
-
   <div class="hero-card">
     <div class="hero-badge">🔰 迷ったらこれだけ！</div>
     <div class="hero-title">今日のおすすめ練習</div>
@@ -381,7 +377,6 @@ grid-template-columns: 1fr 1fr 1fr;
   </div>
 
   <!-- ===== 基礎トレーニング ===== -->
-
   <div class="category">
     <div class="category-header">
       <div class="category-icon basics">💪</div>
@@ -419,7 +414,6 @@ grid-template-columns: 1fr 1fr 1fr;
   </div>
 
   <!-- ===== スピーチ実践 ===== -->
-
   <div class="category">
     <div class="category-header">
       <div class="category-icon speech">🎤</div>
@@ -451,7 +445,6 @@ grid-template-columns: 1fr 1fr 1fr;
   </div>
 
   <!-- ===== 話法ガイド ===== -->
-
   <div class="category">
     <div class="category-header">
       <div class="category-icon guide">📚</div>
@@ -505,7 +498,6 @@ grid-template-columns: 1fr 1fr 1fr;
   </div>
 
   <!-- ===== ツール ===== -->
-
   <div class="category">
     <div class="category-header">
       <div class="category-icon tools">🧠</div>
@@ -534,8 +526,3 @@ grid-template-columns: 1fr 1fr 1fr;
 
 </body>
 </html>
-
-
-
-
-
