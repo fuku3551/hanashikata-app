@@ -1,475 +1,797 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>80秒スピーチ</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>80秒スピーチ｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<body>
-
-<header class="top">
-  <h1>🎤 80秒スピーチ</h1>
-  <p class="sub">おすすめシリーズ × 80秒タイマー（録音＆AI評価つき）</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
-</header>
-
-<main class="menu">
-
-  <!-- お題 -->
-  <div class="card" style="display:block;">
-    <div class="title">お題</div>
-    <div class="desc">
-      <p id="topic" style="font-size:20px; font-weight:bold;">スタートを押してください</p>
-      <p style="margin-top:8px; opacity:0.8; line-height:1.6;">
-        💡「おすすめ理由」→「具体例」→「一言まとめ」を意識すると、80秒が埋まりやすいです
-      </p>
-    </div>
-  </div>
-
-  <!-- タイマー -->
-  <div class="card" style="display:block;">
-    <div class="title">タイマー</div>
-    <div class="desc">
-      <p id="timer" style="font-size:32px;">80</p>
-      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <button onclick="start()">▶ スタート</button>
-        <button onclick="stop()">⏹ ストップ</button>
-        <button onclick="newTopic();">🎲 お題だけ更新</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================
-    🎙 録音＋AI評価（1画面完結）
-  ========================= -->
-  <section class="card" style="display:block;">
-    <div class="title">🎙 録音 & AI評価（1画面完結）</div>
-    <div class="desc">
-
-      <div style="border:1px solid #eee; border-radius:14px; padding:12px;">
-        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-          <button id="hxRecBtn" onclick="hxToggleRecording()"
-            style="padding:12px 14px; border-radius:12px; border:none; background:#22c55e; color:#fff;">
-            録音開始
-          </button>
-
-          <button onclick="hxResetRecording()"
-            style="padding:12px 14px; border-radius:12px; border:none; background:#ef4444; color:#fff;">
-            録音リセット
-          </button>
-
-          <span id="hxRecStatus" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">
-            待機中
-          </span>
-        </div>
-
-        <audio id="hxPlayer" controls style="display:none; width:100%; margin-top:10px;"></audio>
-
-        <div style="margin-top:10px; font-size:14px; opacity:0.9; line-height:1.7;">
-          ✅ 録音→再生できます（端末内）<br>
-          💡 録音を聞きながら下の欄に原稿メモ→「AI評価」がおすすめ
-        </div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <div style="font-weight:700; margin-bottom:6px;">📝 スピーチ本文（評価対象）</div>
-        <textarea id="hxSpeechText"
-          placeholder="ここにスピーチを書いてください（録音を聞きながらメモでもOK）"
-          style="width:100%; min-height:160px; padding:12px; border-radius:12px; border:1px solid #ddd;"></textarea>
-
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-          <button onclick="hxRunEvaluation()"
-            style="padding:12px 14px; border-radius:12px; border:none; background:#0ea5e9; color:#fff;">
-            AI評価する
-          </button>
-
-          <button onclick="hxClearText()"
-            style="padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff;">
-            クリア
-          </button>
-
-          <button onclick="hxInsertTemplate()"
-            style="padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff;">
-            テンプレ挿入
-          </button>
-        </div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <div id="hxBadges"></div>
-        <div id="hxResult" style="white-space:pre-wrap; line-height:1.9; margin-top:10px;">
-          ここに評価結果が表示されます。
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-</main>
-
-<script>
-/* =========================
-   80秒スピーチ設定
-========================= */
-const TARGET_SECONDS = 80;
-
-const topics = [
-  // おすすめシリーズ（被りにくく30個くらい）
-  "最近観てよかった映画（おすすめ理由まで）",
-  "最近観てよかったドラマ・アニメ（推しポイント）",
-  "最近読んでよかった本（学びと一言）",
-  "最近聴いてよかった音楽（気分が変わる理由）",
-  "最近行ってよかった場所（雰囲気・魅力）",
-  "最近行ってよかったレストラン（推しメニュー）",
-  "最近食べてよかった食べ物（味の特徴）",
-  "最近買ってよかったもの（生活が変わった点）",
-  "最近使ってよかったアプリ（おすすめ機能）",
-  "最近おすすめしたい習慣（続けるコツ）",
-
-  "初心者におすすめの勉強法",
-  "忙しい人におすすめの時短術",
-  "疲れた時におすすめの回復法",
-  "朝が苦手な人におすすめのルーティン",
-  "集中したい時におすすめの環境づくり",
-  "緊張する時におすすめの呼吸法",
-  "落ち込んだ時におすすめの立て直し方",
-  "人間関係でおすすめの距離感の取り方",
-  "仕事でおすすめの報連相のコツ",
-  "相手に伝わるおすすめの話し方",
-
-  "友達におすすめしたい休日の過ごし方",
-  "子どもとおすすめの遊び・お出かけ",
-  "健康のためにおすすめの運動",
-  "食事でおすすめの工夫（続くやり方）",
-  "節約でおすすめの方法（無理しない）",
-  "学び直しでおすすめのテーマ",
-  "介護現場でおすすめの声かけ",
-  "新人におすすめの覚え方・メモ術",
-  "自分の強みを活かすおすすめの方法",
-  "未来の自分におすすめしたい選択",
-
-  // フリートーク枠
-  "フリートーク：最近うれしかったこと",
-  "フリートーク：最近学んだこと"
-];
-
-let time = TARGET_SECONDS;
-let interval = null;
-
-function newTopic(){
-  const t = topics[Math.floor(Math.random() * topics.length)];
-  document.getElementById("topic").textContent = t;
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
 }
 
-function start(){
-  if(interval) return; // 二重起動防止
-  newTopic();
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
 
-  time = TARGET_SECONDS;
-  document.getElementById("timer").textContent = time;
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 0%, rgba(230,126,34,.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
 
-  interval = setInterval(() => {
-    time--;
-    document.getElementById("timer").textContent = time;
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
 
-    if(time <= 0){
-      stop();
-      alert("終了！お疲れさまでした😊");
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-header .icon { font-size: 16px; }
+.card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
+.card-body { padding: 16px 18px; }
+
+.announce-bar {
+  background: var(--blue-light); border: 1px solid rgba(41,128,185,.15);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px;
+  font-size: 13px; font-weight: 600; color: var(--blue);
+  text-align: center; line-height: 1.6; min-height: 40px;
+  display: flex; align-items: center; justify-content: center;
+}
+.announce-bar.phase-info {
+  background: var(--orange-light); border-color: rgba(230,126,34,.15); color: var(--orange);
+}
+.announce-bar.warn {
+  background: var(--accent-light); border-color: rgba(192,57,43,.15); color: var(--accent);
+}
+
+.status-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 6px 0; font-size: 12px; color: var(--text-sub);
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.status-dot.idle { background: #bbb; }
+.status-dot.playing { background: var(--green); animation: pulse 1.2s infinite; }
+.status-dot.recording { background: var(--accent); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+.display-area {
+  min-height: 240px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 20px 8px; text-align: center;
+}
+
+.topic-box {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 20px;
+  margin-bottom: 16px; text-align: center;
+}
+.topic-label { font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 4px; }
+.topic-text {
+  font-family: var(--font-serif); font-size: 20px; font-weight: 700; line-height: 1.5;
+}
+
+.timer-circle-wrap { position: relative; width: 160px; height: 160px; margin: 0 auto 12px; }
+.timer-circle {
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 5px solid var(--border); background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: border-color .3s, background .3s;
+}
+.timer-circle.active { border-color: var(--green); }
+.timer-circle.warning { border-color: var(--orange); background: var(--orange-light); }
+.timer-circle.danger { border-color: var(--accent); background: var(--accent-light); }
+.timer-number { font-family: var(--font-serif); font-size: 52px; font-weight: 900; line-height: 1; }
+.timer-label { font-size: 13px; color: var(--text-sub); margin-top: 2px; }
+.timer-hint { font-size: 13px; color: var(--text-sub); margin-top: 8px; }
+
+.progress-wrap {
+  margin-top: 10px; background: rgba(0,0,0,.06);
+  border-radius: 4px; height: 5px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; width: 0%; background: var(--green);
+  border-radius: 4px; transition: width .4s ease;
+}
+
+.controls-wrap { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.controls-main { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 18px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: #fff;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn-start {
+  background: var(--green); color: #fff; border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(39,174,96,.25);
+  min-width: 160px; font-size: 16px; padding: 13px 24px;
+}
+.btn-stop { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-ghost { background: #fff; color: var(--text); }
+.btn-topic { background: var(--bg); color: var(--text); }
+.btn-blue { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn-rec { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-rec.recording { background: var(--accent); border-color: var(--accent); }
+.controls-secondary {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px;
+}
+
+.rec-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+.rec-status { font-size: 12px; color: var(--text-sub); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.rec-player { width: 100%; margin-top: 10px; border-radius: var(--radius-sm); }
+
+.ai-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+.ai-textarea {
+  width: 100%; min-height: 160px; padding: 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); font-family: var(--font-body); font-size: 14px;
+  line-height: 1.7; resize: vertical; background: #fff;
+}
+.ai-textarea:focus { outline: none; border-color: var(--blue); }
+.ai-badges { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+.ai-badge {
+  display: inline-block; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid var(--border); font-size: 12px; font-weight: 600;
+  background: var(--green-light); color: var(--green);
+}
+.ai-result {
+  margin-top: 10px; white-space: pre-wrap; line-height: 1.9;
+  font-size: 14px; color: var(--text);
+  background: var(--bg); border-radius: var(--radius-sm);
+  padding: 14px; border: 1px solid var(--border);
+}
+
+.section-label { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+.tips {
+  background: var(--accent-light); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-top: 14px;
+}
+.tips-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.tips-text { font-size: 12px; line-height: 1.8; color: var(--text-sub); }
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .timer-circle-wrap { width: 140px; height: 140px; }
+  .timer-circle { width: 140px; height: 140px; }
+  .timer-number { font-size: 44px; }
+  .topic-text { font-size: 17px; }
+  .btn { padding: 10px 14px; font-size: 13px; }
+  .btn-start { padding: 12px 20px; font-size: 15px; min-width: 140px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>80秒スピーチ</h1>
+  <p class="sub">おすすめシリーズ &#215; 80秒タイマー</p>
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">&#127908;</span>
+      <span class="label">スピーチ練習</span>
+    </div>
+    <div class="card-body">
+
+      <div class="announce-bar" id="announceBar">
+        スタートでお題が出ます。15秒考えて80秒で話しましょう
+      </div>
+
+      <div class="status-bar">
+        <span><span class="status-dot idle" id="statusDot"></span></span>
+        <span id="statusText">待機中</span>
+      </div>
+
+      <div class="display-area" id="displayArea">
+        <div class="topic-box">
+          <div class="topic-label">お題</div>
+          <div class="topic-text" id="topicText">スタートを押してください</div>
+        </div>
+        <div class="timer-circle-wrap">
+          <div class="timer-circle" id="timerCircle">
+            <div class="timer-number" id="timerNumber">80</div>
+            <div class="timer-label" id="timerLabel">秒</div>
+          </div>
+        </div>
+        <div class="timer-hint" id="timerHint">お題に合った話法でチャレンジしましょう</div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <div class="controls-wrap">
+        <div class="controls-main" id="controlsMain">
+          <button class="btn btn-start" id="startBtn" type="button">&#9654; スタート</button>
+        </div>
+        <div class="controls-main" id="controlsRunning" style="display:none;">
+          <button class="btn btn-stop" id="stopBtn" type="button">&#9209; 停止</button>
+          <button class="btn btn-topic" id="topicBtn" type="button">&#127922; お題を変える</button>
+        </div>
+        <div class="controls-main" id="controlsDone" style="display:none;">
+          <button class="btn btn-start" id="retryBtn" type="button" style="min-width:auto;">もう一度</button>
+          <a href="index.html" class="btn btn-ghost" style="text-decoration:none;">ホームへ</a>
+        </div>
+      </div>
+
+      <div class="tips">
+        <div class="tips-title">80秒スピーチのコツ</div>
+        <div class="tips-text">
+          お題ごとに<strong>話法のヒント</strong>が表示されます。<br>
+          PREP（結論→理由→具体例→まとめ）、ストーリー（場面→出来事→感情→学び）、<br>
+          AREA（主張→理由→具体例→再主張）など、お題に合った型を意識してみましょう。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 録音 & AI評価 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">&#127897;</span>
+      <span class="label">録音 & AI評価</span>
+    </div>
+    <div class="card-body">
+
+      <div class="section-label">&#127908; 録音</div>
+      <div class="controls-main">
+        <button class="btn btn-rec" id="recBtn" type="button">録音開始</button>
+        <button class="btn btn-ghost" id="recResetBtn" type="button">リセット</button>
+      </div>
+      <div style="text-align:center; margin-top:8px;">
+        <span class="rec-status" id="recStatus">待機中</span>
+      </div>
+      <audio id="recPlayer" controls class="rec-player" style="display:none;"></audio>
+      <div style="font-size: 12px; color: var(--text-sub); margin-top: 8px; line-height: 1.7;">
+        録音を聞きながら下の欄にメモして「AI評価」がおすすめ
+      </div>
+
+      <div class="ai-section">
+        <div class="section-label">&#128221; AI評価</div>
+        <textarea class="ai-textarea" id="speechText"
+          placeholder="ここにスピーチを書いてください（録音を聞きながらメモでもOK）"></textarea>
+        <div class="controls-main" style="margin-top: 10px;">
+          <button class="btn btn-blue" id="evalBtn" type="button">AI評価する</button>
+          <button class="btn btn-ghost" id="clearBtn" type="button">クリア</button>
+          <button class="btn btn-ghost" id="templateBtn" type="button">テンプレ挿入</button>
+        </div>
+
+        <div class="ai-badges" id="aiBadges"></div>
+        <div class="ai-result" id="aiResult">ここに評価結果が表示されます。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ======================================================
+   Topics (32 recommendation-style questions)
+====================================================== */
+var topics = [
+  // おすすめ系（PREP向き）
+  { text: '最近観てよかった映画やドラマ', hint: 'PREP：結論（おすすめ）\u2192 理由 \u2192 具体シーン \u2192 まとめ' },
+  { text: '最近読んでよかった本', hint: 'PREP：おすすめポイント \u2192 学んだこと \u2192 印象に残った一節 \u2192 まとめ' },
+  { text: '最近買ってよかったもの', hint: 'PREP：何を買ったか \u2192 なぜ良いか \u2192 使った場面 \u2192 おすすめ' },
+  { text: '最近行ってよかった場所', hint: 'PREP：どこか \u2192 魅力 \u2192 実際の体験 \u2192 おすすめ' },
+  { text: '最近食べておいしかったもの', hint: 'PREP：何を食べたか \u2192 おいしさの理由 \u2192 場面 \u2192 おすすめ' },
+  { text: '最近ハマっている趣味', hint: 'PREP：何にハマっているか \u2192 きっかけ \u2192 楽しいポイント \u2192 まとめ' },
+  { text: '最近使ってよかったアプリやサービス', hint: 'PREP：何か \u2192 便利な理由 \u2192 具体的な使い方 \u2192 おすすめ' },
+  { text: '最近聴いてよかった音楽やポッドキャスト', hint: 'PREP：何か \u2192 良い理由 \u2192 聴いた場面 \u2192 おすすめ' },
+  { text: '友達におすすめしたい休日の過ごし方', hint: 'PREP：おすすめ \u2192 なぜ良いか \u2192 実際の過ごし方 \u2192 まとめ' },
+  { text: '健康のために続けていること', hint: 'PREP：何をしているか \u2192 理由 \u2192 続けた結果 \u2192 おすすめ' },
+
+  // 体験・エピソード系（ストーリー向き）
+  { text: '最近うれしかったこと', hint: 'ストーリー：状況 \u2192 何があったか \u2192 どう感じたか \u2192 学び' },
+  { text: '最近失敗して学んだこと', hint: 'ストーリー：場面 \u2192 何が起きたか \u2192 気づき \u2192 今後どうするか' },
+  { text: '忘れられない「ありがとう」の体験', hint: 'ストーリー：誰に \u2192 何があったか \u2192 感じたこと \u2192 今思うこと' },
+  { text: '人生で一番頑張ったこと', hint: 'ストーリー：何を \u2192 なぜ頑張ったか \u2192 結果 \u2192 学んだこと' },
+  { text: '自分を変えたきっかけ', hint: 'ストーリー：きっかけ \u2192 何が変わったか \u2192 今どう感じるか' },
+  { text: '誰かの一言で救われた経験', hint: 'ストーリー：状況 \u2192 何を言われたか \u2192 どう変わったか' },
+  { text: '子どもの頃の忘れられない思い出', hint: 'ストーリー：いつ・どこで \u2192 何があったか \u2192 今振り返って思うこと' },
+  { text: '最近感動したこと', hint: 'ストーリー：何に感動したか \u2192 場面の描写 \u2192 なぜ心に残ったか' },
+
+  // コツ・ノウハウ系（PREP向き）
+  { text: '忙しい日でもできる気分転換法', hint: 'PREP：方法 \u2192 なぜ効くか \u2192 自分の実例 \u2192 おすすめ' },
+  { text: '朝の時間を有効に使うコツ', hint: 'PREP：コツ \u2192 理由 \u2192 自分のルーティン \u2192 まとめ' },
+  { text: '集中力を上げるための工夫', hint: 'PREP：工夫 \u2192 なぜ効果的か \u2192 実体験 \u2192 おすすめ' },
+  { text: '人に何かを教えるときのコツ', hint: 'PREP：コツ \u2192 理由 \u2192 うまくいった場面 \u2192 まとめ' },
+  { text: '仕事や勉強を続けるモチベーションの保ち方', hint: 'PREP：方法 \u2192 なぜ続くか \u2192 体験 \u2192 おすすめ' },
+  { text: '良い睡眠のためにしている工夫', hint: 'PREP：工夫 \u2192 効果 \u2192 実体験 \u2192 まとめ' },
+
+  // 考え・価値観系（AREA向き）
+  { text: '「聞き上手」とはどんな人か', hint: 'AREA：主張 \u2192 理由 \u2192 具体例 \u2192 もう一度主張' },
+  { text: '信頼される人の共通点', hint: 'AREA：主張 \u2192 根拠 \u2192 実例 \u2192 まとめ' },
+  { text: '失敗は成功のもとだと思うか', hint: 'AREA：自分の立場 \u2192 理由 \u2192 具体例 \u2192 結論' },
+  { text: '大人になって気づいた大切なこと', hint: 'ストーリー＋AREA：気づき \u2192 きっかけ \u2192 具体例 \u2192 まとめ' },
+  { text: '「続ける力」と「やめる勇気」どちらが大事か', hint: 'AREA：自分の立場 \u2192 理由 \u2192 体験 \u2192 結論' },
+  { text: '良いチームに必要なこと', hint: 'AREA：主張 \u2192 理由 \u2192 実例 \u2192 まとめ' }
+];
+
+var TARGET_SECONDS = 80;
+var PREP_SECONDS = 15;
+
+/* ======================================================
+   State
+====================================================== */
+var runToken = 0;
+var timerInterval = null;
+var currentTopic = '';
+var currentHint = '';
+
+function $(id) { return document.getElementById(id); }
+function isStopped(token) { return token !== runToken; }
+function pickTopic() {
+  var item = topics[Math.floor(Math.random() * topics.length)];
+  currentHint = item.hint;
+  return item.text;
+}
+
+/* ======================================================
+   UI
+====================================================== */
+function setAnnounce(text, type) {
+  var bar = $('announceBar');
+  bar.textContent = text;
+  bar.className = 'announce-bar' + (type ? ' ' + type : '');
+}
+
+function setStatus(state) {
+  var dot = $('statusDot');
+  var txt = $('statusText');
+  if (state === 'playing') { dot.className = 'status-dot playing'; txt.textContent = '進行中'; }
+  else if (state === 'recording') { dot.className = 'status-dot recording'; txt.textContent = '録音中'; }
+  else { dot.className = 'status-dot idle'; txt.textContent = '待機中'; }
+}
+
+function showControls(mode) {
+  $('controlsMain').style.display = mode === 'start' ? 'flex' : 'none';
+  $('controlsRunning').style.display = mode === 'running' ? 'flex' : 'none';
+  $('controlsDone').style.display = mode === 'done' ? 'flex' : 'none';
+}
+
+function setTimerDisplay(num, label, circleClass, hint) {
+  $('timerNumber').textContent = num;
+  $('timerLabel').textContent = label || '';
+  $('timerCircle').className = 'timer-circle' + (circleClass ? ' ' + circleClass : '');
+  if (hint !== undefined) $('timerHint').textContent = hint;
+}
+
+/* ======================================================
+   Timer flow
+====================================================== */
+function startSpeech() {
+  runToken++;
+  var token = runToken;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+
+  currentTopic = pickTopic();
+  $('topicText').textContent = currentTopic;
+  showControls('running');
+  setStatus('playing');
+
+  var prep = PREP_SECONDS;
+  setAnnounce(currentHint, 'phase-info');
+  setTimerDisplay(prep, '準備', '', currentHint);
+  $('progressBar').style.width = '0%';
+
+  timerInterval = setInterval(function() {
+    if (isStopped(token)) { clearInterval(timerInterval); return; }
+    prep--;
+    setTimerDisplay(prep, '準備', '', 'おすすめ理由 \u2192 具体例 \u2192 一言まとめ');
+    if (prep <= 3 && prep > 0) setAnnounce('まもなく開始！', 'warn');
+    if (prep <= 0) { clearInterval(timerInterval); startCountdown(token); }
+  }, 1000);
+}
+
+function startCountdown(token) {
+  var remaining = TARGET_SECONDS;
+  var total = TARGET_SECONDS;
+  setAnnounce('スピーチ開始！');
+  setTimerDisplay(remaining, '秒', 'active', currentHint);
+
+  timerInterval = setInterval(function() {
+    if (isStopped(token)) { clearInterval(timerInterval); return; }
+    remaining--;
+    var pct = ((total - remaining) / total) * 100;
+    $('progressBar').style.width = pct + '%';
+
+    var circleClass = 'active';
+    var hint = currentHint;
+
+    if (remaining <= 10) {
+      circleClass = 'danger'; hint = 'まとめましょう！';
+      setAnnounce('残り' + remaining + '秒！まとめに入りましょう', 'warn');
+    } else if (remaining <= 20) {
+      circleClass = 'warning'; hint = 'そろそろまとめへ';
+      setAnnounce('残り' + remaining + '秒：まとめを意識して');
+    }
+
+    setTimerDisplay(remaining, '秒', circleClass, hint);
+
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      showComplete(token);
     }
   }, 1000);
 }
 
-function stop(){
-  if(interval){
-    clearInterval(interval);
-    interval = null;
-  }
+function showComplete(token) {
+  if (isStopped(token)) return;
+  setAnnounce('お疲れさまでした！');
+  setStatus('idle');
+  $('progressBar').style.width = '100%';
+
+  $('displayArea').innerHTML =
+    '<div style="text-align:center; padding:10px 0;">' +
+      '<div style="font-size:48px; margin-bottom:8px;">&#127881;</div>' +
+      '<div style="font-family:var(--font-serif); font-size:20px; font-weight:700; margin-bottom:6px;">お疲れさまでした！</div>' +
+      '<div style="font-size:14px; color:var(--text-sub); line-height:1.8;">' +
+        'お題：' + currentTopic + '<br>' +
+        '録音を聞きながらAI評価してみましょう' +
+      '</div>' +
+    '</div>';
+  showControls('done');
 }
 
-/* =========================
-   ① 録音（MediaRecorder）
-========================= */
-let hxMediaRecorder = null;
-let hxRecordedChunks = [];
-let hxRecordedBlobUrl = null;
+function stopSpeech() {
+  runToken++;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  resetDisplay();
+}
 
-async function hxToggleRecording(){
-  const btn = document.getElementById("hxRecBtn");
-  const status = document.getElementById("hxRecStatus");
-  const player = document.getElementById("hxPlayer");
+function changeTopic() {
+  currentTopic = pickTopic();
+  $('topicText').textContent = currentTopic;
+  setAnnounce(currentHint, 'phase-info');
+}
 
-  if(hxMediaRecorder && hxMediaRecorder.state === "recording"){
-    hxMediaRecorder.stop();
-    btn.textContent = "録音開始";
-    status.textContent = "停止しました（音声生成中…）";
+function resetDisplay() {
+  setAnnounce('スタートでお題が出ます。15秒考えて80秒で話しましょう');
+  setStatus('idle');
+  $('progressBar').style.width = '0%';
+  showControls('start');
+  $('displayArea').innerHTML =
+    '<div class="topic-box">' +
+      '<div class="topic-label">お題</div>' +
+      '<div class="topic-text" id="topicText">スタートを押してください</div>' +
+    '</div>' +
+    '<div class="timer-circle-wrap">' +
+      '<div class="timer-circle" id="timerCircle">' +
+        '<div class="timer-number" id="timerNumber">80</div>' +
+        '<div class="timer-label" id="timerLabel">秒</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="timer-hint" id="timerHint">お題に合った話法でチャレンジしましょう</div>';
+}
+
+/* ======================================================
+   Recording
+====================================================== */
+var mediaRecorder = null;
+var recordedChunks = [];
+var recordedBlobUrl = null;
+
+function toggleRecording() {
+  var btn = $('recBtn');
+  var status = $('recStatus');
+  var player = $('recPlayer');
+
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    btn.textContent = '録音開始';
+    btn.className = 'btn btn-rec';
+    status.textContent = '処理中...';
+    setStatus('idle');
     return;
   }
 
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    hxRecordedChunks = [];
-    hxMediaRecorder = new MediaRecorder(stream);
-
-    hxMediaRecorder.ondataavailable = (e) => {
-      if(e.data && e.data.size > 0) hxRecordedChunks.push(e.data);
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = function(e) {
+      if (e.data && e.data.size > 0) recordedChunks.push(e.data);
     };
-
-    hxMediaRecorder.onstop = () => {
-      stream.getTracks().forEach(t => t.stop());
-      const blob = new Blob(hxRecordedChunks, { type: "audio/webm" });
-
-      if(hxRecordedBlobUrl) URL.revokeObjectURL(hxRecordedBlobUrl);
-      hxRecordedBlobUrl = URL.createObjectURL(blob);
-
-      player.src = hxRecordedBlobUrl;
-      player.style.display = "block";
-      status.textContent = "録音データ準備OK（再生できます）";
+    mediaRecorder.onstop = function() {
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      var blob = new Blob(recordedChunks, { type: 'audio/webm' });
+      if (recordedBlobUrl) URL.revokeObjectURL(recordedBlobUrl);
+      recordedBlobUrl = URL.createObjectURL(blob);
+      player.src = recordedBlobUrl;
+      player.style.display = 'block';
+      status.textContent = '録音OK（再生できます）';
     };
-
-    hxMediaRecorder.start();
-    btn.textContent = "録音停止";
-    status.textContent = "録音中…";
-  }catch(err){
-    status.textContent = "録音できませんでした（マイク許可を確認）";
-    alert("録音に失敗しました。iPhoneの設定/サイト設定でマイク許可を確認してください。");
-  }
+    mediaRecorder.start();
+    btn.textContent = '録音停止';
+    btn.className = 'btn btn-rec recording';
+    status.textContent = '録音中...';
+    setStatus('recording');
+  }).catch(function() {
+    status.textContent = 'マイク許可を確認してください';
+  });
 }
 
-function hxResetRecording(){
-  const status = document.getElementById("hxRecStatus");
-  const player = document.getElementById("hxPlayer");
-
-  if(hxMediaRecorder && hxMediaRecorder.state === "recording"){
-    hxMediaRecorder.stop();
-  }
-  hxRecordedChunks = [];
-  if(hxRecordedBlobUrl) URL.revokeObjectURL(hxRecordedBlobUrl);
-  hxRecordedBlobUrl = null;
-
+function resetRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+  recordedChunks = [];
+  if (recordedBlobUrl) URL.revokeObjectURL(recordedBlobUrl);
+  recordedBlobUrl = null;
+  var player = $('recPlayer');
   player.pause();
-  player.removeAttribute("src");
-  player.style.display = "none";
-  status.textContent = "待機中";
-
-  const btn = document.getElementById("hxRecBtn");
-  btn.textContent = "録音開始";
+  player.removeAttribute('src');
+  player.style.display = 'none';
+  $('recStatus').textContent = '待機中';
+  $('recBtn').textContent = '録音開始';
+  $('recBtn').className = 'btn btn-rec';
 }
 
-/* =========================
-   ② 長さ推定（80秒に合ってるか）
-   - 日本語は“文字数”でざっくり推定
-   - 目安：1秒あたり約6文字（個人差あり）
-========================= */
-function hxEstimateSeconds(text){
-  const t = (text || "")
-    .replace(/\s/g, "")         // 空白削除
-    .replace(/[、。,.!?！？]/g,""); // 句読点など軽く除外
+/* ======================================================
+   AI Evaluation (80-second optimized)
+====================================================== */
+function evaluate() {
+  var raw = ($('speechText').value || '').trim();
+  var t = raw.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  var badgesEl = $('aiBadges');
+  var resultEl = $('aiResult');
+  badgesEl.innerHTML = '';
 
-  const chars = t.length;
-
-  // 1秒=6文字（話速の目安）。速い人は7〜8、ゆっくりは5くらい。
-  const CHARS_PER_SEC = 6;
-
-  const sec = chars / CHARS_PER_SEC;
-  return { sec, chars, charsPerSec: CHARS_PER_SEC };
-}
-
-/* =========================
-   ③ やさしい総合評価（80秒対応）
-   - 構成 + 聞き手目線 + 感情
-   - さらに「長さが80秒に合うか」を表示＆加点
-========================= */
-function hxGentleEvaluate(text){
-  const raw = (text || "").trim();
-  const t = raw.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
-
-  let score = 60;
-  const goodPoints = [];
-  const badges = [];
-  const advice = [];
-
-  if(t.length < 10){
-    return {
-      score: 60,
-      badges: ["入力が短め"],
-      message:
-`🌟 総合評価：60点
-
-短いながらも、話そうとする姿勢がとても良いです。
-
-もう1〜2文だけ足して、
-「おすすめ理由」か「印象に残った具体例」を入れると、
-80秒がぐっと埋まりやすくなります😊`
-    };
+  if (t.length < 10) {
+    resultEl.textContent =
+      '\u{1F31F} 総合評価：60点\n\n' +
+      '話そうとする姿勢がとても良いです。\n\n' +
+      '80秒スピーチでは「おすすめ理由」と「具体的なエピソード」を\n' +
+      '入れると、自然と時間が埋まりやすくなります。';
+    addBadge(badgesEl, '入力が短め');
+    return;
   }
 
-  // 柔軟ワード判定（言い換え許容）
-  const conclusion = ["結論","要するに","つまり","一言でいうと","私の考えは","僕の考えは","私は","僕は","大事なのは","重要なのは","ポイントは","結局","一番言いたいのは","おすすめは","推しは"];
-  const reason = ["なぜなら","理由","背景","というのも","なぜかというと","だからこそ","なので","から","ため","があって","ポイントは"];
-  const example = ["例えば","たとえば","実際に","この前","以前","先日","具体的に","体験として","たとえると","こんなことがあって","のとき","シーン","場面"];
-  const summary = ["まとめると","結論として","最後に","だから","つまり","なので","というわけで","要は","今後は","次は","これから","おすすめです","ぜひ"];
+  var score = 45;
+  var goodPoints = [];
+  var badges = [];
+  var adviceList = [];
 
-  const hasConclusion = conclusion.some(w => t.includes(w));
-  const hasReason = reason.some(w => t.includes(w));
-  const hasExample = example.some(w => t.includes(w));
-  const hasSummary = summary.some(w => t.includes(w));
+  // --- 構造チェック（80秒おすすめ系に最適化） ---
+  var conclusion = ['おすすめは','推しは','結論','一言でいうと','私の考えは','大事なのは','ポイントは','と思います','と考えます','紹介したい','紹介します'];
+  var reason = ['なぜなら','理由','というのも','だからこそ','きっかけ','があって','からです','ためです','良いところは','魅力は','ポイントは'];
+  var example = ['例えば','たとえば','実際に','この前','以前','先日','具体的に','体験','場面','シーン','エピソード','のとき','思い出'];
+  var summary = ['まとめると','最後に','というわけで','だからこそ','おすすめです','ぜひ','試してみて','やってみて','改めて','振り返ると'];
 
-  if(hasConclusion){ score += 10; goodPoints.push("テーマ（主張）がはっきりしていました"); badges.push("テーマ明確"); }
-  if(hasReason){ score += 10; goodPoints.push("理由や背景が伝わって納得しやすかったです"); badges.push("納得感"); }
-  if(hasExample){ score += 10; goodPoints.push("具体例があり、イメージしやすかったです"); badges.push("具体性"); }
-  if(hasSummary){ score += 10; goodPoints.push("最後の締め・まとめが良く、余韻が残りました"); badges.push("締めが良い"); }
+  var hasConclusion = conclusion.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasReason = reason.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasExample = example.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasSummary = summary.some(function(w) { return t.indexOf(w) >= 0; });
 
-  // 文量（しっかり書いてる）
-  if(t.length > 220){
-    score += 5; goodPoints.push("内容が充実していて、80秒向きの厚みがありました"); badges.push("内容充実");
+  // --- 長さチェック（先に計算、構造点に影響させる） ---
+  var cleanText = t.replace(/\s/g, '').replace(/[、。,.!?！？]/g, '');
+  var estSec = Math.round(cleanText.length / 6);
+
+  // 長さが目標の50%以下なら構造点を半分にする
+  var structureMultiplier = 1.0;
+  if (estSec < TARGET_SECONDS * 0.5) {
+    structureMultiplier = 0.5;
+  } else if (estSec < TARGET_SECONDS * 0.7) {
+    structureMultiplier = 0.75;
+  }
+
+  // 褒めフレーズ（80秒おすすめ系向け）
+  var conclusionPraise = [
+    '何をおすすめしたいかが冒頭からしっかり伝わります',
+    '主題が明確で、聞き手がすぐに興味を持てる導入です',
+    'おすすめしたい気持ちがストレートに伝わる出だしです'
+  ];
+  var reasonPraise = [
+    'おすすめする理由がしっかり語られていて、説得力があります',
+    '「なぜ良いのか」が具体的で、聞き手が納得しやすい構成です',
+    '魅力を伝える言葉選びが上手で、聞いてみたくなります'
+  ];
+  var examplePraise = [
+    '実際の体験やエピソードが入っていて、リアリティがあります',
+    '具体的な場面の描写があり、聞き手が情景を思い浮かべやすいです',
+    'エピソードの選び方がうまく、おすすめの魅力が自然に伝わります'
+  ];
+  var summaryPraise = [
+    '最後に「ぜひ」と呼びかけることで、聞き手の行動を促しています',
+    '締めの一言がきれいで、話全体の印象がまとまっています',
+    'おすすめが自然に伝わる、気持ちの良い締めくくりです'
+  ];
+
+  function pickOne(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  if (hasConclusion) { score += Math.round(10 * structureMultiplier); goodPoints.push(pickOne(conclusionPraise)); badges.push('テーマ明確'); }
+  if (hasReason) { score += Math.round(10 * structureMultiplier); goodPoints.push(pickOne(reasonPraise)); badges.push('納得感'); }
+  if (hasExample) { score += Math.round(10 * structureMultiplier); goodPoints.push(pickOne(examplePraise)); badges.push('具体性'); }
+  if (hasSummary) { score += Math.round(8 * structureMultiplier); goodPoints.push(pickOne(summaryPraise)); badges.push('締めが良い'); }
+
+  // 文量チェック
+  if (t.length > 250) {
+    score += 4;
+    goodPoints.push('80秒にふさわしい情報量があり、聞き応えのある内容です');
+    badges.push('内容充実');
+  } else if (t.length > 140) {
+    score += 2;
   }
 
   // 感情
-  const emotionWords = ["嬉しい","楽しい","悔しい","悲しい","怖い","感動","驚いた","ワクワク","モヤモヤ","腹が立った","ほっとした","最高","泣いた"];
-  if(emotionWords.some(w => t.includes(w))){
-    score += 5; goodPoints.push("感情が入っていて、聞き手の心に届きやすい話し方でした"); badges.push("感情が伝わる");
+  var emotionWords = ['嬉しい','嬉しかった','楽しい','楽しかった','感動','驚いた','最高','好き','ハマった','気に入った','心に残った','泣いた','笑った','ワクワク','ほっとした'];
+  if (emotionWords.some(function(w) { return t.indexOf(w) >= 0; })) {
+    score += 4;
+    goodPoints.push('自分の感情が素直に表現されていて、おすすめの熱量が伝わります');
+    badges.push('感情が伝わる');
   }
 
-  // 聞き手目線
-  const listenerWords = ["あなた","みなさん","皆さん","相手","聞く人","伝えたい","おすすめ","共有","ぜひ","もしよければ"];
-  if(listenerWords.some(w => t.includes(w))){
-    score += 5; goodPoints.push("聞き手を意識した言葉選びができていました"); badges.push("聞き手目線");
+  // 聞き手への呼びかけ
+  var listenerWords = ['あなた','みなさん','皆さん','おすすめ','ぜひ','試してみて','やってみて','もしよければ','伝えたい','共有'];
+  if (listenerWords.some(function(w) { return t.indexOf(w) >= 0; })) {
+    score += 3;
+    goodPoints.push('聞き手への呼びかけがあり、「自分も試してみたい」と思わせる力があります');
+    badges.push('聞き手目線');
   }
 
-  // 80秒の長さチェック（ここが今回の改良点）
-  const est = hxEstimateSeconds(t);
-  const target = TARGET_SECONDS;
-  const low = target * 0.85;  // -15%
-  const high = target * 1.15; // +15%
+  // --- 長さ結果表示 ---
+  var lengthComment = '';
 
-  let lengthComment = "";
-  if(est.sec < low){
-    badges.push("短め");
+  if (estSec < TARGET_SECONDS * 0.7) {
+    badges.push('短め');
     lengthComment =
-`⏱ 長さチェック：
-推定 ${est.sec.toFixed(0)}秒（目標 ${target}秒） → 少し短め
-
-💡 伸ばすコツ：
-・「おすすめ理由」を1文追加
-・「具体例（どの場面/何が良かった）」を1つ足す
-・最後に「誰におすすめか」を一言`;
-    advice.push("80秒に合わせるなら、理由＋具体例をもう1段だけ足すと安定します");
-  }else if(est.sec > high){
-    badges.push("長め");
+      '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 ' + TARGET_SECONDS + '秒）\u2192 少し短めです\n' +
+      '伸ばすコツ：エピソードをもう1つ足す、「誰におすすめか」を最後に一言加える';
+    adviceList.push('80秒を埋めるには、具体的な場面やエピソードをもう少し丁寧に語ると自然に伸びます');
+  } else if (estSec > TARGET_SECONDS * 1.3) {
+    badges.push('長め');
     lengthComment =
-`⏱ 長さチェック：
-推定 ${est.sec.toFixed(0)}秒（目標 ${target}秒） → 少し長め
-
-💡 短くするコツ：
-・具体例を1つに絞る
-・同じ意味の文を削る
-・締めを1文にまとめる`;
-    advice.push("80秒に収めるなら、具体例を1つに絞って締めを短くすると綺麗です");
-  }else{
-    badges.push("長さOK");
-    score += 5; // 適正なら加点（ここで80秒と差が出る）
-    lengthComment =
-`⏱ 長さチェック：
-推定 ${est.sec.toFixed(0)}秒（目標 ${target}秒） → ちょうど良い長さです ✅`;
-    goodPoints.push("80秒に合う長さで、聞き手が集中しやすいテンポでした");
+      '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 ' + TARGET_SECONDS + '秒）\u2192 少し長めです\n' +
+      '短くするコツ：具体例を1つに絞る、同じ意味の文を削る';
+    adviceList.push('80秒に収めるなら、エピソードを1つに絞って要点を整理すると聞きやすくなります');
+  } else {
+    badges.push('長さOK');
+    score += 4;
+    lengthComment = '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 ' + TARGET_SECONDS + '秒）\u2192 ちょうど良い長さです \u2705';
+    goodPoints.push('80秒にちょうど良いペースで、聞き手が集中しやすいテンポです');
   }
 
-  // 改善は“最大2つ”まで（充実したい要望に合わせて）
-  // ただし強すぎないように “優しく”
-  const improveList = [];
-
-  if(!hasExample) improveList.push("具体例を「1つだけ」入れると、さらにグッと伝わります");
-  if(!hasSummary) improveList.push("最後に一言だけ「まとめ」を置くと、記憶に残りやすいです");
-  if(!hasReason) improveList.push("理由を一言足すと説得力が増します（なぜおすすめ？）");
-  if(!hasConclusion) improveList.push("冒頭か最後に「一番言いたい結論」を一言置くと分かりやすいです");
-
-  // length由来の advice があれば優先して混ぜる
-  // 最終的に最大2つ
-  (advice.concat(improveList)).forEach(a => {
-    if(improveList.length >= 2) return;
-  });
-
-  // ここで “最大2つ” に整形
-  const merged = [];
-  (advice.concat(improveList)).forEach(a => {
-    if(!a) return;
-    if(merged.includes(a)) return;
-    if(merged.length >= 2) return;
-    merged.push(a);
-  });
-
-  const praise = goodPoints.length
-    ? goodPoints[Math.floor(Math.random() * goodPoints.length)]
-    : "前向きに話そうとしている姿勢がとても良いです";
+  // 改善アドバイス（足りない構造要素を指摘）
+  if (!hasConclusion) adviceList.push('冒頭に「私のおすすめは〇〇です」と一言置くと、聞き手が話の方向をつかみやすくなります');
+  if (!hasExample) adviceList.push('「例えば〜」と具体的な場面を1つ語ると、おすすめの魅力がリアルに伝わります');
+  if (!hasReason) adviceList.push('「なぜおすすめなのか」を一言加えると、聞き手の納得感がぐっと上がります');
+  if (!hasSummary) adviceList.push('最後に「ぜひ試してみてください」と呼びかけると、印象に残る締めになります');
 
   score = Math.min(score, 100);
+  if (badges.length === 0) badges.push('チャレンジ精神');
 
-  const improveText = merged.length
-    ? "💡 さらに良くするなら：\n・" + merged.join("\n・")
-    : "💡 この調子で続けていきましょう";
+  // 結果テキスト
+  var praiseLines = '';
+  var shown = goodPoints.slice(0, Math.min(2, goodPoints.length));
+  if (shown.length > 0) {
+    for (var i = 0; i < shown.length; i++) {
+      praiseLines += '\u2714 ' + shown[i] + '\n';
+    }
+  } else {
+    praiseLines = '\u2714 おすすめを自分の言葉で伝えようとする姿勢がとても良いです\n';
+  }
 
-  const finalBadges = badges.length ? badges : ["前向き"];
+  var improveLines = '';
+  var shownAdvice = adviceList.slice(0, 2);
+  if (shownAdvice.length > 0) {
+    for (var j = 0; j < shownAdvice.length; j++) {
+      improveLines += '\u2022 ' + shownAdvice[j] + '\n';
+    }
+  } else {
+    improveLines = 'おすすめの構成がしっかりできています。この調子で続けましょう！\n';
+  }
 
-  return {
-    score,
-    badges: finalBadges,
-    message:
-`🌟 総合評価：${score}点
+  var overall = '';
+  if (score >= 90) overall = '素晴らしいおすすめスピーチです！構成も熱量も申し分ありません。';
+  else if (score >= 80) overall = 'とても良いスピーチです。おすすめの魅力がしっかり伝わる内容です。';
+  else if (score >= 70) overall = '良い内容です。あと一工夫で、もっと「聞いてみたい」と思わせるスピーチになります。';
+  else overall = 'おすすめを伝えようとする姿勢が素晴らしいです。少しずつ磨いていきましょう。';
 
-とても良いスピーチでした。
+  badges.forEach(function(b) { addBadge(badgesEl, b); });
 
-特に「${praise}」点が素晴らしいです。
-
-${lengthComment}
-
-${improveText}
-
-これからも自信を持って話して大丈夫です😊`
-  };
+  resultEl.textContent =
+    '\u{1F31F} 総合評価：' + score + '点\n\n' +
+    overall + '\n\n' +
+    '【良かった点】\n' +
+    praiseLines + '\n' +
+    lengthComment + '\n\n' +
+    '【もっと良くするには】\n' +
+    improveLines + '\n' +
+    '自分の「好き」や「おすすめ」を言葉にできること自体が大きな力です。\nこの調子で続けていきましょう！';
 }
 
-/* =========================
-   ④ UI操作
-========================= */
-function hxRunEvaluation(){
-  const text = document.getElementById("hxSpeechText").value;
-  const res = hxGentleEvaluate(text);
-
-  const badgesEl = document.getElementById("hxBadges");
-  badgesEl.innerHTML = "";
-  (res.badges || []).forEach(b => {
-    const span = document.createElement("span");
-    span.textContent = b;
-    span.style.display = "inline-block";
-    span.style.padding = "6px 10px";
-    span.style.borderRadius = "999px";
-    span.style.border = "1px solid #ddd";
-    span.style.fontSize = "14px";
-    span.style.margin = "4px 6px 0 0";
-    badgesEl.appendChild(span);
-  });
-
-  document.getElementById("hxResult").textContent = res.message;
+function addBadge(container, text) {
+  var span = document.createElement('span');
+  span.className = 'ai-badge';
+  span.textContent = text;
+  container.appendChild(span);
 }
 
-function hxClearText(){
-  document.getElementById("hxSpeechText").value = "";
-  document.getElementById("hxBadges").innerHTML = "";
-  document.getElementById("hxResult").textContent = "ここに評価結果が表示されます。";
+function clearEval() {
+  $('speechText').value = '';
+  $('aiBadges').innerHTML = '';
+  $('aiResult').textContent = 'ここに評価結果が表示されます。';
 }
 
-function hxInsertTemplate(){
-  document.getElementById("hxSpeechText").value =
-`（例）私のおすすめは〇〇です。
-というのも、△△という理由があるからです。
-例えば、□□の場面（体験）が特に良かったです。
-だから、〇〇が好きな人にはぜひおすすめです。`;
-  hxRunEvaluation();
+function insertTemplate() {
+  $('speechText').value =
+    '（例）私のおすすめは〇〇です。\n' +
+    'なぜかというと、△△という魅力があるからです。\n' +
+    '実際に使ってみた（行ってみた）ときのことなのですが、\n' +
+    '□□という場面で特にそれを感じました。\n' +
+    'たとえば、▽▽のときに◇◇だったのが印象的でした。\n' +
+    'この経験を通じて、改めて〇〇の良さを実感しました。\n' +
+    'もし興味がある方がいたら、ぜひ試してみてほしいです。';
+  evaluate();
 }
+
+/* ======================================================
+   Events
+====================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+  $('startBtn').addEventListener('click', startSpeech);
+  $('stopBtn').addEventListener('click', stopSpeech);
+  $('topicBtn').addEventListener('click', changeTopic);
+  $('retryBtn').addEventListener('click', function() { resetDisplay(); startSpeech(); });
+  $('recBtn').addEventListener('click', toggleRecording);
+  $('recResetBtn').addEventListener('click', resetRecording);
+  $('evalBtn').addEventListener('click', evaluate);
+  $('clearBtn').addEventListener('click', clearEval);
+  $('templateBtn').addEventListener('click', insertTemplate);
+});
 </script>
-
 </body>
 </html>
-  
