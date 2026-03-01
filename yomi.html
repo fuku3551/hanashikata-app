@@ -3,329 +3,582 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>読み練習（外郎売）縦書き</title>
-<link rel="stylesheet" href="style.css" />
-
+<title>読み練習（外郎売）縦書き｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  .wrap{max-width:1100px;margin:0 auto;}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* 本文エリア（縦書き右→左） */
-  #reader{
-    position:relative;
-    height:45vh; /* ✅ 70vh → 半分くらいへ */
-    overflow-x:auto;       /* ✅ 縦書きの“読み進め”は横スクロールが自然 */
-    overflow-y:hidden;     /* ✅ 縦方向のブレを封じる */
-    -webkit-overflow-scrolling:touch;
-    touch-action: pan-x;   /* ✅ 斜めスクロールを防止（横だけ） */
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', '游明朝', serif;
+}
 
-    border:1px solid rgba(0,0,0,.12);
-    border-radius:14px;
-    background:rgba(255,255,255,.75);
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
 
-    /* ✅ 右端（開始列）が見えにくい問題を解決：右余白を大きめに */
-    padding:14px 46px 14px 20px; /* 上 右 下 左 */
-    box-sizing:border-box;
-  }
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff;
+  padding: 20px 20px 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, rgba(192,57,43,.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  position: relative;
+}
+.header .sub {
+  font-size: 12px;
+  opacity: .65;
+  margin-top: 4px;
+  letter-spacing: .04em;
+  position: relative;
+}
+.header .back-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: rgba(255,255,255,.7);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color .2s;
+  position: relative;
+}
+.header .back-link:hover { color: #fff; }
 
-  #textBody{
-    writing-mode:vertical-rl;     /* 縦書き・右→左 */
-    text-orientation:mixed;
-    font-size:18px;              /* 少し小さめ */
-    font-weight:650;
-    line-height:1.95;
-    letter-spacing:.03em;
-    white-space:pre-wrap;
-    word-break:break-word;
-  }
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
 
-  /* ruby（ふりがな） */
-  ruby{ ruby-position: over; ruby-align: center; }
-  ruby rt{
-    font-size:.55em;
-    opacity:.88;
-    letter-spacing:.02em;
-    line-height:1.1;
-    text-orientation:mixed;
-  }
+/* ===== ONBOARDING ===== */
+.onboarding {
+  background: linear-gradient(135deg, var(--blue-light), var(--green-light));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  position: relative;
+  animation: slideDown .5s ease-out;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.onboarding-title {
+  font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(--blue);
+}
+.onboarding-steps { display: flex; flex-direction: column; gap: 6px; }
+.onboarding-step {
+  display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6;
+}
+.step-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--blue); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; margin-top: 1px;
+}
+.onboarding .close-btn {
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none; font-size: 18px;
+  color: var(--text-sub); cursor: pointer; line-height: 1; padding: 4px;
+}
 
-  /* ガイド縦線 */
-  #guideLine{
-    position:absolute;
-    top:10px; bottom:10px;
-    width:2px;
-    background:rgba(230,0,51,.18);
-    right:46px; /* ✅ 右余白に合わせて初期位置 */
-    display:none;
-    border-radius:999px;
-    pointer-events:none; /* ✅ 触らない（操作は上部コントロールで） */
-  }
+/* ===== CARD ===== */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-header .icon { font-size: 18px; }
+.card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
+.card-body { padding: 16px 18px; }
 
-  .row{
-    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;
-  }
-  .pill{
-    display:inline-block;padding:6px 12px;border-radius:999px;
-    background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.12);font-size:14px;
-  }
-  .btn{
-    padding:10px 14px;border-radius:12px;border:1px solid rgba(0,0,0,.12);
-    background:#fff;font-weight:800;
-  }
-  .btnPrimary{background:#0ea5e9;color:#fff;border:none;}
-  .btnDanger{background:#ef4444;color:#fff;border:none;}
-  .mini{font-size:14px;opacity:.85;line-height:1.7;text-align:center;white-space:pre-wrap;}
+/* ===== CONTROLS ===== */
+.controls-main {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 18px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: #fff;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .15s ease; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.97); }
+.btn-start {
+  background: var(--green); color: #fff; border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(39, 174, 96, .25);
+}
+.btn-start:hover { background: #219a52; }
+.btn-stop {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(192, 57, 43, .2);
+}
+.btn-stop:hover { background: #a93226; }
+.btn-reset { background: var(--bg); color: var(--text); }
 
-  input[type="range"]{ width:240px; }
+.slider-group {
+  display: flex; align-items: center; gap: 8px;
+  justify-content: center; flex-wrap: wrap; margin-top: 12px;
+}
+.slider-label {
+  font-size: 12px; font-weight: 600; color: var(--text-sub);
+  min-width: 56px; text-align: right;
+}
+.slider-value {
+  font-size: 12px; font-weight: 700; color: var(--accent);
+  background: var(--accent-light); padding: 2px 10px;
+  border-radius: 999px; min-width: 60px; text-align: center;
+}
+.slider-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--border); background: #fff;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.slider-btn:active { transform: scale(.92); }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 160px; height: 6px; border-radius: 3px;
+  background: var(--border); outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px;
+  border-radius: 50%; background: var(--accent);
+  border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2); cursor: pointer;
+}
+
+/* ===== READER ===== */
+#reader {
+  position: relative;
+  height: 55vh;
+  min-height: 320px;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: auto;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  background: #fffef9;
+  /* ✅ 右パディングでふりがなが枠に当たらないよう余白確保 */
+  padding: 16px 50px 16px 16px;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.03);
+}
+
+#textBody {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 2.0;
+  letter-spacing: .04em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+  min-height: 100%;
+  height: max-content;
+}
+
+ruby { ruby-position: over; ruby-align: center; }
+ruby rt {
+  font-size: .52em; opacity: .78; letter-spacing: .02em;
+  line-height: 1.1; text-orientation: mixed; color: var(--accent);
+}
+
+/* ===== STATUS & PROGRESS ===== */
+.status-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 10px 0 8px; font-size: 12px; color: var(--text-sub);
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.status-dot.idle { background: #bbb; }
+.status-dot.playing { background: var(--green); animation: pulse 1.2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+
+.progress-wrap {
+  margin-top: 8px; background: rgba(0,0,0,.06);
+  border-radius: 4px; height: 5px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; width: 0%; background: var(--green);
+  border-radius: 4px; transition: width .3s ease;
+}
+
+.tips {
+  background: var(--accent-light); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-top: 12px;
+}
+.tips-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.tips-text { font-size: 12px; line-height: 1.7; color: var(--text-sub); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  #reader { height: 50vh; min-height: 280px; padding: 14px 44px 14px 12px; }
+  #textBody { font-size: 16px; }
+  input[type="range"] { width: 120px; }
+  .btn { padding: 9px 14px; font-size: 13px; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  #reader { height: 65vh; min-height: 250px; }
+  .header { padding: 10px 20px; }
+  .header h1 { font-size: 18px; }
+}
 </style>
 </head>
-
 <body>
-<header class="top">
+
+<div class="header">
   <h1>📖 読み練習（外郎売）</h1>
   <p class="sub">縦書き（右→左）｜スマホ横向き推奨</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
-</header>
+  <a href="index.html" class="back-link">← ホームへ戻る</a>
+</div>
 
-<main class="menu wrap">
+<div class="container">
 
-  <!-- 操作 -->
-  <div class="card" style="display:block;">
-    <div class="title">操作</div>
-    <div class="desc">
-
-      <div class="row">
-        <button class="btn btnPrimary" onclick="startAuto()">▶ 開始</button>
-        <button class="btn btnDanger" onclick="stopAuto()">⏹ 停止</button>
-        <button class="btn" onclick="resetPos()">⟲ リセット</button>
+  <!-- 初回ガイド -->
+  <div class="onboarding" id="onboarding">
+    <button class="close-btn" onclick="closeOnboarding()" aria-label="閉じる">✕</button>
+    <div class="onboarding-title">🎯 はじめての方へ — 3ステップで練習開始！</div>
+    <div class="onboarding-steps">
+      <div class="onboarding-step">
+        <span class="step-num">1</span>
+        <span>本文エリアを<strong>横にスワイプ</strong>して、縦書きの外郎売を読み進めます</span>
       </div>
-
-      <div class="row" style="margin-top:10px;">
-        <button class="btn" onclick="toggleLine()">│ 縦線：<span id="lineState">OFF</span></button>
-        <button class="btn" onclick="toggleSlide()">⇢ 自動スライド：<span id="slideState">OFF</span></button>
+      <div class="onboarding-step">
+        <span class="step-num">2</span>
+        <span><strong>▶ 開始</strong>ボタンで自動スクロール。速度は自由に調整できます</span>
       </div>
-
-      <!-- ✅ 縦線コントロール（上部に集約して使いやすく） -->
-      <div class="row" style="margin-top:10px;">
-        <span class="pill">縦線</span>
-        <button class="btn" onclick="moveLine(12)">◀</button>
-        <input id="linePos" type="range" min="0" max="260" value="46" oninput="setLineRight(this.value)">
-        <button class="btn" onclick="moveLine(-12)">▶</button>
-        <span class="pill"><span id="lineRightLabel">46</span>px</span>
-      </div>
-
-      <!-- ✅ 速度：ボタン＋スライダー（どちらでもOK） -->
-      <div class="row" style="margin-top:10px;">
-        <span class="pill">自動速度</span>
-        <button class="btn" onclick="slower()">➖</button>
-        <input id="speedRange" type="range" min="200" max="3000" step="50" value="900" oninput="setSpeed(this.value)">
-        <button class="btn" onclick="faster()">➕</button>
-        <span class="pill"><span id="speedLabel">900</span>ms</span>
-      </div>
-
-      <div class="mini" style="margin-top:10px;">
-        ✅ スクロールは「横だけ」に固定（斜めブレ防止）<br>
-        ✅ 縦線は上部コントロールで自由に調整できます
+      <div class="onboarding-step">
+        <span class="step-num">3</span>
+        <span>声に出して読みましょう！ふりがな付きなので安心です</span>
       </div>
     </div>
   </div>
 
-  <!-- 本文 -->
-  <div class="card" style="display:block;">
-    <div class="title">外郎売（縦書き）</div>
-    <div class="desc">
+  <!-- 操作パネル -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">🎛️</span>
+      <span class="label">操作パネル</span>
+    </div>
+    <div class="card-body">
+      <div class="controls-main">
+        <button class="btn btn-start" onclick="startAuto()">▶ 開始</button>
+        <button class="btn btn-stop" onclick="stopAuto()">⏹ 停止</button>
+        <button class="btn btn-reset" onclick="resetPos()">⟲ リセット</button>
+      </div>
+      <div class="slider-group">
+        <span class="slider-label">自動速度</span>
+        <button class="slider-btn" onclick="slower()">−</button>
+        <input id="speedRange" type="range" min="200" max="3000" step="50" value="900" oninput="setSpeed(this.value)">
+        <button class="slider-btn" onclick="faster()">+</button>
+        <span class="slider-value" id="speedLabel">900ms</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 本文エリア -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">📜</span>
+      <span class="label">外郎売（縦書き）</span>
+    </div>
+    <div class="card-body" style="padding-bottom:10px;">
+      <div class="status-bar">
+        <span><span class="status-dot idle" id="statusDot"></span></span>
+        <span id="statusText">停止中 — スワイプまたは「開始」で読み進めましょう</span>
+      </div>
       <div id="reader">
-        <div id="guideLine"></div>
         <div id="textBody">読み込み中…</div>
       </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="tips">
+        <div class="tips-title">💡 練習のコツ</div>
+        <div class="tips-text">
+          ・まずはゆっくり、一文ずつ声に出して読みましょう<br>
+          ・慣れてきたら速度を上げてみましょう<br>
+          ・スマホの場合は横向きにすると読みやすくなります
+        </div>
+      </div>
     </div>
   </div>
 
-</main>
+</div>
 
 <script>
 /* ======================================================
-  ✅ 本文は福田さんが貼るので、ここだけ差し替えてOK
-  （このままでも動作確認はできます）
+  本文データ — 意味の区切りで改行し行数を増やす
 ====================================================== */
 const RAW_TEXT = `
-拙者せっしゃ親方おやかたと申もうすは、お立たち会 あいの中 うちに御存ごぞんじのお方かたもござりましょうが、お江戸えどを発たって二十里にじゅうり上方かみがた、相州 そうしゅう小田原おだわら一色町 いっしきまちをお過すぎなされて、青物あおもの町 ちょうを上のぼりへお出いでなさるれば、欄干らんかん橋 ばし虎屋とらや藤 と右衛門うえもん、只今ただいまは剃髪ていはつ致いたして圓えん斎 さいと名乗なのりまする。
-元朝がんちょうより大晦日 おおつごもりまで、御手おてに入いれまする此 この薬くすりは、昔むかし、珍ちんの国くにの唐人とうじん、 外郎ういろうと云いう人ひと、我わが朝 ちょうへ来きたり。 帝みかどへ参内さんだいの折 おりから、此 この薬くすりを深ふかく込こめ置おき、用 もちゆる時ときは一いち粒 りゅうずつ冠かんむりの隙間すきまより取とり出 いだす。 依よ ってその名なを帝みかどより、 透頂香 とうちんこうと 賜たまわる。即すなわち 文字もじ には、「 頂 いただき、 透すく、香 におい 」と書か いて「とうちんこう」と 申もうす。
-只今ただいまは此 この薬くすり、殊ことの外ほか、 世上 せじょうに広ひろまり、方々 ほうぼうに似にせ看板かんばんを出 いだし、イヤ小田原おだわらの、灰はい俵 だわらの、さん俵 だわらの、炭俵すみだわらのと、色々いろいろに申もうせども、平仮名ひらがな をもって「ういろう」と 致いたしたは、親方おやかた圓えん斎さいばかり。 もしやお 立たち会 あいの中 うちに、熱海あたみか塔ノ沢とうのさわへ湯治とうじにお出いでなさるるか、又または伊勢いせ御ご参宮さんぐうの折おりからは、必かならず門 かど違ちがいなされまするな。 御 お上のぼりなれば右みぎの方 かた、御 お下くだりなれば左側ひだりがわ、八方はっぽうが八 やつ棟 むね、表おもてが三 みつ棟 むね玉堂ぎょくどう造 づくり、破風はふには菊きくに桐きりの薹とうの御ご紋もんを御ご赦免しゃめんあって、系図けいず正 ただしき薬 くすりでござる。
-イヤ最前さいぜんより家名かめいの自慢じまんばかり申もうしても、御存ごぞんじない方 かたには、正身 しょうしんの胡椒の丸呑こしょうのまるのみ、白河夜船しらかわよふね 。さらば 一いち粒 りゅう食たべかけて、その気味合きみあいをお目めに懸かけましょう。 先まず此 この薬くすりを斯様かように一いち粒 りゅう舌したの上うえ へ 乗のせまして、腹 ふく内ないへ納おさめますると、イヤどうもいえぬは、 胃い、心 しん、肺はい、肝 かんが健すこやかに成なって、薫風くんぷう喉のどより来きたり、口中 こうちゅう微び涼りょうを生しょうずるが如ごとし。 魚 ぎょ鳥 ちょう、木きの子こ、麺類めんるいの食くい合あわせ、其その外ほか、万病 まんびょう即効そっこうあること神かみの如ごとし。  さて此 この薬くすり、第一だいいちの奇妙きみょうには、舌したの廻 まわることが銭 ぜにごまが裸足はだしで逃にげる。ひょっと舌したが廻まわり出だすと、矢やも盾たても堪たまらぬじゃ。
-そりゃそりゃそりゃ、そりゃそりゃ、廻まわって来きたわ、廻まわって来くるわ。 アワヤ 喉のど、サタラナ舌したにカ牙 げサ歯音しおん、ハマの二ふたつは唇くちびるの軽重 きょうじゅう開口かいこう爽さわやかに、アカサタナ、ハマヤラワ、オコソトノ、ホモヨロヲ。 一つへぎへぎに、へぎ干ほし、はじかみ。 盆ぼん豆まめ、盆ぼん米 ごめ、盆ぼん牛蒡ごぼう 。 摘 つみ蓼 たで、 摘 つみ豆 まめ、摘山椒 つみさんしょう、書写山しょしゃざんの社しゃ僧正そうじょう。 小米こごめの生なま噛 がみ、小米こごめの生なま噛 がみ、こん小米こごめのこ生 なま噛 がみ。繻子しゅす緋ひ繻子 じゅす、繻子しゅす繻珍 しゅちん。 親おやも嘉兵衛かへえ、子こも嘉兵衛かへえ、親嘉兵衛おやかへえ子こ嘉兵衛かへえ、子こ嘉兵衛かへえ親 おや嘉兵衛かへえ。古栗こぐりの木きの古 ふる切口きりくち。雨合羽あまがっぱが番ばん合羽 がっぱか。貴様きさまの脚絆きゃはんも皮かわ脚絆 ぎゃはん、我 われ等らが脚絆きゃはんも皮かわ脚絆 ぎゃはん。尻しり皮 かわ袴 ばかまのしっ綻 ぽころびを、三 み針はり針長はりながにちょと縫ぬうて、縫ぬうてちょとぶん出 だせ。河原撫子かわらなでしこ野石 のぜき竹 ちく。野良のら如来にょらい野良のら如来にょらい、三野みの良 ら如来にょらいに六野 むの良 ら如来にょらい 。 一寸先いっすんさき のお 小仏こぼとけにお蹴躓けつまずきゃるな、細溝ほそみぞにどじょにょろり。京きょうの生なま鱈 だら、奈良なら、生なま学 まな鰹 がつお、ちょと四 し五ご貫目かんめ。お茶ちゃ立 たちょ、茶ちゃ立 だちょ、ちゃっと立 たちょ、茶ちゃ立 だちょ。青竹あおだけ茶筅ちゃせんでお茶ちゃちゃと立たちゃ。  来くるわ来くるわ何なにが来くる、高野 こうやの山やまのおこけら小僧こぞう、狸たぬき百 ひゃっ匹 ぴき、箸はし百ひゃく膳ぜん、天目てんもく百 ひゃっ杯 ぱい、棒ぼう八 はっ百 ぴゃっ本 ぽん。武具ぶぐ、馬具ばぐ、武具ぶぐ馬具ばぐ、三 み武具ぶぐ馬具ばぐ、合あわせて武具ぶぐ馬具ばぐ、六 む武具ぶぐ馬具ばぐ。 菊きく、栗くり、菊きく栗くり、三 み菊きく栗くり、合あわせて菊きく栗くり、六 む菊きく栗くり。麦むぎ、ごみ、麦むぎごみ、三 み麦むぎごみ、合あわせて麦むぎごみ、六 む麦むぎごみ。あの長押なげしの長 なが薙刀なぎなたは誰 たが長 なが薙刀なぎなたぞ。向むこうの胡麻ごま殻 がらは荏えの胡麻ごま殻 がらか真ま胡麻ごま殻 がらか、あれこそ本ほんの真ま胡麻ごま殻 がら。がらぴぃがらぴぃ風車かざぐるま。起おきゃがれ小法師 こぼし、起おきゃがれ小法師 こぼし、昨夜 ゆんべも溢 こぼしてまた溢 こぼした。 たぁぷぽぽ、たぁぷぽぽ、ちりからちりから、つったっぽ。たっぽたっぽ一丁いっちょう蛸だこ、落 おちたら煮にて食くを。煮にても焼やいても食くわれぬ物ものは、五徳ごとく、鉄てつ弓 きゅう、金かな熊童子くまどうじに、石熊いしくま、石持いしもち、虎熊とらくま、虎鱚とらぎす。中 なかにも東寺とうじの羅生門らしょうもんには、茨木童子いばらきどうじが腕うで栗 ぐり五 ごん合ごう掴つか んでおむしゃる。かの頼光 らいこうの膝元ひざもと去さらず。
-鮒ふな、金柑きんかん、椎茸しいたけ、定さだめて後段 ごだんな、蕎麦切そばきり、素麺そうめん、饂飩うどんか愚鈍ぐどんなこ新発しんぼ知 ち。小棚 こだなの小下こしたに、小桶こおけにこ味噌みそがこ有あるぞ、こ杓子しゃくしこ持 もって、こすくてこ寄よこせ。 おっと合点がてんだ、心得こころえ田圃たんぼの川崎かわさき、神奈川かながわ、程ほどヶ谷 がや、戸塚とつかは走はしって行 ゆけば、灸やいとを擦すりむく、三里さんりばかりか、藤沢ふじさわ、平塚ひらつか、大磯おおいそがしや、小磯こいその宿やどを七ななつ起おきして、早天そうてんそうそう、相州 そうしゅう小田原おだわら、透 とう頂 ちん香こう。隠かくれござらぬ貴賎きせん群衆 ぐんじゅの 花はなの御 お江戸えどの花はな ういろう。 あれ、あの花はなを見みて、お心こころをお和やわ らぎやという。 産 うぶ子こ、這子 はうこに至いたるまで、此 このういろうの御ご評判ひょうばん、御存ごぞんじないとは申もうされまいまいつぶり、角出 つのだせ、棒ぼう出だせ、ぼうぼう眉まゆに、臼うす、杵きね、擂鉢すりばち、ばちばち、ぐゎらぐゎらぐゎらと、 羽目はめを外はずして今日 こんにち御 おい出 での何 いずれ様 さまに、上あげねばならぬ、売うらねばならぬと、息いきせい引ひっ張ぱり、東方とうほう世界せかいの薬くすりの元締もとじめ、薬師如来やくしにょらいも照覧 しょうらんあれと、ホホ 敬うやまって、ういろうはいらっしゃりませぬか。
+拙者せっしゃ親方おやかたと申もうすは、お立たち会 あいの中 うちに御存ごぞんじのお方かたもござりましょうが、
+お江戸えどを発たって二十里にじゅうり上方かみがた、相州 そうしゅう小田原おだわら一色町 いっしきまちをお過すぎなされて、
+青物あおもの町 ちょうを上のぼりへお出いでなさるれば、欄干らんかん橋 ばし虎屋とらや藤 と右衛門うえもん、
+只今ただいまは剃髪ていはつ致いたして圓えん斎 さいと名乗なのりまする。
+
+元朝がんちょうより大晦日 おおつごもりまで、御手おてに入いれまする此 この薬くすりは、
+昔むかし、珍ちんの国くにの唐人とうじん、外郎ういろうと云いう人ひと、我わが朝 ちょうへ来きたり。
+帝みかどへ参内さんだいの折 おりから、此 この薬くすりを深ふかく込こめ置おき、
+用 もちゆる時ときは一いち粒 りゅうずつ冠かんむりの隙間すきまより取とり出 いだす。
+依よってその名なを帝みかどより、透頂香 とうちんこうと賜たまわる。
+即すなわち文字もじには、「頂 いただき、透すく、香 におい」と書か いて「とうちんこう」と申もうす。
+
+只今ただいまは此 この薬くすり、殊ことの外ほか、世上 せじょうに広ひろまり、
+方々 ほうぼうに似にせ看板かんばんを出 いだし、イヤ小田原おだわらの、灰はい俵 だわらの、
+さん俵 だわらの、炭俵すみだわらのと、色々いろいろに申もうせども、
+平仮名ひらがなをもって「ういろう」と致いたしたは、親方おやかた圓えん斎さいばかり。
+もしやお立たち会 あいの中 うちに、熱海あたみか塔ノ沢とうのさわへ湯治とうじにお出いでなさるるか、
+又または伊勢いせ御ご参宮さんぐうの折おりからは、必かならず門 かど違ちがいなされまするな。
+御 お上のぼりなれば右みぎの方 かた、御 お下くだりなれば左側ひだりがわ、八方はっぽうが八 やつ棟 むね、
+表おもてが三 みつ棟 むね玉堂ぎょくどう造 づくり、破風はふには菊きくに桐きりの薹とうの
+御ご紋もんを御ご赦免しゃめんあって、系図けいず正 ただしき薬 くすりでござる。
+
+イヤ最前さいぜんより家名かめいの自慢じまんばかり申もうしても、御存ごぞんじない方 かたには、
+正身 しょうしんの胡椒の丸呑こしょうのまるのみ、白河夜船しらかわよふね。
+さらば一いち粒 りゅう食たべかけて、その気味合きみあいをお目めに懸かけましょう。
+先まず此 この薬くすりを斯様かように一いち粒 りゅう舌したの上うえへ乗のせまして、
+腹 ふく内ないへ納おさめますると、イヤどうもいえぬは、胃い、心 しん、肺はい、
+肝 かんが健すこやかに成なって、薫風くんぷう喉のどより来きたり、
+口中 こうちゅう微び涼りょうを生しょうずるが如ごとし。
+魚 ぎょ鳥 ちょう、木きの子こ、麺類めんるいの食くい合あわせ、其その外ほか、
+万病 まんびょう即効そっこうあること神かみの如ごとし。
+さて此 この薬くすり、第一だいいちの奇妙きみょうには、舌したの廻 まわることが
+銭 ぜにごまが裸足はだしで逃にげる。ひょっと舌したが廻まわり出だすと、矢やも盾たても堪たまらぬじゃ。
+
+そりゃそりゃそりゃ、そりゃそりゃ、廻まわって来きたわ、廻まわって来くるわ。
+アワヤ喉のど、サタラナ舌したにカ牙 げサ歯音しおん、ハマの二ふたつは唇くちびるの
+軽重 きょうじゅう開口かいこう爽さわやかに、アカサタナ、ハマヤラワ、オコソトノ、ホモヨロヲ。
+一つへぎへぎに、へぎ干ほし、はじかみ。盆ぼん豆まめ、盆ぼん米 ごめ、盆ぼん牛蒡ごぼう。
+摘 つみ蓼 たで、摘 つみ豆 まめ、摘山椒 つみさんしょう、書写山しょしゃざんの社しゃ僧正そうじょう。
+小米こごめの生なま噛 がみ、小米こごめの生なま噛 がみ、こん小米こごめのこ生 なま噛 がみ。
+繻子しゅす緋ひ繻子 じゅす、繻子しゅす繻珍 しゅちん。
+親おやも嘉兵衛かへえ、子こも嘉兵衛かへえ、親嘉兵衛おやかへえ子こ嘉兵衛かへえ、
+子こ嘉兵衛かへえ親 おや嘉兵衛かへえ。古栗こぐりの木きの古 ふる切口きりくち。
+雨合羽あまがっぱが番ばん合羽 がっぱか。貴様きさまの脚絆きゃはんも皮かわ脚絆 ぎゃはん、
+我 われ等らが脚絆きゃはんも皮かわ脚絆 ぎゃはん。尻しり皮 かわ袴 ばかまのしっ綻 ぽころびを、
+三 み針はり針長はりながにちょと縫ぬうて、縫ぬうてちょとぶん出 だせ。
+河原撫子かわらなでしこ野石 のぜき竹 ちく。野良のら如来にょらい野良のら如来にょらい、
+三野みの良 ら如来にょらいに六野 むの良 ら如来にょらい。
+一寸先いっすんさきのお小仏こぼとけにお蹴躓けつまずきゃるな、細溝ほそみぞにどじょにょろり。
+京きょうの生なま鱈 だら、奈良なら、生なま学 まな鰹 がつお、ちょと四 し五ご貫目かんめ。
+お茶ちゃ立 たちょ、茶ちゃ立 だちょ、ちゃっと立 たちょ、茶ちゃ立 だちょ。
+青竹あおだけ茶筅ちゃせんでお茶ちゃちゃと立たちゃ。
+
+来くるわ来くるわ何なにが来くる、高野 こうやの山やまのおこけら小僧こぞう、
+狸たぬき百 ひゃっ匹 ぴき、箸はし百ひゃく膳ぜん、天目てんもく百 ひゃっ杯 ぱい、棒ぼう八 はっ百 ぴゃっ本 ぽん。
+武具ぶぐ、馬具ばぐ、武具ぶぐ馬具ばぐ、三 み武具ぶぐ馬具ばぐ、
+合あわせて武具ぶぐ馬具ばぐ、六 む武具ぶぐ馬具ばぐ。
+菊きく、栗くり、菊きく栗くり、三 み菊きく栗くり、合あわせて菊きく栗くり、六 む菊きく栗くり。
+麦むぎ、ごみ、麦むぎごみ、三 み麦むぎごみ、合あわせて麦むぎごみ、六 む麦むぎごみ。
+あの長押なげしの長 なが薙刀なぎなたは誰 たが長 なが薙刀なぎなたぞ。
+向むこうの胡麻ごま殻 がらは荏えの胡麻ごま殻 がらか真ま胡麻ごま殻 がらか、
+あれこそ本ほんの真ま胡麻ごま殻 がら。がらぴぃがらぴぃ風車かざぐるま。
+起おきゃがれ小法師 こぼし、起おきゃがれ小法師 こぼし、昨夜 ゆんべも溢 こぼしてまた溢 こぼした。
+たぁぷぽぽ、たぁぷぽぽ、ちりからちりから、つったっぽ。
+たっぽたっぽ一丁いっちょう蛸だこ、落 おちたら煮にて食くを。
+煮にても焼やいても食くわれぬ物ものは、五徳ごとく、鉄てつ弓 きゅう、
+金かな熊童子くまどうじに、石熊いしくま、石持いしもち、虎熊とらくま、虎鱚とらぎす。
+中 なかにも東寺とうじの羅生門らしょうもんには、茨木童子いばらきどうじが
+腕うで栗 ぐり五 ごん合ごう掴つかんでおむしゃる。かの頼光 らいこうの膝元ひざもと去さらず。
+
+鮒ふな、金柑きんかん、椎茸しいたけ、定さだめて後段 ごだんな、蕎麦切そばきり、
+素麺そうめん、饂飩うどんか愚鈍ぐどんなこ新発しんぼ知 ち。
+小棚 こだなの小下こしたに、小桶こおけにこ味噌みそがこ有あるぞ、
+こ杓子しゃくしこ持 もって、こすくてこ寄よこせ。
+おっと合点がてんだ、心得こころえ田圃たんぼの川崎かわさき、神奈川かながわ、
+程ほどヶ谷 がや、戸塚とつかは走はしって行 ゆけば、灸やいとを擦すりむく、
+三里さんりばかりか、藤沢ふじさわ、平塚ひらつか、大磯おおいそがしや、
+小磯こいその宿やどを七ななつ起おきして、早天そうてんそうそう、
+相州 そうしゅう小田原おだわら、透 とう頂 ちん香こう。
+隠かくれござらぬ貴賎きせん群衆 ぐんじゅの花はなの御 お江戸えどの花はなういろう。
+あれ、あの花はなを見みて、お心こころをお和やわらぎやという。
+産 うぶ子こ、這子 はうこに至いたるまで、此 このういろうの御ご評判ひょうばん、
+御存ごぞんじないとは申もうされまいまいつぶり、角出 つのだせ、棒ぼう出だせ、
+ぼうぼう眉まゆに、臼うす、杵きね、擂鉢すりばち、ばちばち、ぐゎらぐゎらぐゎらと、
+羽目はめを外はずして今日 こんにち御 おい出 での何 いずれ様 さまに、
+上あげねばならぬ、売うらねばならぬと、息いきせい引ひっ張ぱり、
+東方とうほう世界せかいの薬くすりの元締もとじめ、薬師如来やくしにょらいも照覧 しょうらんあれと、
+ホホ敬うやまって、ういろうはいらっしゃりませぬか。
 `.trim();
 
 /* ======================================================
-  ✅ 自動ruby化（漢字＋ひらがな / 漢字＋空白＋ひらがな に対応）
+  自動ruby化
 ====================================================== */
-function isKanji(ch){ return /[一-龥々]/.test(ch); }
-function isHiragana(ch){ return /[ぁ-ゖーゝゞ]/.test(ch); }
-function isSpace(ch){ return ch === " " || ch === "　"; }
-
-function escapeHtml(s){
-  return (s+"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
+function isKanji(ch) { return /[一-龥々]/.test(ch); }
+function isHiragana(ch) { return /[ぁ-ゖーゝゞ]/.test(ch); }
+function isSpace(ch) { return ch === " " || ch === "\u3000"; }
+function escapeHtml(s) {
+  return (s + "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function autoRuby(text){
+function autoRuby(text) {
   let out = "";
   let i = 0;
-
-  while(i < text.length){
+  while (i < text.length) {
     const c = text[i];
-
-    if(c === "\n" || c === "\r"){
-      out += "\n";
-      i++;
-      continue;
-    }
-
-    if(isKanji(c)){
-      let kanjiRun = c;
-      i++;
-      while(i < text.length && isKanji(text[i])){
-        kanjiRun += text[i];
-        i++;
-      }
-
-      while(i < text.length && isSpace(text[i])) i++;
-
+    if (c === "\n" || c === "\r") { out += "\n"; i++; continue; }
+    if (isKanji(c)) {
+      let kanjiRun = c; i++;
+      while (i < text.length && isKanji(text[i])) { kanjiRun += text[i]; i++; }
+      while (i < text.length && isSpace(text[i])) i++;
       let hiraRun = "";
-      while(i < text.length && isHiragana(text[i])){
-        hiraRun += text[i];
-        i++;
-      }
-
-      if(hiraRun.length > 0){
+      while (i < text.length && isHiragana(text[i])) { hiraRun += text[i]; i++; }
+      if (hiraRun.length > 0) {
         out += `<ruby>${escapeHtml(kanjiRun)}<rt>${escapeHtml(hiraRun)}</rt></ruby>`;
-      }else{
+      } else {
         out += escapeHtml(kanjiRun);
       }
       continue;
     }
-
     out += escapeHtml(c);
     i++;
   }
-
   return out;
 }
 
-function render(){
+function render() {
   document.getElementById("textBody").innerHTML = autoRuby(RAW_TEXT);
 }
 render();
 
 /* ======================================================
-  ✅ 縦線 ON/OFF + 位置調整（上部コントロール）
+  オンボーディング
 ====================================================== */
-let lineOn = false;
-
-function setLineRight(px){
-  const v = Number(px);
-  const line = document.getElementById("guideLine");
-  line.style.right = v + "px";
-  document.getElementById("lineRightLabel").textContent = String(v);
-  document.getElementById("linePos").value = v;
+function closeOnboarding() {
+  const el = document.getElementById("onboarding");
+  el.style.opacity = "0";
+  el.style.transform = "translateY(-10px)";
+  el.style.transition = "all .3s ease";
+  setTimeout(() => el.style.display = "none", 300);
+  try { localStorage.setItem("onboarding_closed", "1"); } catch(e) {}
 }
-
-function toggleLine(){
-  lineOn = !lineOn;
-  document.getElementById("guideLine").style.display = lineOn ? "block" : "none";
-  document.getElementById("lineState").textContent = lineOn ? "ON" : "OFF";
-}
-
-function moveLine(delta){
-  const cur = Number(document.getElementById("linePos").value || 46);
-  let next = cur + delta;
-  next = Math.max(0, Math.min(260, next));
-  setLineRight(next);
-}
-
-/* 初期：縦線位置を反映（右余白と揃える） */
-setLineRight(46);
+try {
+  if (localStorage.getItem("onboarding_closed") === "1") {
+    document.getElementById("onboarding").style.display = "none";
+  }
+} catch(e) {}
 
 /* ======================================================
-  ✅ 自動スライド（縦書き＝右→左へ“読み進める”ので scrollLeft を進める）
+  自動スライド（シンプル版・縦線なし）
 ====================================================== */
-let slideOn = false;
-let speed = 900; // ms
+let speed = 900;
 let timer = null;
 
-function updateSpeedLabel(){
-  document.getElementById("speedLabel").textContent = String(speed);
+function updateSpeedLabel() {
+  document.getElementById("speedLabel").textContent = speed + "ms";
   document.getElementById("speedRange").value = String(speed);
 }
 updateSpeedLabel();
 
-function setSpeed(v){
+function setSpeed(v) {
   speed = Number(v);
   updateSpeedLabel();
-  if(timer) startAuto();
+  if (timer) startAuto();
 }
 
-function toggleSlide(){
-  slideOn = !slideOn;
-  document.getElementById("slideState").textContent = slideOn ? "ON" : "OFF";
-
-  if(slideOn){
-    if(!lineOn) toggleLine();
-    startAuto();
-  }else{
-    stopAuto();
+function updateStatus(playing) {
+  const dot = document.getElementById("statusDot");
+  const txt = document.getElementById("statusText");
+  if (playing) {
+    dot.className = "status-dot playing";
+    txt.textContent = "再生中 — 声に出して読みましょう！";
+  } else {
+    dot.className = "status-dot idle";
+    txt.textContent = "停止中 — スワイプまたは「開始」で読み進めましょう";
   }
 }
 
-function startAuto(){
-  stopAuto();
-  if(!slideOn) slideOn = true, document.getElementById("slideState").textContent = "ON";
-  if(!lineOn) toggleLine();
-
+function updateProgress() {
   const reader = document.getElementById("reader");
+  const max = reader.scrollWidth - reader.clientWidth;
+  const pct = max > 0 ? Math.min(100, (reader.scrollLeft / max) * 100) : 0;
+  document.getElementById("progressBar").style.width = pct + "%";
+}
 
-  timer = setInterval(()=>{
-    // 読み進め（横方向）
+document.getElementById("reader").addEventListener("scroll", updateProgress);
+
+function startAuto() {
+  stopAuto();
+  updateStatus(true);
+  const reader = document.getElementById("reader");
+  timer = setInterval(() => {
     reader.scrollLeft += 18;
-
-    // 端まで行ったら停止
+    updateProgress();
     const max = reader.scrollWidth - reader.clientWidth;
-    if(reader.scrollLeft >= max - 2){
+    if (reader.scrollLeft >= max - 2) {
       stopAuto();
-      slideOn = false;
-      document.getElementById("slideState").textContent = "OFF";
     }
   }, speed);
 }
 
-function stopAuto(){
-  if(timer){
-    clearInterval(timer);
-    timer = null;
-  }
+function stopAuto() {
+  if (timer) { clearInterval(timer); timer = null; }
+  updateStatus(false);
 }
 
-function resetPos(){
+function resetPos() {
   stopAuto();
-  const reader = document.getElementById("reader");
-  reader.scrollLeft = 0;
-  // 縦線位置も初期へ
-  setLineRight(46);
+  document.getElementById("reader").scrollLeft = 0;
+  updateProgress();
 }
 
-function slower(){
+function slower() {
   speed = Math.min(speed + 120, 3000);
   updateSpeedLabel();
-  if(timer) startAuto();
+  if (timer) startAuto();
 }
-function faster(){
+function faster() {
   speed = Math.max(speed - 120, 200);
   updateSpeedLabel();
-  if(timer) startAuto();
+  if (timer) startAuto();
 }
 </script>
-
 </body>
 </html>
