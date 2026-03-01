@@ -661,7 +661,7 @@ function evaluate() {
     return;
   }
 
-  var score = 55;
+  var score = 50;
   var goodPoints = [];
   var badges = [];
   var advice = [];
@@ -676,6 +676,13 @@ function evaluate() {
   var hasReason = reason.some(function(w) { return t.indexOf(w) >= 0; });
   var hasExample = example.some(function(w) { return t.indexOf(w) >= 0; });
   var hasSummary = summary.some(function(w) { return t.indexOf(w) >= 0; });
+
+  // 長さペナルティ（短い文でキーワードだけ揃えても高得点にならない）
+  var cleanText = t.replace(/\s/g, '').replace(/[、。,.!?！？]/g, '');
+  var estSec = Math.round(cleanText.length / 6);
+  var structureMultiplier = 1.0;
+  if (estSec < 20) { structureMultiplier = 0.5; }
+  else if (estSec < 28) { structureMultiplier = 0.75; }
 
   // --- 褒めフレーズ集（バリエーション） ---
   var conclusionPraise = [
@@ -703,10 +710,10 @@ function evaluate() {
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  if (hasConclusion) { score += 10; goodPoints.push(pickOne(conclusionPraise)); badges.push('テーマ明確'); }
-  if (hasReason) { score += 10; goodPoints.push(pickOne(reasonPraise)); badges.push('納得感'); }
-  if (hasExample) { score += 10; goodPoints.push(pickOne(examplePraise)); badges.push('具体性'); }
-  if (hasSummary) { score += 8; goodPoints.push(pickOne(summaryPraise)); badges.push('締めが良い'); }
+  if (hasConclusion) { score += Math.round(10 * structureMultiplier); goodPoints.push(pickOne(conclusionPraise)); badges.push('テーマ明確'); }
+  if (hasReason) { score += Math.round(10 * structureMultiplier); goodPoints.push(pickOne(reasonPraise)); badges.push('納得感'); }
+  if (hasExample) { score += Math.round(10 * structureMultiplier); goodPoints.push(pickOne(examplePraise)); badges.push('具体性'); }
+  if (hasSummary) { score += Math.round(8 * structureMultiplier); goodPoints.push(pickOne(summaryPraise)); badges.push('締めが良い'); }
 
   // --- 追加チェック ---
   if (t.length > 150) {
@@ -748,10 +755,35 @@ function evaluate() {
   score = Math.min(score, 100);
   if (badges.length === 0) badges.push('チャレンジ精神');
 
+  // --- 長さチェックコメント ---
+  var lengthComment = '';
+  if (estSec < 20) {
+    badges.push('短め');
+    lengthComment =
+      '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 40秒）\u2192 かなり短めです\n' +
+      '40秒は短い分、点数はシビアになります。\n' +
+      '結論＋理由＋具体例を1つずつ入れるだけで、自然と時間が埋まります。';
+  } else if (estSec < 28) {
+    badges.push('短め');
+    lengthComment =
+      '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 40秒）\u2192 少し短めです\n' +
+      '40秒は短い分、点数はシビアになります。\n' +
+      'もう1〜2文足すと、ちょうど良い長さになります。';
+  } else if (estSec > 52) {
+    badges.push('長め');
+    lengthComment =
+      '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 40秒）\u2192 少し長めです\n' +
+      '具体例を1つに絞るか、締めを短くすると40秒に収まります。';
+  } else {
+    badges.push('長さOK');
+    score += 4;
+    lengthComment =
+      '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 40秒）\u2192 ちょうど良い長さです \u2705';
+  }
+
   // --- 結果テキスト生成 ---
   var praiseLines = '';
   if (goodPoints.length > 0) {
-    // 良い点を最大2つ表示
     var shown = goodPoints.slice(0, Math.min(2, goodPoints.length));
     for (var i = 0; i < shown.length; i++) {
       praiseLines += '\u2714 ' + shown[i] + '\n';
@@ -786,6 +818,7 @@ function evaluate() {
     overall + '\n\n' +
     '【良かった点】\n' +
     praiseLines + '\n' +
+    lengthComment + '\n\n' +
     '【もっと良くするには】\n' +
     improveLine + '\n\n' +
     '自分の言葉で話せていること自体が大きな一歩です。\nこの調子で続けていきましょう！';
