@@ -1,217 +1,882 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>呼吸練習（4-4-8）</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>呼吸練習｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, rgba(41,128,185,.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-header .icon { font-size: 16px; }
+.card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
+.card-body { padding: 16px 18px; }
+
+.onboarding {
+  background: linear-gradient(135deg, var(--blue-light), var(--green-light));
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; margin-bottom: 16px; position: relative;
+  animation: slideDown .5s ease-out;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.onboarding-title { font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(--blue); }
+.onboarding-steps { display: flex; flex-direction: column; gap: 6px; }
+.onboarding-step { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6; }
+.ob-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--blue); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; margin-top: 1px;
+}
+.onboarding .close-btn {
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none; font-size: 18px;
+  color: var(--text-sub); cursor: pointer; line-height: 1; padding: 4px;
+}
+
+/* Mode selector */
+.mode-selector { display: flex; gap: 8px; margin-bottom: 14px; }
+.mode-btn {
+  flex: 1; padding: 10px 8px; border-radius: var(--radius-sm);
+  border: 2px solid var(--border); background: #fff;
+  font-family: var(--font-body); font-size: 13px; font-weight: 700;
+  text-align: center; cursor: pointer; transition: all .15s;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  color: var(--text-sub);
+}
+.mode-btn:active { transform: scale(.97); }
+.mode-btn.active { border-color: var(--green); background: var(--green-light); color: var(--green); }
+
+/* Steps */
+.steps-indicator {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; padding: 12px 4px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.step-item { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 50px; }
+.step-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  border: 2px solid var(--border); background: #fff; color: var(--text-sub);
+  transition: all .3s;
+}
+.step-circle.active {
+  border-color: var(--green); background: var(--green); color: #fff;
+  box-shadow: 0 2px 8px rgba(39,174,96,.3);
+  animation: stepPulse 1.5s ease infinite;
+}
+@keyframes stepPulse {
+  0%,100% { box-shadow: 0 2px 8px rgba(39,174,96,.3); }
+  50% { box-shadow: 0 2px 14px rgba(39,174,96,.5); }
+}
+.step-circle.done { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.step-label { font-size: 9px; font-weight: 600; color: var(--text-sub); white-space: nowrap; }
+.step-item.active .step-label { color: var(--green); font-weight: 700; }
+.step-item.done .step-label { color: var(--green); }
+.step-connector {
+  width: 14px; height: 2px; background: var(--border);
+  margin-bottom: 16px; flex-shrink: 0; transition: background .3s;
+}
+.step-connector.done { background: var(--green); }
+
+/* Announce */
+.announce-bar {
+  background: var(--blue-light); border: 1px solid rgba(41,128,185,.15);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px;
+  font-size: 13px; font-weight: 600; color: var(--blue);
+  text-align: center; line-height: 1.6; min-height: 40px;
+  display: flex; align-items: center; justify-content: center;
+}
+.announce-bar.phase-info {
+  background: var(--orange-light); border-color: rgba(230,126,34,.15); color: var(--orange);
+}
+
+/* Status */
+.status-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 6px 0; font-size: 12px; color: var(--text-sub);
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.status-dot.idle { background: #bbb; }
+.status-dot.playing { background: var(--green); animation: pulse 1.2s infinite; }
+.status-dot.paused-dot { background: var(--orange); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* Display */
+.display-area {
+  min-height: 200px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 20px 8px; text-align: center;
+}
+
+/* Breath visual */
+.breath-circle-wrap {
+  position: relative; width: 160px; height: 160px; margin: 0 auto;
+}
+.breath-circle {
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 4px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: transform 4s ease, border-color .3s, background .3s;
+  background: #fff;
+}
+.breath-circle.inhale {
+  transform: scale(1.2);
+  border-color: var(--blue);
+  background: var(--blue-light);
+}
+.breath-circle.hold {
+  transform: scale(1.2);
+  border-color: var(--orange);
+  background: var(--orange-light);
+}
+.breath-circle.exhale {
+  transform: scale(1.0);
+  border-color: var(--green);
+  background: var(--green-light);
+}
+.breath-number {
+  font-family: var(--font-serif);
+  font-size: 48px; font-weight: 900; line-height: 1;
+}
+.breath-action {
+  font-size: 14px; font-weight: 700; margin-top: 4px;
+}
+.breath-hint {
+  font-size: 13px; color: var(--text-sub); margin-top: 12px; line-height: 1.6;
+  text-align: center;
+}
+
+/* Progress */
+.progress-wrap {
+  margin-top: 12px; background: rgba(0,0,0,.06);
+  border-radius: 4px; height: 5px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; width: 0%; background: var(--green);
+  border-radius: 4px; transition: width .4s ease;
+}
+
+/* Controls */
+.controls-wrap { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.controls-main { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 18px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: #fff;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:disabled:active { transform: none; }
+.btn-start {
+  background: var(--green); color: #fff; border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(39,174,96,.25);
+  min-width: 160px; font-size: 16px; padding: 13px 24px;
+}
+.btn-start:hover:not(:disabled) { background: #219a52; }
+.btn-pause { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn-resume { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-stop { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-skip { background: #2c2520; color: #fff; border-color: #2c2520; }
+.btn-ghost { background: #fff; color: var(--text); }
+.btn-vibe { background: var(--bg); color: var(--text-sub); font-size: 12px; padding: 8px 14px; }
+.btn-vibe.active { background: var(--orange-light); color: var(--orange); border-color: rgba(230,126,34,.2); }
+.controls-secondary {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px;
+}
+
+/* Tips */
+.tips {
+  background: var(--accent-light); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-top: 14px;
+}
+.tips-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.tips-text { font-size: 12px; line-height: 1.8; color: var(--text-sub); }
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .breath-circle-wrap { width: 140px; height: 140px; }
+  .breath-circle { width: 140px; height: 140px; }
+  .breath-number { font-size: 40px; }
+  .btn { padding: 10px 14px; font-size: 13px; }
+  .btn-start { padding: 12px 20px; font-size: 15px; min-width: 140px; }
+  .step-circle { width: 26px; height: 26px; font-size: 10px; }
+  .step-connector { width: 10px; }
+  .mode-btn { font-size: 12px; padding: 9px 6px; }
+}
+</style>
 </head>
-
 <body>
-  <header class="top">
-    <h1>💨 呼吸練習（4-4-8）</h1>
-    <p class="sub">落ち着いて声を出すための「息の土台」を作ります</p>
-    <p><a href="index.html">← ホームへ戻る</a></p>
-  </header>
 
-  <main class="menu">
+<div class="header">
+  <h1>呼吸練習</h1>
+  <p class="sub">落ち着いて声を出すための「息の土台」を作ります</p>
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
+</div>
 
-    <div class="card" style="display:block;">
-      <div class="title">① 姿勢（10秒）</div>
-      <div class="desc">
-        ・背すじを伸ばす（反りすぎない）<br>
-        ・肩の力を抜く<br>
-        ・鼻からゆっくり吸える姿勢に
+<div class="container">
+
+  <!-- オンボーディング -->
+  <div class="onboarding" id="onboarding">
+    <button class="close-btn" onclick="closeOnboarding()" aria-label="閉じる">&times;</button>
+    <div class="onboarding-title">はじめての方へ</div>
+    <div class="onboarding-steps">
+      <div class="onboarding-step">
+        <span class="ob-num">1</span>
+        <span>背すじを伸ばし、肩の力を抜いて<strong>リラックス</strong></span>
+      </div>
+      <div class="onboarding-step">
+        <span class="ob-num">2</span>
+        <span>画面の円が<strong>膨らむ＝吸う、縮む＝吐く</strong>。合わせて呼吸します</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="ob-num">3</span>
+        <span>苦しければ<strong>3-3-6</strong>モードに切り替えてOK</span>
       </div>
     </div>
+  </div>
 
-    <div class="card" style="display:block;">
-      <div class="title">② 4-4-8 呼吸（3セット）</div>
-      <div class="desc">
-        <b>鼻で吸う 4秒</b> → <b>止める 4秒</b> → <b>口で吐く 8秒</b><br><br>
-        目安：<br>
-        ・吸う：お腹がふくらむイメージ（胸だけで吸わない）<br>
-        ・吐く：細く長く（ロウソクを揺らさない感じ）<br>
-        ・苦しければ「3-3-6」でもOK
-      </div>
+  <!-- ステップ -->
+  <div class="card">
+    <div class="card-body" style="padding: 6px 10px;">
+      <div class="steps-indicator" id="stepsIndicator"></div>
     </div>
+  </div>
 
-    <div class="card" style="display:block;">
-      <div class="title">③ 息→声（30秒）</div>
-      <div class="desc">
-        8秒吐く代わりに、吐きながら「すーーー」または「はーーー」<br>
-        ・息がブレないように一直線で<br>
-        ・喉に力を入れず、お腹から支える
-      </div>
+  <!-- メインエリア -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">&#9881;</span>
+      <span class="label">練習エリア</span>
     </div>
+    <div class="card-body">
 
-    <div class="card" style="display:block;">
-      <div class="title">④ 話す前の1呼吸（実戦）</div>
-      <div class="desc">
-        人前で話す直前は、深呼吸1回だけ。<br>
-        「4秒吸う → 6〜8秒吐く」くらいでOK。<br>
-        それだけで声が安定しやすいです。
+      <!-- モード選択 -->
+      <div class="mode-selector">
+        <button class="mode-btn active" id="mode448" type="button">4-4-8</button>
+        <button class="mode-btn" id="mode336" type="button">3-3-6（やさしめ）</button>
       </div>
-    </div>
 
-    <!-- =====================================================
-      ✅ ガイド（言葉表示＋カウントダウン）
-    ====================================================== -->
-    <div class="card" style="display:block;">
-      <div class="title">▶ ガイドつき実践（表示＋カウント）</div>
-      <div class="desc">
+      <!-- アナウンス -->
+      <div class="announce-bar" id="announceBar">
+        スタートを押すと呼吸ガイドが始まります
+      </div>
 
-        <div style="margin-bottom:10px; font-size:14px; opacity:0.9; line-height:1.7;">
-          画面の指示に合わせて呼吸するだけでOKです😊<br>
-          🔰おすすめ所要時間：<b>約3分</b>（4-4-8×3セット＋息→声＋実戦1呼吸）
-        </div>
+      <!-- ステータス -->
+      <div class="status-bar">
+        <span><span class="status-dot idle" id="statusDot"></span></span>
+        <span id="statusText">待機中</span>
+      </div>
 
-        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-          <button onclick="breathStart('4-4-8')">▶ 4-4-8を開始</button>
-          <button onclick="breathStart('3-3-6')">▶ 3-3-6（やさしめ）</button>
-          <button onclick="breathStop()">⏹ ストップ</button>
-          <button onclick="breathReset()">🔁 リセット</button>
-          <button onclick="breathToggleVibe()" id="vibeBtn" style="opacity:0.85;">📳 バイブ：OFF</button>
-        </div>
-
-        <div style="margin-top:12px; text-align:center;">
-          <div id="breathPhase" style="font-size:22px; font-weight:800;">
-            スタートを押してください
-          </div>
-
-          <div id="breathCount" style="font-size:64px; font-weight:900; margin-top:6px; line-height:1;">
-            --
-          </div>
-
-          <div id="breathSub" style="margin-top:10px; opacity:0.9; line-height:1.7;">
-            例）吸う4秒 → 止める4秒 → 吐く8秒（3セット）
-          </div>
-
-          <!-- 進捗（迷わない工夫） -->
-          <div id="breathProgress" style="margin-top:10px; font-size:14px; opacity:0.85;">
-            進捗：0 / 0
+      <!-- メイン表示 -->
+      <div class="display-area" id="displayArea">
+        <div class="breath-circle-wrap">
+          <div class="breath-circle" id="breathCircle">
+            <div class="breath-number" id="breathNumber">--</div>
+            <div class="breath-action" id="breathAction">準備OK</div>
           </div>
         </div>
+        <div class="breath-hint" id="breathHint">
+          鼻から吸って、口から細く長く吐きます
+        </div>
+      </div>
 
+      <!-- プログレス -->
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- コントロール -->
+      <div class="controls-wrap">
+        <div class="controls-main" id="controlsMain">
+          <button class="btn btn-start" id="startBtn" type="button">&#9654; スタート</button>
+        </div>
+        <div class="controls-secondary" id="controlsSec" style="display:none;">
+          <button class="btn btn-pause" id="pauseBtn" type="button">&#9208; 一時停止</button>
+          <button class="btn btn-stop" id="stopBtn" type="button">&#9209; 停止</button>
+          <button class="btn btn-skip" id="skipBtn" type="button">&#9197; スキップ</button>
+        </div>
+        <div class="controls-secondary">
+          <button class="btn btn-vibe" id="vibeBtn" type="button">振動：OFF</button>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="tips">
+        <div class="tips-title">練習のコツ</div>
+        <div class="tips-text">
+          吸うとき：お腹がふくらむイメージ（胸だけで吸わない）<br>
+          吐くとき：細く長く、ロウソクの炎を揺らさない感じ<br>
+          話す前に深呼吸1回するだけで、声の安定感が変わります
+        </div>
       </div>
     </div>
+  </div>
 
-  </main>
+</div>
 
-  <script>
-  /* =========================
-     呼吸ガイド：表示＋カウント
-     - 自動で次へ
-     - 3-3-6 も選べる
-     - バイブON/OFF
-  ========================= */
-  let breathTimer = null;
-  let breathPlan = [];
-  let breathIndex = 0;
-  let breathRemaining = 0;
-  let vibeOn = false;
+<script>
+/* ======================================================
+   State
+====================================================== */
+var runToken = 0;
+var paused = false;
+var pauseResolvers = [];
+var skipRequested = false;
+var currentMode = '448'; // '448' or '336'
+var vibeOn = false;
 
-  function setBreathUI(phase, count, sub){
-    document.getElementById("breathPhase").textContent = phase || "";
-    document.getElementById("breathCount").textContent = (count === null || count === undefined) ? "--" : count;
-    document.getElementById("breathSub").textContent = sub || "";
-    document.getElementById("breathProgress").textContent = `進捗：${Math.min(breathIndex + 1, breathPlan.length)} / ${breathPlan.length}`;
+function waitWhilePaused() {
+  if (!paused) return Promise.resolve();
+  return new Promise(function(res) { pauseResolvers.push(res); });
+}
+function resumePausedWaiters() {
+  pauseResolvers.splice(0).forEach(function(r) { r(); });
+}
+function isStopped(token) { return token !== runToken; }
+
+function $(id) { return document.getElementById(id); }
+
+function buzz(ms) {
+  if (!vibeOn) return;
+  if (navigator.vibrate) navigator.vibrate(ms || 50);
+}
+
+/* ======================================================
+   Build plan
+====================================================== */
+var STEP_NAMES = [];
+
+function buildPlan() {
+  var inhale, hold, exhale;
+  if (currentMode === '336') {
+    inhale = 3; hold = 3; exhale = 6;
+  } else {
+    inhale = 4; hold = 4; exhale = 8;
   }
 
-  function buzz(ms=60){
-    if(!vibeOn) return;
-    if(navigator.vibrate) navigator.vibrate(ms);
+  var plan = [];
+  STEP_NAMES = [];
+
+  // Posture prep
+  plan.push({
+    step: 0, type: 'prep', label: '姿勢を整えましょう',
+    sec: 5, hint: '背すじを伸ばし、肩の力を抜いてリラックス',
+    circleClass: ''
+  });
+  STEP_NAMES.push('姿勢');
+
+  // 3 sets of breathing
+  for (var i = 1; i <= 3; i++) {
+    var tag = '（' + i + '/3）';
+    plan.push({
+      step: i, type: 'inhale', label: '吸って' + tag,
+      sec: inhale, hint: '鼻からゆっくり。お腹がふくらむイメージ',
+      circleClass: 'inhale'
+    });
+    plan.push({
+      step: i, type: 'hold', label: '止めて' + tag,
+      sec: hold, hint: '肩の力を抜いて、そのままキープ',
+      circleClass: 'hold'
+    });
+    plan.push({
+      step: i, type: 'exhale', label: '吐いて' + tag,
+      sec: exhale, hint: '口から細く長く。ロウソクを揺らさない感じ',
+      circleClass: 'exhale'
+    });
+    if (i === 1) STEP_NAMES.push('1セット');
+    else if (i === 2) STEP_NAMES.push('2セット');
+    else STEP_NAMES.push('3セット');
   }
 
-  function breathToggleVibe(){
-    vibeOn = !vibeOn;
-    const btn = document.getElementById("vibeBtn");
-    btn.textContent = vibeOn ? "📳 バイブ：ON" : "📳 バイブ：OFF";
+  // Voice practice
+  plan.push({
+    step: 4, type: 'voice-prep', label: '息→声（準備）',
+    sec: 3, hint: '吐きながら「すーー」または「はーー」を出します',
+    circleClass: ''
+  });
+  plan.push({
+    step: 4, type: 'exhale', label: '「すーー」一定に',
+    sec: 10, hint: '息を一直線に。喉は力を抜いて',
+    circleClass: 'exhale'
+  });
+  plan.push({
+    step: 4, type: 'exhale', label: '「はーー」一定に',
+    sec: 10, hint: '同じ強さで、ゆらぎを減らす',
+    circleClass: 'exhale'
+  });
+  plan.push({
+    step: 4, type: 'exhale', label: '「すーー」もう一度',
+    sec: 10, hint: 'お腹で支えるイメージ',
+    circleClass: 'exhale'
+  });
+  STEP_NAMES.push('息→声');
+
+  // Real practice
+  plan.push({
+    step: 5, type: 'prep', label: '実戦：話す前の1呼吸',
+    sec: 3, hint: '人前で話す直前は深呼吸1回だけでOK',
+    circleClass: ''
+  });
+  plan.push({
+    step: 5, type: 'inhale', label: '吸って（4秒）',
+    sec: 4, hint: '鼻から。背すじは伸ばす',
+    circleClass: 'inhale'
+  });
+  plan.push({
+    step: 5, type: 'exhale', label: '吐いて（6秒）',
+    sec: 6, hint: '長めに吐くと声が安定しやすい',
+    circleClass: 'exhale'
+  });
+  STEP_NAMES.push('実戦');
+
+  return plan;
+}
+
+/* ======================================================
+   Step indicator
+====================================================== */
+function buildStepIndicator() {
+  var container = $('stepsIndicator');
+  container.innerHTML = '';
+  for (var i = 0; i < STEP_NAMES.length; i++) {
+    var item = document.createElement('div');
+    item.className = 'step-item';
+    item.id = 'step-' + i;
+    item.innerHTML =
+      '<div class="step-circle" id="circle-' + i + '">' + (i + 1) + '</div>' +
+      '<span class="step-label">' + STEP_NAMES[i] + '</span>';
+    container.appendChild(item);
+    if (i < STEP_NAMES.length - 1) {
+      var conn = document.createElement('div');
+      conn.className = 'step-connector';
+      conn.id = 'conn-' + i;
+      container.appendChild(conn);
+    }
+  }
+}
+
+function updateStep(activeIdx, doneUpTo) {
+  var total = STEP_NAMES.length;
+  for (var i = 0; i < total; i++) {
+    var item = $('step-' + i);
+    var circle = $('circle-' + i);
+    if (!item || !circle) continue;
+    item.className = 'step-item';
+    circle.className = 'step-circle';
+    if (i < doneUpTo) {
+      item.classList.add('done');
+      circle.classList.add('done');
+      circle.innerHTML = '&#10003;';
+    } else if (i === activeIdx) {
+      item.classList.add('active');
+      circle.classList.add('active');
+      circle.textContent = String(i + 1);
+    } else {
+      circle.textContent = String(i + 1);
+    }
+    if (i < total - 1) {
+      var conn = $('conn-' + i);
+      if (conn) conn.className = 'step-connector' + (i < doneUpTo ? ' done' : '');
+    }
+  }
+}
+
+function resetStep() {
+  var total = STEP_NAMES.length;
+  for (var i = 0; i < total; i++) {
+    var item = $('step-' + i);
+    var circle = $('circle-' + i);
+    if (!item || !circle) continue;
+    item.className = 'step-item';
+    circle.className = 'step-circle';
+    circle.textContent = String(i + 1);
+    if (i < total - 1) {
+      var conn = $('conn-' + i);
+      if (conn) conn.className = 'step-connector';
+    }
+  }
+}
+
+/* ======================================================
+   UI helpers
+====================================================== */
+function setAnnounce(text, type) {
+  var bar = $('announceBar');
+  bar.textContent = text;
+  bar.className = 'announce-bar' + (type ? ' ' + type : '');
+}
+
+function setStatus(state) {
+  var dot = $('statusDot');
+  var txt = $('statusText');
+  if (state === 'playing') {
+    dot.className = 'status-dot playing'; txt.textContent = '進行中';
+  } else if (state === 'paused') {
+    dot.className = 'status-dot paused-dot'; txt.textContent = '一時停止中';
+  } else if (state === 'complete') {
+    dot.className = 'status-dot idle'; txt.textContent = '完了';
+  } else {
+    dot.className = 'status-dot idle'; txt.textContent = '待機中';
+  }
+}
+
+function setProgress(pct) {
+  $('progressBar').style.width = Math.min(100, pct) + '%';
+}
+
+function setCircle(cls, number, action) {
+  var circle = $('breathCircle');
+  circle.className = 'breath-circle' + (cls ? ' ' + cls : '');
+
+  // Set transition speed based on phase
+  if (cls === 'inhale') {
+    circle.style.transition = 'transform 3s ease-out, border-color .3s, background .3s';
+  } else if (cls === 'exhale') {
+    circle.style.transition = 'transform 6s ease-in, border-color .3s, background .3s';
+  } else {
+    circle.style.transition = 'transform .5s ease, border-color .3s, background .3s';
   }
 
-  function buildBreathPlan(type){
-    const inhale = (type === "3-3-6") ? 3 : 4;
-    const hold   = (type === "3-3-6") ? 3 : 4;
-    const exhale = (type === "3-3-6") ? 6 : 8;
-    const sets = 3;
+  $('breathNumber').textContent = (number !== undefined && number !== null) ? number : '--';
+  $('breathAction').textContent = action || '';
+}
 
-    const plan = [];
+function setHint(text) {
+  $('breathHint').textContent = text || '';
+}
 
-    // 4-4-8（3セット）
-    for(let i=1; i<=sets; i++){
-      plan.push({ phase:`はい吸ってー（${i}/${sets}）`, sec: inhale, sub:"鼻からゆっくり。お腹がふくらむイメージ" });
-      plan.push({ phase:`ここで止めて（${i}/${sets}）`, sec: hold,   sub:"肩の力を抜いて、そのままキープ" });
-      plan.push({ phase:`はい今から吐いてー（${i}/${sets}）`, sec: exhale, sub:"口から細く長く。ロウソクを揺らさない感じ" });
+function showRunningControls(on) {
+  $('controlsMain').style.display = on ? 'none' : 'flex';
+  $('controlsSec').style.display = on ? 'flex' : 'none';
+}
+
+function renderWelcome() {
+  setCircle('', '--', '準備OK');
+  setHint('鼻から吸って、口から細く長く吐きます');
+}
+
+/* ======================================================
+   Wait
+====================================================== */
+function wait(ms, token) {
+  var left = ms;
+  var step = 50;
+  return new Promise(function(resolve) {
+    function tick() {
+      if (isStopped(token) || skipRequested) { resolve(false); return; }
+      if (paused) { waitWhilePaused().then(tick); return; }
+      if (left <= 0) { resolve(true); return; }
+      var chunk = Math.min(step, left);
+      left -= chunk;
+      setTimeout(tick, chunk);
+    }
+    tick();
+  });
+}
+
+/* ======================================================
+   Onboarding
+====================================================== */
+function closeOnboarding() {
+  var el = $('onboarding');
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(-10px)';
+  el.style.transition = 'all .3s ease';
+  setTimeout(function() { el.style.display = 'none'; }, 300);
+  try { localStorage.setItem('kokyu_onboarding_closed', '1'); } catch (e) {}
+}
+try {
+  if (localStorage.getItem('kokyu_onboarding_closed') === '1') {
+    $('onboarding').style.display = 'none';
+  }
+} catch (e) {}
+
+/* ======================================================
+   Controls
+====================================================== */
+function togglePause() {
+  paused = !paused;
+  var btn = $('pauseBtn');
+  if (paused) {
+    btn.textContent = '\u25B6 再開';
+    btn.className = 'btn btn-resume';
+    setStatus('paused');
+  } else {
+    btn.textContent = '\u23F8 一時停止';
+    btn.className = 'btn btn-pause';
+    setStatus('playing');
+    resumePausedWaiters();
+  }
+}
+
+function skipPhase() {
+  skipRequested = true;
+  resumePausedWaiters();
+}
+
+function stopAll() {
+  runToken++;
+  paused = false;
+  resumePausedWaiters();
+  skipRequested = false;
+
+  buildPlan(); // rebuild to get STEP_NAMES
+  buildStepIndicator();
+  resetStep();
+  setProgress(0);
+  setStatus('idle');
+  setAnnounce('スタートを押すと呼吸ガイドが始まります');
+  showRunningControls(false);
+  renderWelcome();
+
+  $('pauseBtn').textContent = '\u23F8 一時停止';
+  $('pauseBtn').className = 'btn btn-pause';
+  $('mode448').disabled = false;
+  $('mode336').disabled = false;
+  $('mode448').style.opacity = '1';
+  $('mode336').style.opacity = '1';
+}
+
+function toggleVibe() {
+  vibeOn = !vibeOn;
+  var btn = $('vibeBtn');
+  if (vibeOn) {
+    btn.textContent = '振動：ON';
+    btn.className = 'btn btn-vibe active';
+    buzz(30);
+  } else {
+    btn.textContent = '振動：OFF';
+    btn.className = 'btn btn-vibe';
+  }
+}
+
+/* ======================================================
+   Main flow
+====================================================== */
+function startAll() {
+  runToken++;
+  var token = runToken;
+
+  paused = false;
+  resumePausedWaiters();
+  skipRequested = false;
+
+  $('pauseBtn').textContent = '\u23F8 一時停止';
+  $('pauseBtn').className = 'btn btn-pause';
+
+  $('mode448').disabled = true;
+  $('mode336').disabled = true;
+  $('mode448').style.opacity = '.5';
+  $('mode336').style.opacity = '.5';
+
+  var plan = buildPlan();
+  buildStepIndicator();
+  showRunningControls(true);
+  setStatus('playing');
+
+  var pIdx = 0;
+  var lastStep = -1;
+
+  function nextPlanItem() {
+    if (pIdx >= plan.length || isStopped(token)) return Promise.resolve();
+
+    skipRequested = false;
+    var item = plan[pIdx];
+
+    // Update step indicator when step changes
+    if (item.step !== lastStep) {
+      lastStep = item.step;
+      updateStep(item.step, item.step);
     }
 
-    // 息→声（30秒を 10秒×3 に分割してガイド）
-    plan.push({ phase:"つぎは息→声（準備）", sec: 2, sub:"吐きながら「すーー」or「はーー」を出します" });
-    plan.push({ phase:"すーー（一定に）", sec: 10, sub:"息を一直線に。喉は力を抜く" });
-    plan.push({ phase:"はーー（一定に）", sec: 10, sub:"同じ強さで、ゆらぎを減らす" });
-    plan.push({ phase:"すーー（最後もう一回）", sec: 10, sub:"お腹で支えるイメージ" });
+    // Announce
+    var actionColors = {
+      inhale: '吸って',
+      hold: '止めて',
+      exhale: '吐いて'
+    };
+    setAnnounce(item.label, item.type === 'prep' || item.type === 'voice-prep' ? 'phase-info' : '');
+    setHint(item.hint);
 
-    // 実戦：話す前の1呼吸（吸う4/吐く6）
-    plan.push({ phase:"実戦：話す前の1呼吸", sec: 2, sub:"人前で話す直前は深呼吸1回だけでOK" });
-    plan.push({ phase:"吸って（4秒）", sec: 4, sub:"鼻から。背すじは伸ばす" });
-    plan.push({ phase:"吐いて（6秒）", sec: 6, sub:"長めに吐くと声が安定しやすい" });
+    // Set circle
+    var actionLabel = '';
+    if (item.type === 'inhale') actionLabel = '吸う';
+    else if (item.type === 'hold') actionLabel = '止める';
+    else if (item.type === 'exhale') actionLabel = '吐く';
+    else actionLabel = '';
 
-    return plan;
-  }
+    setCircle(item.circleClass, item.sec, actionLabel || item.label);
+    buzz(40);
 
-  function breathStart(type){
-    if(breathTimer) return; // 二重起動防止
+    // Countdown
+    var remaining = item.sec;
 
-    breathPlan = buildBreathPlan(type);
-    breathIndex = 0;
+    function countdown() {
+      if (isStopped(token) || skipRequested) return Promise.resolve();
+      if (remaining <= 0) return Promise.resolve();
 
-    // 進捗表示初期化
-    document.getElementById("breathProgress").textContent = `進捗：1 / ${breathPlan.length}`;
+      $('breathNumber').textContent = remaining;
+      remaining--;
 
-    runBreathStep();
-  }
+      // Progress
+      var totalSteps = plan.length;
+      var currentProgress = ((pIdx + (1 - (remaining + 1) / item.sec)) / totalSteps) * 100;
+      setProgress(currentProgress);
 
-  function runBreathStep(){
-    if(breathIndex >= breathPlan.length){
-      breathStop();
-      setBreathUI("終了！お疲れさまでした😊", "--", "呼吸が整うと、声の安定感が上がります。");
-      return;
+      return wait(1000, token).then(function(ok) {
+        return ok ? countdown() : undefined;
+      });
     }
 
-    const step = breathPlan[breathIndex];
-    breathRemaining = step.sec;
-
-    buzz(50);
-    setBreathUI(step.phase, breathRemaining, step.sub);
-
-    breathTimer = setInterval(() => {
-      breathRemaining--;
-      setBreathUI(step.phase, breathRemaining, step.sub);
-
-      if(breathRemaining <= 0){
-        clearInterval(breathTimer);
-        breathTimer = null;
-        breathIndex++;
-        runBreathStep();
-      }
-    }, 1000);
+    return countdown().then(function() {
+      if (isStopped(token)) return;
+      pIdx++;
+      return nextPlanItem();
+    });
   }
 
-  function breathStop(){
-    if(breathTimer){
-      clearInterval(breathTimer);
-      breathTimer = null;
-    }
+  nextPlanItem().then(function() {
+    if (isStopped(token)) return;
+
+    // Complete
+    updateStep(-1, STEP_NAMES.length);
+    setProgress(100);
+    setStatus('complete');
+    setAnnounce('すべて完了しました！');
+    setCircle('', '', '');
+    setHint('');
+
+    $('displayArea').innerHTML =
+      '<div style="text-align:center; padding:10px 0;">' +
+        '<div style="font-size:48px; margin-bottom:8px;">&#127881;</div>' +
+        '<div style="font-family:var(--font-serif); font-size:20px; font-weight:700; margin-bottom:6px;">お疲れさまでした！</div>' +
+        '<div style="font-size:14px; color:var(--text-sub); line-height:1.8; margin-bottom:14px;">' +
+          '呼吸が整うと声の安定感が上がります。<br>話す前にも深呼吸1回、試してみてください。' +
+        '</div>' +
+        '<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">' +
+          '<button class="btn btn-start" onclick="startAll()" type="button" style="min-width:auto;">もう一度</button>' +
+          '<a href="index.html" class="btn btn-ghost" style="text-decoration:none;">ホームへ</a>' +
+        '</div>' +
+      '</div>';
+
+    showRunningControls(false);
+    $('mode448').disabled = false;
+    $('mode336').disabled = false;
+    $('mode448').style.opacity = '1';
+    $('mode336').style.opacity = '1';
+  }).catch(function(e) {
+    console.error(e);
+  });
+}
+
+/* ======================================================
+   Mode switching
+====================================================== */
+function setMode(mode) {
+  currentMode = mode;
+  $('mode448').className = 'mode-btn' + (mode === '448' ? ' active' : '');
+  $('mode336').className = 'mode-btn' + (mode === '336' ? ' active' : '');
+
+  if (mode === '448') {
+    setAnnounce('4-4-8：吸う4秒 → 止める4秒 → 吐く8秒');
+  } else {
+    setAnnounce('3-3-6：吸う3秒 → 止める3秒 → 吐く6秒（やさしめ）');
   }
 
-  function breathReset(){
-    breathStop();
-    breathPlan = [];
-    breathIndex = 0;
-    breathRemaining = 0;
-    document.getElementById("breathProgress").textContent = "進捗：0 / 0";
-    setBreathUI("スタートを押してください", "--", "例）吸う4秒 → 止める4秒 → 吐く8秒（3セット）");
-  }
-  </script>
+  // Rebuild step indicator for new mode
+  buildPlan();
+  buildStepIndicator();
+}
 
+/* ======================================================
+   Events
+====================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+  $('startBtn').addEventListener('click', startAll);
+  $('pauseBtn').addEventListener('click', togglePause);
+  $('stopBtn').addEventListener('click', stopAll);
+  $('skipBtn').addEventListener('click', skipPhase);
+  $('vibeBtn').addEventListener('click', toggleVibe);
+
+  $('mode448').addEventListener('click', function() { setMode('448'); });
+  $('mode336').addEventListener('click', function() { setMode('336'); });
+
+  // Initial
+  buildPlan();
+  buildStepIndicator();
+  renderWelcome();
+});
+</script>
 </body>
 </html>
