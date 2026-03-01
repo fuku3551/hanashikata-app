@@ -1,354 +1,817 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>舌トレ | 一人話し方GYM</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    /* このページ用の補助スタイル（既存のstyle.cssを壊しません） */
-    .mini { font-size: 14px; opacity: 0.85; }
-    .soft { opacity: 0.9; line-height: 1.7; }
-    .box { border:1px solid #eee; border-radius:14px; padding:12px; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; }
-    .tip { margin-top:10px; font-size:14px; opacity:0.9; line-height:1.8; }
-    .hr { height:1px; background:#eee; margin:14px 0; }
-    .badge { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid #ddd; font-size:13px; margin:6px 6px 0 0; }
-    .tDisplay{
-      font-size:48px;
-      font-weight:800;
-      text-align:center;
-      letter-spacing:1px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    }
-    .twrap button{
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid #ddd;
-      background:#fff;
-    }
-    .svgWrap { display:flex; justify-content:center; margin-top:10px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>舌トレ｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --purple: #8e44ad;
+  --purple-light: rgba(142, 68, 173, .08);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 0%, rgba(230,126,34,.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-header .icon { font-size: 16px; }
+.card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
+.card-body { padding: 16px 18px; }
+
+.onboarding {
+  background: linear-gradient(135deg, var(--orange-light), var(--green-light));
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; margin-bottom: 16px; position: relative;
+  animation: slideDown .5s ease-out;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.onboarding-title { font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(--orange); }
+.onboarding-steps { display: flex; flex-direction: column; gap: 6px; }
+.onboarding-step { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6; }
+.ob-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--orange); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; margin-top: 1px;
+}
+.onboarding .close-btn {
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none; font-size: 18px;
+  color: var(--text-sub); cursor: pointer; line-height: 1; padding: 4px;
+}
+
+/* Steps */
+.steps-indicator {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; padding: 12px 4px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.step-item { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 48px; }
+.step-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  border: 2px solid var(--border); background: #fff; color: var(--text-sub);
+  transition: all .3s;
+}
+.step-circle.active {
+  border-color: var(--green); background: var(--green); color: #fff;
+  box-shadow: 0 2px 8px rgba(39,174,96,.3);
+  animation: stepPulse 1.5s ease infinite;
+}
+@keyframes stepPulse {
+  0%,100% { box-shadow: 0 2px 8px rgba(39,174,96,.3); }
+  50% { box-shadow: 0 2px 14px rgba(39,174,96,.5); }
+}
+.step-circle.done { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.step-label { font-size: 9px; font-weight: 600; color: var(--text-sub); white-space: nowrap; }
+.step-item.active .step-label { color: var(--green); font-weight: 700; }
+.step-item.done .step-label { color: var(--green); }
+.step-connector {
+  width: 12px; height: 2px; background: var(--border);
+  margin-bottom: 16px; flex-shrink: 0; transition: background .3s;
+}
+.step-connector.done { background: var(--green); }
+
+/* Announce */
+.announce-bar {
+  background: var(--blue-light); border: 1px solid rgba(41,128,185,.15);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px;
+  font-size: 13px; font-weight: 600; color: var(--blue);
+  text-align: center; line-height: 1.6; min-height: 40px;
+  display: flex; align-items: center; justify-content: center;
+}
+.announce-bar.phase-info {
+  background: var(--orange-light); border-color: rgba(230,126,34,.15); color: var(--orange);
+}
+
+/* Status */
+.status-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 6px 0; font-size: 12px; color: var(--text-sub);
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.status-dot.idle { background: #bbb; }
+.status-dot.playing { background: var(--green); animation: pulse 1.2s infinite; }
+.status-dot.paused-dot { background: var(--orange); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* Display */
+.display-area {
+  min-height: 200px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 20px 8px; text-align: center;
+}
+
+/* Exercise visual */
+.exercise-icon {
+  font-size: 48px; margin-bottom: 6px; line-height: 1;
+}
+.exercise-title {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700; margin-bottom: 4px;
+}
+.exercise-desc {
+  font-size: 14px; color: var(--text-sub); line-height: 1.7; margin-bottom: 12px;
+}
+.exercise-action {
+  font-family: var(--font-serif); font-size: 28px; font-weight: 700;
+  color: var(--accent); margin-bottom: 4px;
+}
+.countdown-big {
+  font-family: var(--font-serif); font-size: 52px; font-weight: 900; line-height: 1.1;
+}
+.countdown-label { font-size: 14px; color: var(--text-sub); margin-top: 4px; }
+.exercise-hint {
+  font-size: 12px; color: var(--text-sub); margin-top: 10px; line-height: 1.6;
+  background: var(--bg); padding: 8px 12px; border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+/* Count display (for reps) */
+.rep-counter {
+  font-family: var(--font-serif); font-size: 44px; font-weight: 900;
+}
+.rep-label { font-size: 14px; color: var(--text-sub); }
+
+/* Progress */
+.progress-wrap {
+  margin-top: 12px; background: rgba(0,0,0,.06);
+  border-radius: 4px; height: 5px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; width: 0%; background: var(--green);
+  border-radius: 4px; transition: width .4s ease;
+}
+
+/* Controls */
+.controls-wrap { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.controls-main { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 18px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: #fff;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:disabled:active { transform: none; }
+.btn-start {
+  background: var(--green); color: #fff; border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(39,174,96,.25);
+  min-width: 160px; font-size: 16px; padding: 13px 24px;
+}
+.btn-start:hover:not(:disabled) { background: #219a52; }
+.btn-pause { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn-resume { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-stop { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-skip { background: #2c2520; color: #fff; border-color: #2c2520; }
+.btn-ghost { background: #fff; color: var(--text); }
+.controls-secondary {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px;
+}
+
+/* Tips */
+.tips {
+  background: var(--accent-light); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-top: 14px;
+}
+.tips-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.tips-text { font-size: 12px; line-height: 1.8; color: var(--text-sub); }
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .exercise-title { font-size: 18px; }
+  .exercise-action { font-size: 24px; }
+  .countdown-big { font-size: 44px; }
+  .rep-counter { font-size: 36px; }
+  .btn { padding: 10px 14px; font-size: 13px; }
+  .btn-start { padding: 12px 20px; font-size: 15px; min-width: 140px; }
+  .step-circle { width: 26px; height: 26px; font-size: 10px; }
+  .step-connector { width: 10px; }
+}
+</style>
 </head>
-
 <body>
-  <header class="top">
-    <h1>👅 舌トレ</h1>
-    <p class="sub">ラ行・タ行・“舌の当てどころ”を整える</p>
-    <p><a href="index.html">← ホームへ戻る</a></p>
-  </header>
 
-  <main class="menu">
+<div class="header">
+  <h1>舌トレ</h1>
+  <p class="sub">ラ行・タ行・舌の当てどころを整える</p>
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
+</div>
 
-    <!-- 今日のやり方（迷わない導線） -->
-    <div class="card" style="display:block;">
-      <div class="title">🔰 今日のやり方（約3分）</div>
-      <div class="desc">
-        <div class="box">
-          <div class="mini soft">
-            迷ったらこれだけでOK。<b>「毎日1セット」</b>で確実に伸びます。
-          </div>
+<div class="container">
 
-          <div class="hr"></div>
+  <!-- オンボーディング -->
+  <div class="onboarding" id="onboarding">
+    <button class="close-btn" onclick="closeOnboarding()" aria-label="閉じる">&times;</button>
+    <div class="onboarding-title">はじめての方へ</div>
+    <div class="onboarding-steps">
+      <div class="onboarding-step">
+        <span class="ob-num">1</span>
+        <span><strong>スタート</strong>を押すだけ。5つのメニューを自動でガイドします</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="ob-num">2</span>
+        <span>力は<strong>2〜3割</strong>でOK。全力は不要です</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="ob-num">3</span>
+        <span>毎日1セット（約3分）で確実に<strong>舌が動きやすく</strong>なります</span>
+      </div>
+    </div>
+  </div>
 
-          <div class="soft" style="line-height:2;">
-            1) ウォームアップ（30秒）<br>
-            2) スポットタッチ（45秒）<br>
-            3) タ行リズム（45秒）<br>
-            4) ラ行フラップ（45秒）<br>
-            <span class="mini">＋余裕がある日：舌ぐるぐる（右10回→左10回）</span>
-          </div>
+  <!-- ステップ -->
+  <div class="card">
+    <div class="card-body" style="padding: 6px 10px;">
+      <div class="steps-indicator" id="stepsIndicator"></div>
+    </div>
+  </div>
 
-          <div class="tip">💡 コツ：完璧を目指さず「<b>1個だけ改善</b>」でOKです。</div>
+  <!-- メインエリア -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">&#9881;</span>
+      <span class="label">練習エリア</span>
+    </div>
+    <div class="card-body">
+
+      <!-- アナウンス -->
+      <div class="announce-bar" id="announceBar">
+        スタートを押すと、ウォームアップから順にガイドします
+      </div>
+
+      <!-- ステータス -->
+      <div class="status-bar">
+        <span><span class="status-dot idle" id="statusDot"></span></span>
+        <span id="statusText">待機中</span>
+      </div>
+
+      <!-- メイン表示 -->
+      <div class="display-area" id="displayArea">
+        <div class="exercise-title">舌のウォームアップ</div>
+        <div class="exercise-desc">5つのメニューで舌を鍛えます</div>
+        <div style="font-size:13px; color:var(--text-sub);">所要時間：約3分</div>
+      </div>
+
+      <!-- プログレス -->
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- コントロール -->
+      <div class="controls-wrap">
+        <div class="controls-main" id="controlsMain">
+          <button class="btn btn-start" id="startBtn" type="button">&#9654; スタート</button>
+        </div>
+        <div class="controls-secondary" id="controlsSec" style="display:none;">
+          <button class="btn btn-pause" id="pauseBtn" type="button">&#9208; 一時停止</button>
+          <button class="btn btn-stop" id="stopBtn" type="button">&#9209; 停止</button>
+          <button class="btn btn-skip" id="skipBtn" type="button">&#9197; スキップ</button>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="tips">
+        <div class="tips-title">練習のコツ</div>
+        <div class="tips-text">
+          完璧を目指さず「1個だけ改善」でOKです。<br>
+          力は2〜3割。軽くリラックスして行いましょう。<br>
+          毎日続けると、タ行・ラ行のキレが変わってきます。
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ① ウォームアップ -->
-    <section class="card" style="display:block;">
-      <div class="title">① ウォームアップ（30秒）</div>
-      <div class="desc">
-        <span class="badge">目的：舌の“起動”</span>
-        <span class="badge">効果：もつれ減</span>
+</div>
 
-        <div class="box" style="margin-top:10px;">
-          <div class="soft">
-            <b>回数の目安</b><br>
-            ・舌 出す↔戻す：<b>10回</b><br>
-            ・上唇→下唇タッチ：<b>10回</b>
-          </div>
+<script>
+/* ======================================================
+   Exercise definitions
+====================================================== */
+var EXERCISES = [
+  {
+    name: 'ウォームアップ',
+    icon: '1',
+    title: 'ウォームアップ',
+    steps: [
+      {
+        action: '舌を出す &#8596; 戻す',
+        desc: '舌をべーっと出して戻す。10回繰り返します',
+        hint: '力は2〜3割。準備運動なので全力不要',
+        type: 'reps', total: 10, interval: 2500
+      },
+      {
+        action: '上唇 &#8596; 下唇タッチ',
+        desc: '舌先で上唇・下唇を交互にタッチ。10回',
+        hint: '舌が軽くなって、タ行/ラ行が回りやすくなります',
+        type: 'reps', total: 10, interval: 2000
+      }
+    ]
+  },
+  {
+    name: 'スポット',
+    icon: '2',
+    title: 'スポットタッチ',
+    steps: [
+      {
+        action: '上の前歯の裏に「トン」',
+        desc: '舌先を歯の付け根（スポット）に軽くタップ',
+        hint: '押しつけずタップ（当てて離す）。力は1〜2割でOK',
+        type: 'timer', seconds: 30
+      }
+    ]
+  },
+  {
+    name: 'タ行',
+    icon: '3',
+    title: 'タ行リズム',
+    steps: [
+      {
+        action: 'タ・テ・ト タ・テ・ト',
+        desc: '一定のテンポで繰り返す。キレを意識',
+        hint: '早く言うより、崩れないテンポが勝ちです',
+        type: 'timer', seconds: 30
+      }
+    ]
+  },
+  {
+    name: 'ラ行',
+    icon: '4',
+    title: 'ラ行フラップ',
+    steps: [
+      {
+        action: 'ラリルレロ ラリルレロ',
+        desc: '押すのではなく「軽く弾く」のがコツ',
+        hint: '舌が軽く弾けて、ラ行が一段クリアに',
+        type: 'timer', seconds: 30
+      }
+    ]
+  },
+  {
+    name: 'ぐるぐる',
+    icon: '5',
+    title: '舌ぐるぐる',
+    steps: [
+      {
+        action: '右回り',
+        desc: '口を閉じたまま、舌で歯ぐきをなぞる円を描く',
+        hint: '口の中のこわばりが取れて発音が滑らかに',
+        type: 'reps', total: 10, interval: 3000
+      },
+      {
+        action: '左回り',
+        desc: '反対方向も同様に',
+        hint: '緊張・疲労で顎が硬い日に特におすすめ',
+        type: 'reps', total: 10, interval: 3000
+      }
+    ]
+  }
+];
 
-          <div class="tip">
-            ✅ 一声：<b>「舌が軽くなって、タ行/ラ行が回りやすくなる」</b><br>
-            力は<b>2〜3割</b>でOK（準備運動なので全力いりません）
-          </div>
+/* ======================================================
+   State
+====================================================== */
+var runToken = 0;
+var paused = false;
+var pauseResolvers = [];
+var skipRequested = false;
 
-          <div class="svgWrap">
-            <!-- ウォームアップ図 -->
-            <svg width="260" height="140" viewBox="0 0 240 130" aria-label="ウォームアップ図">
-              <path d="M30,70 C45,25 195,25 210,70 C195,110 45,110 30,70 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
-              <path d="M110,70 C110,55 130,55 130,70 C130,90 110,90 110,70 Z" fill="#fb7185" opacity="0.9"/>
-              <text x="120" y="118" text-anchor="middle" font-size="12" fill="#666">舌を出す→戻す / 唇タッチ</text>
-            </svg>
-          </div>
+function waitWhilePaused() {
+  if (!paused) return Promise.resolve();
+  return new Promise(function(res) { pauseResolvers.push(res); });
+}
+function resumePausedWaiters() {
+  pauseResolvers.splice(0).forEach(function(r) { r(); });
+}
+function isStopped(token) { return token !== runToken; }
 
-          <!-- タイマー -->
-          <div class="box" style="margin-top:12px;">
-            <div class="mini soft">⏱ タイマー</div>
-            <div class="twrap" data-seconds="30">
-              <div class="tDisplay">00:30</div>
-              <div class="row" style="margin-top:10px;">
-                <button class="tStart">▶ スタート</button>
-                <button class="tStop">⏹ ストップ</button>
-                <button class="tReset">↩ リセット</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+function $(id) { return document.getElementById(id); }
 
-    <!-- ② スポットタッチ -->
-    <section class="card" style="display:block;">
-      <div class="title">② スポットタッチ（45秒）</div>
-      <div class="desc">
-        <span class="badge">目的：位置を覚える</span>
-        <span class="badge">効果：タ/ラが安定</span>
+/* ======================================================
+   UI helpers
+====================================================== */
+function setAnnounce(text, type) {
+  var bar = $('announceBar');
+  bar.textContent = text;
+  bar.className = 'announce-bar' + (type ? ' ' + type : '');
+}
 
-        <div class="box" style="margin-top:10px;">
-          <div class="soft">
-            <b>やり方</b><br>
-            上の前歯の裏（付け根あたり＝スポット）に、舌先を<b>軽く「トン」</b>と当てる。<br>
-            押しつけてキープではなく、<b>タップ（当てて離す）</b>が基本です。
-          </div>
+function setStatus(state) {
+  var dot = $('statusDot');
+  var txt = $('statusText');
+  if (state === 'playing') { dot.className = 'status-dot playing'; txt.textContent = '進行中'; }
+  else if (state === 'paused') { dot.className = 'status-dot paused-dot'; txt.textContent = '一時停止中'; }
+  else if (state === 'complete') { dot.className = 'status-dot idle'; txt.textContent = '完了'; }
+  else { dot.className = 'status-dot idle'; txt.textContent = '待機中'; }
+}
 
-          <div class="tip">
-            ✅ 力は<b>1〜2割</b>でOK（強く押すほど良いタイプではありません）<br>
-            ✅ 一声：<b>「舌が迷わなくなって、早口でも発音が安定する」</b><br>
-            目安：<b>トン×30回</b>（一定リズムで）
-          </div>
+function setProgress(pct) {
+  $('progressBar').style.width = Math.min(100, pct) + '%';
+}
 
-          <div class="svgWrap">
-            <!-- スポット図 -->
-            <svg width="260" height="150" viewBox="0 0 240 140" aria-label="スポット位置の図">
-              <path d="M20,80 C40,20 200,20 220,80 C200,120 40,120 20,80 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
-              <circle cx="120" cy="58" r="10" fill="#8b5cf6" opacity="0.9"/>
-              <text x="120" y="62" text-anchor="middle" font-size="11" fill="#fff">SP</text>
-              <text x="120" y="112" text-anchor="middle" font-size="12" fill="#666">上の前歯の裏（付け根）</text>
-            </svg>
-          </div>
+function showRunningControls(on) {
+  $('controlsMain').style.display = on ? 'none' : 'flex';
+  $('controlsSec').style.display = on ? 'flex' : 'none';
+}
 
-          <!-- タイマー -->
-          <div class="box" style="margin-top:12px;">
-            <div class="mini soft">⏱ タイマー</div>
-            <div class="twrap" data-seconds="45">
-              <div class="tDisplay">00:45</div>
-              <div class="row" style="margin-top:10px;">
-                <button class="tStart">▶ スタート</button>
-                <button class="tStop">⏹ ストップ</button>
-                <button class="tReset">↩ リセット</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ③ タ行リズム -->
-    <section class="card" style="display:block;">
-      <div class="title">③ タ行リズム（45秒）</div>
-      <div class="desc">
-        <span class="badge">目的：キレ</span>
-        <span class="badge">効果：聞き返し減</span>
-
-        <div class="box" style="margin-top:10px;">
-          <div class="soft">
-            <b>やり方</b><br>
-            「タ・テ・ト」を一定のテンポで繰り返す（例：タテト タテト…）
-          </div>
-
-          <div class="tip">
-            ✅ 一声：<b>「言葉のキレが戻って、モゴモゴが減る」</b><br>
-            ✅ 早く言うより、<b>崩れないテンポ</b>が勝ちです。
-          </div>
-
-          <div class="svgWrap">
-            <!-- タ行図 -->
-            <svg width="260" height="130" viewBox="0 0 240 120" aria-label="タ行の図">
-              <path d="M30,65 C45,25 195,25 210,65 C195,105 45,105 30,65 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
-              <text x="120" y="55" text-anchor="middle" font-size="18" fill="#111">タ テ ト</text>
-              <text x="120" y="95" text-anchor="middle" font-size="12" fill="#666">キレ（破裂）を作る</text>
-            </svg>
-          </div>
-
-          <!-- タイマー -->
-          <div class="box" style="margin-top:12px;">
-            <div class="mini soft">⏱ タイマー</div>
-            <div class="twrap" data-seconds="45">
-              <div class="tDisplay">00:45</div>
-              <div class="row" style="margin-top:10px;">
-                <button class="tStart">▶ スタート</button>
-                <button class="tStop">⏹ ストップ</button>
-                <button class="tReset">↩ リセット</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ④ ラ行フラップ -->
-    <section class="card" style="display:block;">
-      <div class="title">④ ラ行フラップ（45秒）</div>
-      <div class="desc">
-        <span class="badge">目的：弾き</span>
-        <span class="badge">効果：滑舌UP</span>
-
-        <div class="box" style="margin-top:10px;">
-          <div class="soft">
-            <b>やり方</b><br>
-            「ラリルレロ」を繰り返す。<br>
-            コツは、押すのではなく<b>“軽く弾く”</b>こと。
-          </div>
-
-          <div class="tip">
-            ✅ 一声：<b>「舌が軽く弾けて、ラ行が一段クリアになる」</b><br>
-            ✅ 目安：<b>ラリルレロ×10セット</b>＋<b>ラララ…10秒</b>
-          </div>
-
-          <div class="svgWrap">
-            <!-- ラ行図 -->
-            <svg width="260" height="130" viewBox="0 0 240 120" aria-label="ラ行の図">
-              <path d="M30,65 C45,25 195,25 210,65 C195,105 45,105 30,65 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
-              <path d="M120,40 q-10,15 0,30 q10,-15 0,-30 Z" fill="#f59e0b" opacity="0.9"/>
-              <text x="120" y="98" text-anchor="middle" font-size="12" fill="#666">舌先を軽く当てて「弾く」</text>
-            </svg>
-          </div>
-
-          <!-- タイマー -->
-          <div class="box" style="margin-top:12px;">
-            <div class="mini soft">⏱ タイマー</div>
-            <div class="twrap" data-seconds="45">
-              <div class="tDisplay">00:45</div>
-              <div class="row" style="margin-top:10px;">
-                <button class="tStart">▶ スタート</button>
-                <button class="tStop">⏹ ストップ</button>
-                <button class="tReset">↩ リセット</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ⑤ オプション：舌ぐるぐる -->
-    <section class="card" style="display:block;">
-      <div class="title">（余裕がある日だけ）舌ぐるぐる</div>
-      <div class="desc">
-        <span class="badge">目的：柔軟</span>
-        <span class="badge">効果：こわばり減</span>
-
-        <div class="box" style="margin-top:10px;">
-          <div class="soft">
-            <b>やり方</b><br>
-            口を閉じたまま、舌で歯ぐきをなぞるように円を描く。<br>
-            目安：<b>右回り10回 → 左回り10回</b>
-          </div>
-
-          <div class="tip">
-            ✅ 一声：<b>「口の中のこわばりが取れて、発音が滑らかになる」</b><br>
-            ✅ 緊張・疲労・顎が硬い日に特におすすめ。
-          </div>
-
-          <div class="svgWrap">
-            <!-- ぐるぐる図 -->
-            <svg width="260" height="150" viewBox="0 0 240 140" aria-label="舌ぐるぐる図">
-              <path d="M20,80 C40,20 200,20 220,80 C200,120 40,120 20,80 Z" fill="#fff" stroke="#ddd" stroke-width="2"/>
-              <path d="M120,70 m-28,0 a28,20 0 1,0 56,0 a28,20 0 1,0 -56,0"
-                    fill="none" stroke="#22c55e" stroke-width="3" opacity="0.9"/>
-              <text x="120" y="118" text-anchor="middle" font-size="12" fill="#666">歯ぐきをなぞる円</text>
-            </svg>
-          </div>
-
-          <!-- タイマー（オプションなので30秒にしておく：回数でもOK） -->
-          <div class="box" style="margin-top:12px;">
-            <div class="mini soft">⏱ タイマー（30秒でもOK）</div>
-            <div class="twrap" data-seconds="30">
-              <div class="tDisplay">00:30</div>
-              <div class="row" style="margin-top:10px;">
-                <button class="tStart">▶ スタート</button>
-                <button class="tStop">⏹ ストップ</button>
-                <button class="tReset">↩ リセット</button>
-              </div>
-            </div>
-            <div class="tip">※回数でやるなら「右10回→左10回」でOK（タイマーは補助）。</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <script>
-  (function(){
-    // ほかのタイマーを同時に動かさない（迷わない設計）
-    let runningStopFunc = null;
-
-    function fmt(sec){
-      sec = Math.max(0, sec|0);
-      const m = String(Math.floor(sec/60)).padStart(2,"0");
-      const s = String(sec%60).padStart(2,"0");
-      return `${m}:${s}`;
+/* ======================================================
+   Step Indicator
+====================================================== */
+function buildStepIndicator() {
+  var container = $('stepsIndicator');
+  container.innerHTML = '';
+  for (var i = 0; i < EXERCISES.length; i++) {
+    var item = document.createElement('div');
+    item.className = 'step-item';
+    item.id = 'step-' + i;
+    item.innerHTML =
+      '<div class="step-circle" id="circle-' + i + '">' + (i + 1) + '</div>' +
+      '<span class="step-label">' + EXERCISES[i].name + '</span>';
+    container.appendChild(item);
+    if (i < EXERCISES.length - 1) {
+      var conn = document.createElement('div');
+      conn.className = 'step-connector';
+      conn.id = 'conn-' + i;
+      container.appendChild(conn);
     }
+  }
+}
 
-    function setupTimer(el){
-      const display = el.querySelector(".tDisplay");
-      const startBtn = el.querySelector(".tStart");
-      const stopBtn  = el.querySelector(".tStop");
-      const resetBtn = el.querySelector(".tReset");
+function updateStep(activeIdx, doneUpTo) {
+  var total = EXERCISES.length;
+  for (var i = 0; i < total; i++) {
+    var item = $('step-' + i);
+    var circle = $('circle-' + i);
+    if (!item || !circle) continue;
+    item.className = 'step-item';
+    circle.className = 'step-circle';
+    if (i < doneUpTo) {
+      item.classList.add('done'); circle.classList.add('done');
+      circle.innerHTML = '&#10003;';
+    } else if (i === activeIdx) {
+      item.classList.add('active'); circle.classList.add('active');
+      circle.textContent = String(i + 1);
+    } else {
+      circle.textContent = String(i + 1);
+    }
+    if (i < total - 1) {
+      var conn = $('conn-' + i);
+      if (conn) conn.className = 'step-connector' + (i < doneUpTo ? ' done' : '');
+    }
+  }
+}
 
-      const base = Number(el.dataset.seconds || 30);
-      let left = base;
-      let iv = null;
+function resetStepIndicator() {
+  var total = EXERCISES.length;
+  for (var i = 0; i < total; i++) {
+    var item = $('step-' + i);
+    var circle = $('circle-' + i);
+    if (!item || !circle) continue;
+    item.className = 'step-item';
+    circle.className = 'step-circle';
+    circle.textContent = String(i + 1);
+    if (i < total - 1) {
+      var conn = $('conn-' + i);
+      if (conn) conn.className = 'step-connector';
+    }
+  }
+}
 
-      display.textContent = fmt(left);
+/* ======================================================
+   Wait
+====================================================== */
+function wait(ms, token) {
+  var left = ms;
+  var step = 50;
+  return new Promise(function(resolve) {
+    function tick() {
+      if (isStopped(token) || skipRequested) { resolve(false); return; }
+      if (paused) { waitWhilePaused().then(tick); return; }
+      if (left <= 0) { resolve(true); return; }
+      var chunk = Math.min(step, left);
+      left -= chunk;
+      setTimeout(tick, chunk);
+    }
+    tick();
+  });
+}
 
-      function stop(){
-        if(iv){ clearInterval(iv); iv = null; }
+/* ======================================================
+   Render exercises
+====================================================== */
+function renderCountdown(action, remaining, total, desc, hint) {
+  $('displayArea').innerHTML =
+    '<div class="exercise-action">' + action + '</div>' +
+    '<div class="countdown-big">' + remaining + '</div>' +
+    '<div class="countdown-label">' + remaining + '秒 / ' + total + '秒</div>' +
+    '<div class="exercise-hint">' + hint + '</div>';
+}
+
+function renderReps(action, current, total, desc, hint) {
+  $('displayArea').innerHTML =
+    '<div class="exercise-action">' + action + '</div>' +
+    '<div class="rep-counter">' + current + ' <span style="font-size:20px; opacity:.5;">/ ' + total + '</span></div>' +
+    '<div class="rep-label">回</div>' +
+    '<div class="exercise-hint">' + hint + '</div>';
+}
+
+function renderWelcome() {
+  $('displayArea').innerHTML =
+    '<div class="exercise-title">舌のウォームアップ</div>' +
+    '<div class="exercise-desc">5つのメニューで舌を鍛えます</div>' +
+    '<div style="font-size:13px; color:var(--text-sub);">所要時間：約3分</div>';
+}
+
+/* ======================================================
+   Play step
+====================================================== */
+function playStep(token, stepDef, exerciseIdx, progressBase, progressSpan) {
+  if (stepDef.type === 'timer') {
+    var remaining = stepDef.seconds;
+    var total = stepDef.seconds;
+
+    function timerTick() {
+      if (isStopped(token) || skipRequested) return Promise.resolve();
+      if (remaining <= 0) return Promise.resolve();
+
+      renderCountdown(stepDef.action, remaining, total, stepDef.desc, stepDef.hint);
+      remaining--;
+      return wait(1000, token).then(function(ok) {
+        return ok ? timerTick() : undefined;
+      });
+    }
+    return timerTick();
+
+  } else if (stepDef.type === 'reps') {
+    var current = 0;
+    var total = stepDef.total;
+
+    function repTick() {
+      if (isStopped(token) || skipRequested) return Promise.resolve();
+      if (current >= total) return Promise.resolve();
+
+      current++;
+      renderReps(stepDef.action, current, total, stepDef.desc, stepDef.hint);
+      return wait(stepDef.interval, token).then(function(ok) {
+        return ok ? repTick() : undefined;
+      });
+    }
+    return repTick();
+  }
+
+  return Promise.resolve();
+}
+
+/* ======================================================
+   Onboarding
+====================================================== */
+function closeOnboarding() {
+  var el = $('onboarding');
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(-10px)';
+  el.style.transition = 'all .3s ease';
+  setTimeout(function() { el.style.display = 'none'; }, 300);
+  try { localStorage.setItem('shitatore_onboarding_closed', '1'); } catch (e) {}
+}
+try {
+  if (localStorage.getItem('shitatore_onboarding_closed') === '1') {
+    $('onboarding').style.display = 'none';
+  }
+} catch (e) {}
+
+/* ======================================================
+   Controls
+====================================================== */
+function togglePause() {
+  paused = !paused;
+  var btn = $('pauseBtn');
+  if (paused) {
+    btn.textContent = '\u25B6 再開';
+    btn.className = 'btn btn-resume';
+    setStatus('paused');
+  } else {
+    btn.textContent = '\u23F8 一時停止';
+    btn.className = 'btn btn-pause';
+    setStatus('playing');
+    resumePausedWaiters();
+  }
+}
+
+function skipPhase() {
+  skipRequested = true;
+  resumePausedWaiters();
+}
+
+function stopAll() {
+  runToken++;
+  paused = false;
+  resumePausedWaiters();
+  skipRequested = false;
+
+  resetStepIndicator();
+  setProgress(0);
+  setStatus('idle');
+  setAnnounce('スタートを押すと、ウォームアップから順にガイドします');
+  showRunningControls(false);
+  renderWelcome();
+
+  $('pauseBtn').textContent = '\u23F8 一時停止';
+  $('pauseBtn').className = 'btn btn-pause';
+}
+
+/* ======================================================
+   Main flow
+====================================================== */
+function startAll() {
+  runToken++;
+  var token = runToken;
+
+  paused = false;
+  resumePausedWaiters();
+  skipRequested = false;
+
+  $('pauseBtn').textContent = '\u23F8 一時停止';
+  $('pauseBtn').className = 'btn btn-pause';
+
+  showRunningControls(true);
+  setStatus('playing');
+
+  var eIdx = 0;
+  var totalExercises = EXERCISES.length;
+
+  function nextExercise() {
+    if (eIdx >= totalExercises || isStopped(token)) return Promise.resolve();
+
+    skipRequested = false;
+    var ex = EXERCISES[eIdx];
+    updateStep(eIdx, eIdx);
+
+    // Announce exercise
+    setAnnounce(ex.title + '：' + ex.steps[0].desc, 'phase-info');
+
+    // Intro
+    $('displayArea').innerHTML =
+      '<div class="exercise-title">' + ex.title + '</div>' +
+      '<div class="exercise-desc">' + ex.steps[0].desc + '</div>';
+
+    return wait(1500, token).then(function(ok) {
+      if (isStopped(token)) return;
+      if (!ok && !isStopped(token)) {
+        // Skip during intro - reset and move to next exercise
+        skipRequested = false;
+        return;
       }
 
-      function reset(){
-        stop();
-        left = base;
-        display.textContent = fmt(left);
-      }
+      // Play each step in exercise
+      var sIdx = 0;
+      function nextStep() {
+        if (sIdx >= ex.steps.length || isStopped(token) || skipRequested) return Promise.resolve();
 
-      function start(){
-        // ほかが動いてたら止める
-        if(runningStopFunc && runningStopFunc !== stop){
-          runningStopFunc();
-        }
-        runningStopFunc = stop;
+        var stepDef = ex.steps[sIdx];
+        setAnnounce(ex.title + '：' + stepDef.action);
 
-        if(iv) return;
-        iv = setInterval(()=>{
-          left--;
-          display.textContent = fmt(left);
-          if(left <= 0){
-            stop();
-            display.textContent = "00:00";
-            alert("終了！お疲れさまでした😊");
+        var progressBase = (eIdx / totalExercises) * 100;
+        var progressSpan = (1 / totalExercises) * 100;
+
+        return playStep(token, stepDef, eIdx, progressBase, progressSpan).then(function() {
+          if (isStopped(token)) return;
+          sIdx++;
+
+          // Transition between sub-steps
+          if (sIdx < ex.steps.length && !skipRequested) {
+            return wait(800, token).then(function(ok) {
+              return ok ? nextStep() : undefined;
+            });
           }
-        },1000);
+        });
       }
 
-      startBtn.addEventListener("click", start);
-      stopBtn.addEventListener("click", stop);
-      resetBtn.addEventListener("click", reset);
-    }
+      return nextStep();
+    }).then(function() {
+      if (isStopped(token)) return;
+      skipRequested = false;
+      setProgress(((eIdx + 1) / totalExercises) * 100);
+      updateStep(eIdx + 1, eIdx + 1);
+      eIdx++;
 
-    document.querySelectorAll(".twrap").forEach(setupTimer);
-  })();
-  </script>
+      if (eIdx < totalExercises && !isStopped(token)) {
+        return wait(600, token).then(function(ok) {
+          if (!ok && !isStopped(token)) {
+            // skip was pressed during transition, still continue
+            skipRequested = false;
+            return nextExercise();
+          }
+          return ok ? nextExercise() : undefined;
+        });
+      }
+    });
+  }
+
+  nextExercise().then(function() {
+    if (isStopped(token)) return;
+
+    // Complete
+    updateStep(-1, totalExercises);
+    setProgress(100);
+    setStatus('complete');
+    setAnnounce('すべてのメニューが完了しました！');
+
+    $('displayArea').innerHTML =
+      '<div style="text-align:center; padding:10px 0;">' +
+        '<div style="font-size:48px; margin-bottom:8px;">&#127881;</div>' +
+        '<div style="font-family:var(--font-serif); font-size:20px; font-weight:700; margin-bottom:6px;">お疲れさまでした！</div>' +
+        '<div style="font-size:14px; color:var(--text-sub); line-height:1.8; margin-bottom:14px;">' +
+          '舌が動きやすくなりました。<br>この調子で毎日続けましょう！' +
+        '</div>' +
+        '<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">' +
+          '<button class="btn btn-start" onclick="startAll()" type="button" style="min-width:auto;">もう一度</button>' +
+          '<a href="index.html" class="btn btn-ghost" style="text-decoration:none;">ホームへ</a>' +
+        '</div>' +
+      '</div>';
+
+    showRunningControls(false);
+  }).catch(function(e) {
+    console.error(e);
+  });
+}
+
+/* ======================================================
+   Events
+====================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+  $('startBtn').addEventListener('click', startAll);
+  $('pauseBtn').addEventListener('click', togglePause);
+  $('stopBtn').addEventListener('click', stopAll);
+  $('skipBtn').addEventListener('click', skipPhase);
+
+  buildStepIndicator();
+  renderWelcome();
+});
+</script>
 </body>
 </html>
