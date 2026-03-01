@@ -1,501 +1,910 @@
 <!doctype html>
+
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>👄 滑舌練習（今日のミッション）</title>
-<link rel="stylesheet" href="style.css" />
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>滑舌練習｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* ===== 全体 ===== */
-  #phraseBody{
-    font-size:32px;
-    font-weight:900;
-    text-align:center;
-    line-height:1.9;
-    white-space:pre-wrap;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  ruby rt{ font-size:0.55em; opacity:0.85; }
+:root {
+–bg: #f5f0e8;
+–bg-card: #fffdf7;
+–text: #2c2520;
+–text-sub: #7a6e62;
+–accent: #c0392b;
+–accent-light: rgba(192, 57, 43, .08);
+–blue: #2980b9;
+–blue-light: rgba(41, 128, 185, .1);
+–green: #27ae60;
+–green-light: rgba(39, 174, 96, .1);
+–orange: #e67e22;
+–orange-light: rgba(230, 126, 34, .1);
+–border: rgba(44, 37, 32, .1);
+–shadow: 0 2px 12px rgba(44, 37, 32, .06);
+–radius: 16px;
+–radius-sm: 10px;
+–font-body: ‘Zen Kaku Gothic New’, ‘Hiragino Sans’, sans-serif;
+–font-serif: ‘Noto Serif JP’, serif;
+}
 
-  .row{
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    flex-wrap:wrap;
-    align-items:center;
-  }
+body {
+font-family: var(–font-body);
+background: var(–bg);
+color: var(–text);
+line-height: 1.7;
+min-height: 100vh;
+-webkit-font-smoothing: antialiased;
+}
 
-  .mini{
-    font-size:14px;
-    opacity:0.85;
-    line-height:1.7;
-    white-space:pre-wrap;
-  }
+/* ===== HEADER ===== */
+.header {
+background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+color: #fff; padding: 20px 20px 18px; text-align: center;
+position: relative; overflow: hidden;
+}
+.header::before {
+content: ‘’; position: absolute; inset: 0;
+background: radial-gradient(ellipse at 30% 0%, rgba(192,57,43,.12) 0%, transparent 60%);
+pointer-events: none;
+}
+.header h1 {
+font-family: var(–font-serif); font-size: 22px; font-weight: 700;
+letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
 
-  /* ===== カラオケユニット ===== */
-  .karaUnit{
-    display:inline-block;
-    padding:2px 4px;
-    border-radius:8px;
-    transition:.12s;
-  }
-  .karaUnit.active{
-    background:#ffdddd;
-    color:#d60000;
-  }
-  .karaUnit.done{ opacity:.45; }
-  .karaUnit.skip{
-    background:transparent !important;
-    color:inherit !important;
-    opacity:1;
-  }
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
 
-  /* 難語：全文点灯 */
-  .hardAllOn{
-    background:#ffdddd;
-    color:#d60000;
-    border-radius:12px;
-    padding:6px 8px;
-    display:inline-block;
-  }
+/* ===== CARD ===== */
+.card {
+background: var(–bg-card); border: 1px solid var(–border);
+border-radius: var(–radius); box-shadow: var(–shadow);
+margin-bottom: 16px; overflow: hidden;
+}
+.card-header {
+padding: 14px 18px 10px; border-bottom: 1px solid var(–border);
+display: flex; align-items: center; gap: 8px;
+}
+.card-header .icon { font-size: 16px; }
+.card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
+.card-body { padding: 16px 18px; }
 
-  /* ===== 読み上げ表示を上部に固定（メニュー下） ===== */
-  .readStageTop{
-    position: sticky;
-    top: 120px;     /* ヘッダーの下に来るように */
-    z-index: 10;
-  }
-  .readBox{
-    border:1px solid rgba(0,0,0,.18);
-    border-radius:14px;
-    padding:12px;
-    background: rgba(255,255,255,.92);
-    backdrop-filter: blur(4px);
-  }
+/* ===== ONBOARDING ===== */
+.onboarding {
+background: linear-gradient(135deg, var(–blue-light), var(–green-light));
+border: 1px solid var(–border); border-radius: var(–radius);
+padding: 16px 18px; margin-bottom: 16px; position: relative;
+animation: slideDown .5s ease-out;
+}
+@keyframes slideDown {
+from { opacity: 0; transform: translateY(-12px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.onboarding-title { font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(–blue); }
+.onboarding-steps { display: flex; flex-direction: column; gap: 6px; }
+.onboarding-step { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6; }
+.ob-num {
+flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+background: var(–blue); color: #fff;
+display: flex; align-items: center; justify-content: center;
+font-size: 11px; font-weight: 700; margin-top: 1px;
+}
+.onboarding .close-btn {
+position: absolute; top: 10px; right: 12px;
+background: none; border: none; font-size: 18px;
+color: var(–text-sub); cursor: pointer; line-height: 1; padding: 4px;
+}
 
-  /* ===== ボタン大きめ ===== */
-  .controls{
-    position:relative;
-    z-index: 5;
-  }
-  .bigBtn{
-    font-size:18px;
-    font-weight:900;
-    padding:16px 18px;
-    border-radius:14px;
-    border:1px solid rgba(0,0,0,.12);
-    background:#fff;
-    min-width:150px;
-    box-shadow:0 6px 18px rgba(0,0,0,.06);
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-  }
-  .bigBtn:active{ transform: scale(.98); }
-  .primary{ background:#0ea5e9; color:#fff; border:none; }
-  .danger{ background:#ef4444; color:#fff; border:none; }
-  .ghost{ background:#fff; }
-  .warn{ background:#111; color:#fff; border:none; }
+/* ===== MODE SELECTOR ===== */
+.mode-selector { display: flex; gap: 8px; margin-bottom: 14px; }
+.mode-btn {
+flex: 1; padding: 10px 8px; border-radius: var(–radius-sm);
+border: 2px solid var(–border); background: #fff;
+font-family: var(–font-body); font-size: 13px; font-weight: 700;
+text-align: center; cursor: pointer; transition: all .15s;
+-webkit-tap-highlight-color: transparent; touch-action: manipulation;
+color: var(–text-sub);
+}
+.mode-btn:active { transform: scale(.97); }
+.mode-btn.active { border-color: var(–green); background: var(–green-light); color: var(–green); }
+
+/* ===== STEP INDICATOR ===== */
+.steps-indicator {
+display: flex; align-items: center; justify-content: center;
+gap: 0; padding: 12px 4px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.step-item { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 44px; }
+.step-circle {
+width: 28px; height: 28px; border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 11px; font-weight: 700;
+border: 2px solid var(–border); background: #fff; color: var(–text-sub);
+transition: all .3s;
+}
+.step-circle.active {
+border-color: var(–green); background: var(–green); color: #fff;
+box-shadow: 0 2px 8px rgba(39,174,96,.3);
+animation: stepPulse 1.5s ease infinite;
+}
+@keyframes stepPulse {
+0%,100% { box-shadow: 0 2px 8px rgba(39,174,96,.3); }
+50% { box-shadow: 0 2px 14px rgba(39,174,96,.5); }
+}
+.step-circle.done { border-color: var(–green); background: var(–green-light); color: var(–green); }
+.step-label { font-size: 9px; font-weight: 600; color: var(–text-sub); white-space: nowrap; }
+.step-item.active .step-label { color: var(–green); font-weight: 700; }
+.step-item.done .step-label { color: var(–green); }
+.step-connector {
+width: 12px; height: 2px; background: var(–border);
+margin-bottom: 16px; flex-shrink: 0; transition: background .3s;
+}
+.step-connector.done { background: var(–green); }
+
+/* ===== ANNOUNCE ===== */
+.announce-bar {
+background: var(–blue-light); border: 1px solid rgba(41,128,185,.15);
+border-radius: var(–radius-sm); padding: 10px 14px; margin-bottom: 12px;
+font-size: 13px; font-weight: 600; color: var(–blue);
+text-align: center; line-height: 1.6; min-height: 40px;
+display: flex; align-items: center; justify-content: center;
+}
+.announce-bar.phase-info {
+background: var(–orange-light); border-color: rgba(230,126,34,.15); color: var(–orange);
+}
+
+/* ===== STATUS ===== */
+.status-bar {
+display: flex; align-items: center; justify-content: center;
+gap: 10px; padding: 6px 0; font-size: 12px; color: var(–text-sub);
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.status-dot.idle { background: #bbb; }
+.status-dot.playing { background: var(–green); animation: pulse 1.2s infinite; }
+.status-dot.paused-dot { background: var(–orange); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* ===== DISPLAY ===== */
+.display-area {
+min-height: 140px; display: flex; flex-direction: column;
+align-items: center; justify-content: center; padding: 16px 8px; text-align: center;
+}
+.display-phase { font-size: 13px; font-weight: 700; color: var(–text-sub); margin-bottom: 6px; }
+.display-sub { font-size: 13px; color: var(–text-sub); margin-top: 8px; line-height: 1.6; }
+
+/* ===== KARAOKE ===== */
+.phrase-display {
+font-family: var(–font-serif); font-size: 30px; font-weight: 700;
+line-height: 2.0; text-align: center; word-break: break-word;
+}
+.kara-unit {
+display: inline-block; padding: 2px 3px; border-radius: 6px; transition: all .12s;
+}
+.kara-unit.active { background: var(–accent-light); color: var(–accent); }
+.kara-unit.done { opacity: .35; }
+.kara-unit.spacer { background: transparent; color: inherit; opacity: 1; }
+
+/* ===== HARD PHRASE ===== */
+.hard-phrase {
+font-family: var(–font-serif); font-size: 26px; font-weight: 700; line-height: 1.7;
+background: var(–accent-light); border: 1px solid rgba(192,57,43,.15);
+border-radius: var(–radius-sm); padding: 14px 18px; display: inline-block;
+}
+.hard-phrase ruby rt { font-size: .48em; color: var(–accent); opacity: .8; }
+
+/* ===== PROGRESS ===== */
+.progress-wrap {
+margin-top: 10px; background: rgba(0,0,0,.06);
+border-radius: 4px; height: 5px; overflow: hidden;
+}
+.progress-bar {
+height: 100%; width: 0%; background: var(–green);
+border-radius: 4px; transition: width .4s ease;
+}
+
+/* ===== CONTROLS ===== */
+.controls-wrap { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(–border); }
+.controls-main { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.btn {
+display: inline-flex; align-items: center; gap: 6px;
+padding: 11px 18px; border-radius: var(–radius-sm);
+border: 1px solid var(–border); background: #fff;
+font-family: var(–font-body); font-size: 14px; font-weight: 600;
+cursor: pointer; transition: all .15s; white-space: nowrap;
+-webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:disabled:active { transform: none; }
+.btn-start {
+background: var(–green); color: #fff; border-color: var(–green);
+box-shadow: 0 2px 8px rgba(39,174,96,.25);
+min-width: 160px; font-size: 16px; padding: 13px 24px;
+}
+.btn-start:hover:not(:disabled) { background: #219a52; }
+.btn-pause { background: var(–blue); color: #fff; border-color: var(–blue); }
+.btn-resume { background: var(–green); color: #fff; border-color: var(–green); }
+.btn-stop { background: var(–accent); color: #fff; border-color: var(–accent); }
+.btn-skip { background: #2c2520; color: #fff; border-color: #2c2520; }
+.btn-ghost { background: #fff; color: var(–text); }
+.controls-secondary {
+display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px;
+}
+
+/* ===== TIPS ===== */
+.tips {
+background: var(–accent-light); border-radius: var(–radius-sm);
+padding: 12px 14px; margin-top: 14px;
+}
+.tips-title { font-size: 13px; font-weight: 700; color: var(–accent); margin-bottom: 6px; }
+.tips-text { font-size: 12px; line-height: 1.8; color: var(–text-sub); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+.container { padding: 10px; }
+.card-body { padding: 12px 14px; }
+.phrase-display { font-size: 24px; }
+.hard-phrase { font-size: 20px; padding: 10px 14px; }
+.btn { padding: 10px 14px; font-size: 13px; }
+.btn-start { padding: 12px 20px; font-size: 15px; min-width: 140px; }
+.step-circle { width: 26px; height: 26px; font-size: 10px; }
+.step-connector { width: 8px; }
+.mode-btn { font-size: 12px; padding: 9px 6px; }
+}
 </style>
-</head>
 
+</head>
 <body>
 
-<header class="top">
-  <h1>👄 滑舌練習</h1>
-  <p><a href="index.html">← ホームへ</a></p>
-</header>
+<div class="header">
+  <h1>滑舌練習</h1>
+  <p class="sub">母音・リズム・拗音・濁音・難語</p>
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
+</div>
 
-<main class="menu">
+<div class="container">
 
-  <!-- ✅ 今日のミッション（最上部） -->
+  <!-- オンボーディング -->
+
+  <div class="onboarding" id="onboarding">
+    <button class="close-btn" onclick="closeOnboarding()" aria-label="閉じる">&times;</button>
+    <div class="onboarding-title">はじめての方へ</div>
+    <div class="onboarding-steps">
+      <div class="onboarding-step">
+        <span class="ob-num">1</span>
+        <span><strong>ミッション</strong>：各ジャンルから1問ずつ。サクッと2〜3分で完了</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="ob-num">2</span>
+        <span><strong>全問練習</strong>：全フレーズを順番に。じっくり取り組みたい日に</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="ob-num">3</span>
+        <span>赤く光った文字に合わせて<strong>声に出して</strong>読みましょう</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ステップインジケーター -->
+
   <div class="card">
-    <div class="title">🔰 今日のミッション（約2〜3分）</div>
-    <div class="desc">
-      <div id="dailyText" class="mini">読み込み中…</div>
-      <div class="mini" style="margin-top:8px;">
-        💡「開始」を押すと、上から順に最後まで自動で進みます
-      </div>
+    <div class="card-body" style="padding: 6px 10px;">
+      <div class="steps-indicator" id="stepsIndicator"></div>
     </div>
   </div>
 
-  <!-- ✅ 読み上げ表示（上部へ移動） -->
-  <div class="card readStageTop" id="readStage">
-    <div class="title" id="sectionTitle">準備OK</div>
-    <div class="desc">
-      <div style="text-align:center;">
-        <span id="counter" class="mini"></span>
-      </div>
+  <!-- メインエリア -->
 
-      <div class="readBox">
-        <div id="phraseBody">▶「開始」を押してください</div>
-      </div>
-
-      <div class="mini" style="text-align:center; margin-top:10px;">
-        ※ まず「ゆっくり正確に」→ 慣れたらテンポアップ
-      </div>
-    </div>
-  </div>
-
-  <!-- ✅ 操作ボタン（必要な4つだけ） -->
   <div class="card">
-    <div class="title">操作</div>
-    <div class="desc controls">
-      <div class="row">
-        <button id="playBtn"  class="bigBtn primary" type="button">▶ 開始</button>
-        <button id="pauseBtn" class="bigBtn ghost"   type="button">⏸ 一時停止</button>
-        <button id="stopBtn"  class="bigBtn danger"  type="button">⏹ 停止</button>
-        <button id="skipBtn"  class="bigBtn warn"    type="button">⏭ スキップ</button>
-      </div>
+    <div class="card-header">
+      <span class="icon">&#9881;</span>
+      <span class="label">練習エリア</span>
+    </div>
+    <div class="card-body">
+
+```
+  <!-- モード選択 -->
+  <div class="mode-selector">
+    <button class="mode-btn active" id="modeMission" type="button">&#127919; ミッション</button>
+    <button class="mode-btn" id="modeAll" type="button">&#128214; 全問練習</button>
+  </div>
+
+  <!-- アナウンス -->
+  <div class="announce-bar" id="announceBar">スタートを押すと、母音から順にガイドします</div>
+
+  <!-- ステータス -->
+  <div class="status-bar">
+    <span><span class="status-dot idle" id="statusDot"></span></span>
+    <span id="statusText">待機中</span>
+  </div>
+
+  <!-- メイン表示 -->
+  <div class="display-area" id="displayArea">
+    <div class="display-phase">準備OK</div>
+    <div class="phrase-display" id="phraseBody">スタートを押してください</div>
+  </div>
+
+  <!-- プログレス -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- コントロール -->
+  <div class="controls-wrap">
+    <div class="controls-main" id="controlsMain">
+      <button class="btn btn-start" id="startBtn" type="button">&#9654; スタート</button>
+    </div>
+    <div class="controls-secondary" id="controlsSec" style="display:none;">
+      <button class="btn btn-pause" id="pauseBtn" type="button">&#9208; 一時停止</button>
+      <button class="btn btn-stop" id="stopBtn" type="button">&#9209; 停止</button>
+      <button class="btn btn-skip" id="skipBtn" type="button">&#9197; スキップ</button>
     </div>
   </div>
 
-</main>
+  <!-- Tips -->
+  <div class="tips">
+    <div class="tips-title">練習のコツ</div>
+    <div class="tips-text">
+      まずは「ゆっくり正確に」が大事です。<br>
+      口を大きく動かし、1音ずつハッキリ発声しましょう。<br>
+      慣れてきたらテンポアップに挑戦してみてください。
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+</div>
 
 <script>
-/* =========================
-   データ（ミッション固定：母音→リズム→拗音→濁音）
-   - 難語は手動用として保持（セクション表示はしないが再生ロジックは残す）
-========================= */
-
-// 母音
-const p1 = [
-  "あいうえお",
-  "あえいうえおあお",
-  "あいうえおあお",
-  "あおあえいうえお",
-  "あいうえおあいうえお",
-  "あーいーうーえーおー（ゆっくり）",
-  "あ　い　う　え　お（1音ずつ）",
-  "あいうえおあえう",
-  "あおあおあえいえうえおう",
-  "あいうえおおえういあ"
+/* ======================================================
+   フレーズデータ
+====================================================== */
+var SECTIONS = [
+  {
+    name: '母音',
+    desc: '口の開きをしっかり意識',
+    phrases: [
+      'あいうえお',
+      'あえいうえおあお',
+      'あおあえいうえお',
+      'あいうえおおえういあ',
+      'あ　い　う　え　お'
+    ]
+  },
+  {
+    name: 'リズム',
+    desc: 'テンポよく弾むように',
+    phrases: [
+      'たたた　ててて　ととと',
+      'かかか　ききき　くくく',
+      'さささ　ししし　すすす',
+      'ららら　りりり　るるる'
+    ]
+  },
+  {
+    name: '拗音',
+    desc: '小さい「ゃゅょ」を正確に',
+    phrases: [
+      'きゃきゅきょ　きゃくきょ　きゅきょきゃ',
+      'しゃしゅしょ　しゃくしょ　しゅしょしゃ',
+      'ちゃちゅちょ　ちゃくちょ　ちゅちょちゃ',
+      'ひゃひゅひょ　ひゃくひょ　ひゅひょひゃ',
+      'りゃりゅりょ　りゃくりょ　りゅりょりゃ'
+    ]
+  },
+  {
+    name: '濁音',
+    desc: '濁点の響きをしっかり出す',
+    phrases: [
+      'がぎぐげご　がげご　ぎぐげ',
+      'ざじずぜぞ　ざぜぞ　じずぜ',
+      'だぢづでど　だでど　ぢづで',
+      'ばびぶべぼ　ばべぼ　びぶべ',
+      'ぱぴぷぺぽ　ぱぺぽ　ぴぷぺ'
+    ]
+  },
+  {
+    name: '難語',
+    desc: '焦らずゆっくり正確に',
+    isHard: true,
+    phrases: [
+      '<ruby>東京<rt>とうきょう</rt></ruby><ruby>特許<rt>とっきょ</rt></ruby><ruby>許可局<rt>きょかきょく</rt></ruby>',
+      '<ruby>生麦<rt>なまむぎ</rt></ruby><ruby>生米<rt>なまごめ</rt></ruby><ruby>生卵<rt>なまたまご</rt></ruby>',
+      '<ruby>新進<rt>しんしん</rt></ruby><ruby>歌手<rt>かしゅ</rt></ruby><ruby>総出演<rt>そうしゅつえん</rt></ruby><ruby>新春<rt>しんしゅん</rt></ruby>ショー',
+      '<ruby>魔術師<rt>まじゅつし</rt></ruby><ruby>手術中<rt>しゅじゅつちゅう</rt></ruby>',
+      '<ruby>貨物<rt>かもつ</rt></ruby><ruby>客室<rt>きゃくしつ</rt></ruby>、<ruby>各客<rt>かくきゃく</rt></ruby>が<ruby>客席<rt>きゃくせき</rt></ruby><ruby>確保<rt>かくほ</rt></ruby>',
+      '<ruby>隣<rt>となり</rt></ruby>の<ruby>客<rt>きゃく</rt></ruby>はよく<ruby>柿<rt>かき</rt></ruby><ruby>食<rt>く</rt></ruby>う<ruby>客<rt>きゃく</rt></ruby>だ',
+      '<ruby>竹垣<rt>たけがき</rt></ruby>に<ruby>竹<rt>たけ</rt></ruby><ruby>立<rt>た</rt></ruby>てかけたのは<ruby>竹<rt>たけ</rt></ruby><ruby>立<rt>た</rt></ruby>てたかったから',
+      '<ruby>赤<rt>あか</rt></ruby><ruby>巻紙<rt>まきがみ</rt></ruby><ruby>青<rt>あお</rt></ruby><ruby>巻紙<rt>まきがみ</rt></ruby><ruby>黄<rt>き</rt></ruby><ruby>巻紙<rt>まきがみ</rt></ruby>',
+      '<ruby>油<rt>あぶら</rt></ruby><ruby>売<rt>う</rt></ruby>りが<ruby>油<rt>あぶら</rt></ruby>を<ruby>売<rt>う</rt></ruby>る<ruby>間<rt>あいだ</rt></ruby>に<ruby>売上<rt>うりあげ</rt></ruby>が<ruby>落<rt>お</rt></ruby>ちる',
+      '<ruby>滑舌<rt>かつぜつ</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby>は<ruby>反復<rt>はんぷく</rt></ruby>が<ruby>最強<rt>さいきょう</rt></ruby>'
+    ]
+  }
 ];
 
-// リズム
-const p5 = [
-  "たたた　ててて　ととと",
-  "かかか　ききき　くくく",
-  "さささ　ししし　すすす",
-  "ららら　りりり　るるる"
-];
+/* ======================================================
+   状態管理
+====================================================== */
+var runToken = 0;
+var paused = false;
+var pauseResolvers = [];
+var skipRequested = false;
+var currentMode = 'mission'; // 'mission' or 'all'
 
-// 拗音
-const p4 = [
-  "きゃきゅきょ　きゃくきょ　きゅきょきゃ",
-  "しゃしゅしょ　しゃくしょ　しゅしょしゃ",
-  "ちゃちゅちょ　ちゃくちょ　ちゅちょちゃ",
-  "にゃにゅにょ　にゃくにょ　にゅにょにゃ",
-  "ひゃひゅひょ　ひゃくひょ　ひゅひょひゃ",
-  "みゃみゅみょ　みゃくみょ　みゅみょみゃ",
-  "りゃりゅりょ　りゃくりょ　りゅりょりゃ"
-];
+var KARA_SPEED = 700; // ms per unit
+var HARD_SPEED = 3500; // ms per hard phrase
 
-// 濁音
-const p3 = [
-  "がぎぐげご　がげご　ぎぐげ",
-  "ざじずぜぞ　ざぜぞ　じずぜ",
-  "だぢづでど　だでど　ぢづで",
-  "ばびぶべぼ　ばべぼ　びぶべ",
-  "ぱぴぷぺぽ　ぱぺぽ　ぴぷぺ"
-];
+function waitWhilePaused() {
+  if (!paused) return Promise.resolve();
+  return new Promise(function(res) { pauseResolvers.push(res); });
+}
+function resumePausedWaiters() {
+  pauseResolvers.splice(0).forEach(function(r) { r(); });
+}
+function isStopped(token) { return token !== runToken; }
 
-/* ✅ 難語（ふりがな付き / 3秒切替 / 全文点灯） */
-const hardRuby = [
-  "<ruby>特製<rt>とくせい</rt></ruby><ruby>炭酸水<rt>たんさんすい</rt></ruby>、<ruby>瞬間<rt>しゅんかん</rt></ruby><ruby>酸欠<rt>さんけつ</rt></ruby><ruby>寸前<rt>すんぜん</rt></ruby>",
-  "<ruby>早朝<rt>そうちょう</rt></ruby><ruby>送迎車<rt>そうげいしゃ</rt></ruby>、<ruby>商社<rt>しょうしゃ</rt></ruby><ruby>駐車場<rt>ちゅうしゃじょう</rt></ruby><ruby>集合<rt>しゅうごう</rt></ruby>",
-  "<ruby>調査主任<rt>ちょうさしゅにん</rt></ruby>、<ruby>諸所<rt>しょしょ</rt></ruby><ruby>視察<rt>しさつ</rt></ruby>し<ruby>所感<rt>しょかん</rt></ruby><ruby>書記<rt>しょき</rt></ruby>",
-  "<ruby>貨物<rt>かもつ</rt></ruby><ruby>客室<rt>きゃくしつ</rt></ruby>、<ruby>各客<rt>かくきゃく</rt></ruby>が<ruby>客席<rt>きゃくせき</rt></ruby><ruby>確保<rt>かくほ</rt></ruby>",
-  "<ruby>急遽<rt>きゅうきょ</rt></ruby><ruby>休暇<rt>きゅうか</rt></ruby>、<ruby>究極級<rt>きゅうきょくきゅう</rt></ruby>の<ruby>供給不足<rt>きょうきゅうぶそく</rt></ruby>",
-  "<ruby>連続<rt>れんぞく</rt></ruby><ruby>朗読<rt>ろうどく</rt></ruby>、<ruby>論理<rt>ろんり</rt></ruby><ruby>論述<rt>ろんじゅつ</rt></ruby>、<ruby>朗朗論<rt>ろうろうろん</rt></ruby>",
-  "<ruby>反復<rt>はんぷく</rt></ruby><ruby>発話<rt>はつわ</rt></ruby>、<ruby>発泡<rt>はっぽう</rt></ruby><ruby>発酵<rt>はっこう</rt></ruby>、<ruby>白泡<rt>しろあわ</rt></ruby><ruby>発生<rt>はっせい</rt></ruby>",
-  "<ruby>逆走客<rt>ぎゃくそうきゃく</rt></ruby>が<ruby>客席<rt>きゃくせき</rt></ruby><ruby>急加速<rt>きゅうかそく</rt></ruby>、<ruby>客席<rt>きゃくせき</rt></ruby><ruby>逆<rt>ぎゃく</rt></ruby>さ",
-  "<ruby>朴訥<rt>ぼくとつ</rt></ruby>な<ruby>牧童<rt>ぼくどう</rt></ruby>、<ruby>北斗<rt>ほくと</rt></ruby>の<ruby>木刀<rt>ぼくとう</rt></ruby><ruby>特訓<rt>とっくん</rt></ruby>",
-  "<ruby>隙間<rt>すきま</rt></ruby><ruby>隙間<rt>すきま</rt></ruby>に<ruby>すき焼き<rt>すきやき</rt></ruby>の<ruby>具<rt>ぐ</rt></ruby>を<ruby>詰<rt>つ</rt></ruby>める",
-  "<ruby>新進<rt>しんしん</rt></ruby><ruby>歌手<rt>かしゅ</rt></ruby><ruby>総出演<rt>そうしゅつえん</rt></ruby>、<ruby>新春<rt>しんしゅん</rt></ruby><ruby>ショー<rt>しょー</rt></ruby>",
-  "<ruby>右目<rt>みぎめ</rt></ruby><ruby>右耳<rt>みぎみみ</rt></ruby><ruby>右肩<rt>みぎかた</rt></ruby><ruby>右腕<rt>みぎうで</rt></ruby>／<ruby>左目<rt>ひだりめ</rt></ruby><ruby>左耳<rt>ひだりみみ</rt></ruby><ruby>左肩<rt>ひだりかた</rt></ruby><ruby>左腕<rt>ひだりうで</rt></ruby>",
-  "<ruby>竹垣<rt>たけがき</rt></ruby>に<ruby>竹<rt>たけ</rt></ruby>を<ruby>立<rt>た</rt></ruby>てかけたのは<ruby>立<rt>た</rt></ruby>てたかったから",
-  "<ruby>釘<rt>くぎ</rt></ruby>を<ruby>引<rt>ひ</rt></ruby>き<ruby>抜<rt>ぬ</rt></ruby>きにくい<ruby>釘<rt>くぎ</rt></ruby>だ",
-  "<ruby>油<rt>あぶら</rt></ruby><ruby>売<rt>う</rt></ruby>りが<ruby>油<rt>あぶら</rt></ruby>を<ruby>売<rt>う</rt></ruby>る<ruby>間<rt>あいだ</rt></ruby>に<ruby>売上<rt>うりあげ</rt></ruby>が<ruby>落<rt>お</rt></ruby>ちる",
-  "<ruby>謎<rt>なぞ</rt></ruby>なら<ruby>謎<rt>なぞ</rt></ruby>と<ruby>名乗<rt>なの</rt></ruby>れ、<ruby>バナナ<rt>ばなな</rt></ruby>の<ruby>謎<rt>なぞ</rt></ruby>はまだ<ruby>謎<rt>なぞ</rt></ruby>だ",
-  "<ruby>屏風<rt>びょうぶ</rt></ruby>に<ruby>上手<rt>じょうず</rt></ruby>に<ruby>坊主<rt>ぼうず</rt></ruby>の<ruby>絵<rt>え</rt></ruby>を<ruby>描<rt>か</rt></ruby>く",
-  "<ruby>青<rt>あお</rt></ruby><ruby>赤<rt>あか</rt></ruby><ruby>黄<rt>き</rt></ruby>の<ruby>パジャマ<rt>ぱじゃま</rt></ruby>を<ruby>着<rt>き</rt></ruby>かえる",
-  "<ruby>三<rt>さん</rt></ruby><ruby>匹<rt>びき</rt></ruby>の<ruby>蛙<rt>かえる</rt></ruby>がぴょこぴょこ、<ruby>六<rt>ろく</rt></ruby>ぴょこぴょこ",
-  "<ruby>滑舌<rt>かつぜつ</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby>は<ruby>反復<rt>はんぷく</rt></ruby>が<ruby>最強<rt>さいきょう</rt></ruby>"
-];
+/* ======================================================
+   DOM
+====================================================== */
+function $(id) { return document.getElementById(id); }
 
-/* ミッション固定（指定どおり） */
-let daily = [
-  {t:"母音", list:p1},
-  {t:"リズム", list:p5},
-  {t:"拗音", list:p4},
-  {t:"濁音", list:p3}
-];
+function setAnnounce(text, type) {
+  var bar = $('announceBar');
+  bar.textContent = text;
+  bar.className = 'announce-bar' + (type ? ' ' + type : '');
+}
 
-/* =========================
-   状態
-========================= */
-let isPlaying = false;
-let paused = false;
-let dailyIndex = 0;
-let phraseIndex = 0;
-let timer = null;
-let hardTimeout = null;
+function setStatus(state) {
+  var dot = $('statusDot');
+  var txt = $('statusText');
+  if (state === 'playing') {
+    dot.className = 'status-dot playing';
+    txt.textContent = '進行中';
+  } else if (state === 'paused') {
+    dot.className = 'status-dot paused-dot';
+    txt.textContent = '一時停止中';
+  } else if (state === 'complete') {
+    dot.className = 'status-dot idle';
+    txt.textContent = '完了';
+  } else {
+    dot.className = 'status-dot idle';
+    txt.textContent = '待機中';
+  }
+}
 
-/* ✅ 通常：1ユニット=0.7秒固定 */
-const SPEED = 700;
+function setProgress(pct) {
+  $('progressBar').style.width = Math.min(100, pct) + '%';
+}
 
-/* ===== DOM ===== */
-const dailyTextEl = document.getElementById("dailyText");
-const sectionTitle = document.getElementById("sectionTitle");
-const counter = document.getElementById("counter");
-const phraseBody = document.getElementById("phraseBody");
+/* ======================================================
+   Step Indicator (dynamic)
+====================================================== */
+function buildStepIndicator(sections) {
+  var container = $('stepsIndicator');
+  container.innerHTML = '';
+  for (var i = 0; i < sections.length; i++) {
+    var item = document.createElement('div');
+    item.className = 'step-item';
+    item.id = 'step-' + i;
+    item.innerHTML = '<div class="step-circle" id="circle-' + i + '">' + (i + 1) + '</div>' +
+                     '<span class="step-label">' + sections[i].name + '</span>';
+    container.appendChild(item);
+    if (i < sections.length - 1) {
+      var conn = document.createElement('div');
+      conn.className = 'step-connector';
+      conn.id = 'conn-' + i;
+      container.appendChild(conn);
+    }
+  }
+}
 
-const playBtn = document.getElementById("playBtn");
-const pauseBtn = document.getElementById("pauseBtn");
-const stopBtn = document.getElementById("stopBtn");
-const skipBtn = document.getElementById("skipBtn");
+function updateStep(activeIdx, doneUpTo, total) {
+  for (var i = 0; i < total; i++) {
+    var item = $('step-' + i);
+    var circle = $('circle-' + i);
+    if (!item || !circle) continue;
+    item.className = 'step-item';
+    circle.className = 'step-circle';
+    if (i < doneUpTo) {
+      item.classList.add('done');
+      circle.classList.add('done');
+      circle.innerHTML = '&#10003;';
+    } else if (i === activeIdx) {
+      item.classList.add('active');
+      circle.classList.add('active');
+      circle.textContent = String(i + 1);
+    } else {
+      circle.textContent = String(i + 1);
+    }
+    if (i < total - 1) {
+      var conn = $('conn-' + i);
+      if (conn) conn.className = 'step-connector' + (i < doneUpTo ? ' done' : '');
+    }
+  }
+}
 
-/* =========================
-   ユニット化（通常用）
-   - 拗音小文字を合体
-   - 空白はskip（表示は残す）
-   - （）内は除外
-========================= */
-function buildUnits(text){
-  const small = "ゃゅょぁぃぅぇぉ";
-  let arr = [];
-  let buf = "";
-  let inParen = false;
+function resetStep(total) {
+  for (var i = 0; i < total; i++) {
+    var item = $('step-' + i);
+    var circle = $('circle-' + i);
+    if (!item || !circle) continue;
+    item.className = 'step-item';
+    circle.className = 'step-circle';
+    circle.textContent = String(i + 1);
+    if (i < total - 1) {
+      var conn = $('conn-' + i);
+      if (conn) conn.className = 'step-connector';
+    }
+  }
+}
 
-  for(const c of text){
-    if(c === "（"){ inParen = true; continue; }
-    if(c === "）"){ inParen = false; continue; }
-    if(inParen) continue;
-
-    if(/\s/.test(c)){
-      if(buf){ arr.push({t:buf}); buf=""; }
-      arr.push({t:c, skip:true});
+/* ======================================================
+   Karaoke unit builder
+====================================================== */
+function buildUnits(text) {
+  var small = 'ゃゅょぁぃぅぇぉ';
+  var arr = [];
+  var buf = '';
+  for (var ci = 0; ci < text.length; ci++) {
+    var c = text[ci];
+    if (/\s/.test(c) || c === '\u3000') {
+      if (buf) { arr.push({t: buf}); buf = ''; }
+      arr.push({t: c, spacer: true});
       continue;
     }
-
-    if(small.includes(c)){
+    if (small.indexOf(c) >= 0) {
       buf += c;
       continue;
-    }else{
-      if(buf) arr.push({t:buf});
+    } else {
+      if (buf) arr.push({t: buf});
       buf = c;
     }
   }
-  if(buf) arr.push({t:buf});
+  if (buf) arr.push({t: buf});
   return arr;
 }
 
-/* =========================
-   表示
-========================= */
-function showDaily(){
-  // 毎回ランダムに選ぶ（固定順で中身だけ変わる）
-  const pick = (a)=> a[Math.floor(Math.random()*a.length)];
-
-  daily = [
-    {t:"母音", list:[pick(p1)]},
-    {t:"リズム", list:[pick(p5)]},
-    {t:"拗音", list:[pick(p4)]},
-    {t:"濁音", list:[pick(p3)]}
-  ];
-
-  dailyTextEl.textContent =
-    daily.map((x,i)=>`(${i+1}) ${x.t}：${x.list[0]}`).join("\n");
+/* ======================================================
+   Render functions
+====================================================== */
+function renderKaraoke(text) {
+  var area = $('displayArea');
+  var units = buildUnits(text);
+  var html = '<div class="phrase-display">';
+  for (var i = 0; i < units.length; i++) {
+    var u = units[i];
+    if (u.spacer) {
+      html += '<span class="kara-unit spacer">' + u.t + '</span>';
+    } else {
+      html += '<span class="kara-unit" data-idx="' + i + '">' + u.t + '</span>';
+    }
+  }
+  html += '</div>';
+  area.innerHTML = html;
 }
 
-function renderCurrent(text, isHard=false){
-  phraseBody.classList.remove("hardAllOn");
-  phraseBody.innerHTML = "";
+function renderHardPhrase(rubyHtml) {
+  var area = $('displayArea');
+  area.innerHTML = '<div class="hard-phrase">' + rubyHtml + '</div>';
+}
 
-  if(isHard){
-    // 難語（ruby HTML）
-    phraseBody.innerHTML = `<span class="hardAllOn">${text}</span>`;
-    return;
-  }
+function renderWelcome() {
+  var area = $('displayArea');
+  area.innerHTML =
+    '<div class="display-phase">準備OK</div>' +
+    '<div class="phrase-display" style="font-size:16px; opacity:.7;">スタートを押してください</div>';
+}
 
-  // 通常：karaUnit生成
-  const units = buildUnits(text);
-  units.forEach(u=>{
-    const sp = document.createElement("span");
-    sp.className = "karaUnit";
-    if(u.skip){
-      sp.classList.add("skip");
-      sp.textContent = u.t;
-    }else{
-      sp.textContent = u.t;
+/* ======================================================
+   Wait utility
+====================================================== */
+function wait(ms, token) {
+  var left = ms;
+  var step = 50;
+  return new Promise(function(resolve) {
+    function tick() {
+      if (isStopped(token) || skipRequested) { resolve(false); return; }
+      if (paused) { waitWhilePaused().then(tick); return; }
+      if (left <= 0) { resolve(true); return; }
+      var chunk = Math.min(step, left);
+      left -= chunk;
+      setTimeout(tick, chunk);
     }
-    phraseBody.appendChild(sp);
+    tick();
   });
 }
 
-function clearVisual(){
-  document.querySelectorAll(".karaUnit").forEach(s=>{
-    s.classList.remove("active","done");
-  });
-  phraseBody.classList.remove("hardAllOn");
+/* ======================================================
+   Karaoke play (animate units one by one)
+====================================================== */
+function playKaraoke(token) {
+  var spans = [];
+  var all = document.querySelectorAll('.kara-unit');
+  for (var i = 0; i < all.length; i++) {
+    if (!all[i].classList.contains('spacer')) spans.push(all[i]);
+  }
+  if (spans.length === 0) return Promise.resolve(true);
+
+  var idx = 0;
+  function step() {
+    if (isStopped(token) || skipRequested) return Promise.resolve(false);
+
+    if (idx > 0) {
+      spans[idx - 1].classList.remove('active');
+      spans[idx - 1].classList.add('done');
+    }
+    if (idx >= spans.length) return Promise.resolve(true);
+
+    spans[idx].classList.add('active');
+    idx++;
+    return wait(KARA_SPEED, token).then(function(ok) {
+      return ok ? step() : false;
+    });
+  }
+  return step();
 }
 
-/* =========================
-   タイマー制御
-========================= */
-function clearTimers(){
-  if(timer){ clearInterval(timer); timer=null; }
-  if(hardTimeout){ clearTimeout(hardTimeout); hardTimeout=null; }
-}
+/* ======================================================
+   Play section
+====================================================== */
+function playSection(token, section, phraseList, sectionIdx, totalSections, progressBase, progressSpan) {
+  var pIdx = 0;
 
-function stopAll(){
-  isPlaying = false;
-  paused = false;
-  pauseBtn.textContent = "⏸ 一時停止";
-  clearTimers();
-  clearVisual();
-  sectionTitle.textContent = "停止";
-  counter.textContent = "";
-  phraseBody.textContent = "▶「開始」を押してください";
-}
+  function nextPhrase() {
+    if (pIdx >= phraseList.length || isStopped(token) || skipRequested) return Promise.resolve();
 
-/* =========================
-   再生ロジック
-   - 開始：ミッションを最後まで自動
-   - 難語は別（手動で使う想定のため、ここではミッションに入れない）
-========================= */
-let playIndex = 0;
+    var phraseNum = pIdx + 1;
+    var totalPhrases = phraseList.length;
 
-function startKaraForCurrent(){
-  clearTimers();
-  clearVisual();
-  playIndex = 0;
-
-  const spans = Array.from(document.querySelectorAll(".karaUnit"))
-    .filter(sp=>!sp.classList.contains("skip"));
-
-  if(spans.length === 0){
-    // 文字が無いときは次へ
-    goNextPhrase();
-    return;
+    if (section.isHard) {
+      // Hard phrase: show with ruby, wait, then next
+      setAnnounce(section.name + '（' + phraseNum + '/' + totalPhrases + '）：ゆっくり声に出しましょう');
+      renderHardPhrase(phraseList[pIdx]);
+      return wait(HARD_SPEED, token).then(function(ok) {
+        if (!ok) return;
+        var pct = progressBase + ((pIdx + 1) / totalPhrases) * progressSpan;
+        setProgress(pct);
+        pIdx++;
+        return nextPhrase();
+      });
+    } else {
+      // Normal karaoke
+      setAnnounce(section.name + '（' + phraseNum + '/' + totalPhrases + '）：' + section.desc);
+      renderKaraoke(phraseList[pIdx]);
+      return playKaraoke(token).then(function(ok) {
+        if (!ok) return;
+        var pct = progressBase + ((pIdx + 1) / totalPhrases) * progressSpan;
+        setProgress(pct);
+        return wait(400, token);
+      }).then(function(ok) {
+        if (ok === undefined) return; // stopped
+        pIdx++;
+        return nextPhrase();
+      });
+    }
   }
 
-  timer = setInterval(()=>{
-    if(!isPlaying) return;
-    if(paused) return;
-
-    if(playIndex > 0){
-      spans[playIndex-1].classList.remove("active");
-      spans[playIndex-1].classList.add("done");
-    }
-
-    if(playIndex >= spans.length){
-      clearTimers();
-      // 次へ
-      setTimeout(()=> goNextPhrase(), 420);
-      return;
-    }
-
-    spans[playIndex].classList.add("active");
-    playIndex++;
-  }, SPEED);
+  return nextPhrase();
 }
 
-function goNextPhrase(){
-  if(!isPlaying) return;
-
-  // ミッションの現在項目は daily[dailyIndex].list に1つだけ入ってる
-  phraseIndex++;
-
-  // 今回は各項目1フレーズ固定なので、すぐ次の項目へ
-  dailyIndex++;
-
-  if(dailyIndex >= daily.length){
-    // 完了
-    isPlaying = false;
-    paused = false;
-    pauseBtn.textContent = "⏸ 一時停止";
-    sectionTitle.textContent = "✨ お疲れ様でした";
-    counter.textContent = "";
-    phraseBody.textContent = "😊";
-    return;
+/* ======================================================
+   Build playlist based on mode
+====================================================== */
+function buildPlaylist() {
+  var playlist = [];
+  for (var i = 0; i < SECTIONS.length; i++) {
+    var sec = SECTIONS[i];
+    var phrases;
+    if (currentMode === 'mission') {
+      // Pick one random phrase per section
+      var ridx = Math.floor(Math.random() * sec.phrases.length);
+      phrases = [sec.phrases[ridx]];
+    } else {
+      // All phrases in order
+      phrases = sec.phrases.slice();
+    }
+    playlist.push({section: sec, phrases: phrases});
   }
-
-  // 次の項目を表示して再生
-  phraseIndex = 0;
-  playDailyStep();
+  return playlist;
 }
 
-function playDailyStep(){
-  const item = daily[dailyIndex];
-  const text = item.list[0];
+/* ======================================================
+   Onboarding
+====================================================== */
+function closeOnboarding() {
+  var el = $('onboarding');
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(-10px)';
+  el.style.transition = 'all .3s ease';
+  setTimeout(function() { el.style.display = 'none'; }, 300);
+  try { localStorage.setItem('katsuzetsu_onboarding_closed', '1'); } catch (e) {}
+}
+try {
+  if (localStorage.getItem('katsuzetsu_onboarding_closed') === '1') {
+    $('onboarding').style.display = 'none';
+  }
+} catch (e) {}
 
-  sectionTitle.textContent = item.t;
-  counter.textContent = `(${dailyIndex+1}/${daily.length})`;
-
-  renderCurrent(text, false);
-  startKaraForCurrent();
+/* ======================================================
+   Controls
+====================================================== */
+function showRunningControls(on) {
+  $('controlsMain').style.display = on ? 'none' : 'flex';
+  $('controlsSec').style.display = on ? 'flex' : 'none';
 }
 
-function startDailyAuto(){
-  // 毎回ミッションを更新してからスタート
-  showDaily();
-
-  isPlaying = true;
-  paused = false;
-  pauseBtn.textContent = "⏸ 一時停止";
-
-  dailyIndex = 0;
-  phraseIndex = 0;
-
-  playDailyStep();
-}
-
-function togglePause(){
-  if(!isPlaying) return;
+function togglePause() {
   paused = !paused;
-  pauseBtn.textContent = paused ? "▶ 再開" : "⏸ 一時停止";
+  var btn = $('pauseBtn');
+  if (paused) {
+    btn.textContent = '\u25B6 再開';
+    btn.className = 'btn btn-resume';
+    setStatus('paused');
+  } else {
+    btn.textContent = '\u23F8 一時停止';
+    btn.className = 'btn btn-pause';
+    setStatus('playing');
+    resumePausedWaiters();
+  }
 }
 
-function skip(){
-  if(!isPlaying){
-    // 停止中のスキップは、次の難語を見せる（おまけ：練習用）
-    const t = hardRuby[Math.floor(Math.random()*hardRuby.length)];
-    sectionTitle.textContent = "⑥難語（おまけ）";
-    counter.textContent = "";
-    renderCurrent(t, true);
-    // 難語は3秒で自動切替（停止中でも見せたい場合）
-    clearTimers();
-    hardTimeout = setTimeout(()=>{
-      if(isPlaying) return;
-      const t2 = hardRuby[Math.floor(Math.random()*hardRuby.length)];
-      renderCurrent(t2, true);
-    }, 3000);
-    return;
+function skipPhase() {
+  skipRequested = true;
+  resumePausedWaiters();
+}
+
+function stopAll() {
+  runToken++;
+  paused = false;
+  resumePausedWaiters();
+  skipRequested = false;
+
+  buildStepIndicator(SECTIONS);
+  resetStep(SECTIONS.length);
+  setProgress(0);
+  setStatus('idle');
+  setAnnounce('スタートを押すと、母音から順にガイドします');
+  showRunningControls(false);
+  renderWelcome();
+
+  $('pauseBtn').textContent = '\u23F8 一時停止';
+  $('pauseBtn').className = 'btn btn-pause';
+
+  // Re-enable mode buttons
+  $('modeMission').disabled = false;
+  $('modeAll').disabled = false;
+  $('modeMission').style.opacity = '1';
+  $('modeAll').style.opacity = '1';
+}
+
+/* ======================================================
+   Main flow
+====================================================== */
+function startAll() {
+  runToken++;
+  var token = runToken;
+
+  paused = false;
+  resumePausedWaiters();
+  skipRequested = false;
+
+  // Disable mode buttons during play
+  $('modeMission').disabled = true;
+  $('modeAll').disabled = true;
+  $('modeMission').style.opacity = '.5';
+  $('modeAll').style.opacity = '.5';
+
+  $('pauseBtn').textContent = '\u23F8 一時停止';
+  $('pauseBtn').className = 'btn btn-pause';
+
+  var playlist = buildPlaylist();
+  var totalSections = playlist.length;
+
+  buildStepIndicator(SECTIONS);
+  showRunningControls(true);
+  setStatus('playing');
+
+  var sIdx = 0;
+
+  function nextSection() {
+    if (sIdx >= totalSections || isStopped(token)) return Promise.resolve();
+
+    skipRequested = false;
+    updateStep(sIdx, sIdx, totalSections);
+
+    var item = playlist[sIdx];
+    var progressBase = (sIdx / totalSections) * 100;
+    var progressSpan = (1 / totalSections) * 100;
+
+    // Announce section
+    setAnnounce(item.section.name + '：' + item.section.desc, 'phase-info');
+
+    return wait(1000, token).then(function(ok) {
+      if (!ok) return;
+      return playSection(token, item.section, item.phrases, sIdx, totalSections, progressBase, progressSpan);
+    }).then(function() {
+      if (isStopped(token)) return;
+      updateStep(sIdx + 1, sIdx + 1, totalSections);
+      sIdx++;
+      return nextSection();
+    });
   }
 
-  // 再生中：次のミッションへ
-  clearTimers();
-  goNextPhrase();
+  nextSection().then(function() {
+    if (isStopped(token)) return;
+
+    // Complete!
+    updateStep(-1, totalSections, totalSections);
+    setProgress(100);
+    setStatus('complete');
+    setAnnounce('すべてのセクションが完了しました！');
+
+    var modeLabel = currentMode === 'mission' ? 'ミッション' : '全問練習';
+    $('displayArea').innerHTML =
+      '<div style="text-align:center; padding:10px 0;">' +
+        '<div style="font-size:48px; margin-bottom:8px;">&#127881;</div>' +
+        '<div style="font-family:var(--font-serif); font-size:20px; font-weight:700; margin-bottom:6px;">お疲れさまでした！</div>' +
+        '<div style="font-size:14px; color:var(--text-sub); line-height:1.8; margin-bottom:14px;">' +
+          modeLabel + '完了です。<br>毎日続けて滑舌力をアップ！' +
+        '</div>' +
+        '<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">' +
+          '<button class="btn btn-start" onclick="startAll()" type="button" style="min-width:auto;">もう一度</button>' +
+          '<a href="index.html" class="btn btn-ghost" style="text-decoration:none;">ホームへ</a>' +
+        '</div>' +
+      '</div>';
+
+    showRunningControls(false);
+    $('modeMission').disabled = false;
+    $('modeAll').disabled = false;
+    $('modeMission').style.opacity = '1';
+    $('modeAll').style.opacity = '1';
+  }).catch(function(e) {
+    console.error(e);
+  });
 }
 
-/* =========================
-   iPhone安定イベント：click + touchend
-========================= */
-function bindTap(el, fn){
-  el.addEventListener("click", fn);
-  el.addEventListener("touchend", fn, {passive:true});
+/* ======================================================
+   Mode switching
+====================================================== */
+function setMode(mode) {
+  currentMode = mode;
+  $('modeMission').className = 'mode-btn' + (mode === 'mission' ? ' active' : '');
+  $('modeAll').className = 'mode-btn' + (mode === 'all' ? ' active' : '');
+
+  if (mode === 'mission') {
+    setAnnounce('ミッション：各ジャンルから1問ずつ出題されます');
+  } else {
+    setAnnounce('全問練習：全フレーズを順番に練習します');
+  }
 }
 
-bindTap(playBtn, ()=> startDailyAuto());
-bindTap(pauseBtn, ()=> togglePause());
-bindTap(stopBtn,  ()=> stopAll());
-bindTap(skipBtn,  ()=> skip());
+/* ======================================================
+   Event listeners
+====================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+  $('startBtn').addEventListener('click', startAll);
+  $('pauseBtn').addEventListener('click', togglePause);
+  $('stopBtn').addEventListener('click', stopAll);
+  $('skipBtn').addEventListener('click', skipPhase);
 
-/* 初期 */
-showDaily();
-sectionTitle.textContent = "準備OK";
-counter.textContent = "";
+  $('modeMission').addEventListener('click', function() { setMode('mission'); });
+  $('modeAll').addEventListener('click', function() { setMode('all'); });
+
+  // Initial state
+  buildStepIndicator(SECTIONS);
+  renderWelcome();
+});
 </script>
 
 </body>
