@@ -1,582 +1,860 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI評価（録音つき）</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .btnRow { display:flex; gap:10px; flex-wrap:wrap; }
-    textarea { width:100%; min-height:160px; padding:12px; border-radius:12px; border:1px solid #ddd; }
-    .resultBox { white-space: pre-wrap; line-height: 1.9; }
-    .pill { display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid #ddd; font-size:14px; margin:4px 6px 0 0; }
-    .small { font-size: 14px; opacity: 0.9; line-height: 1.7; }
-    button { padding:12px 14px; border-radius:12px; border:1px solid #ddd; background:#fff; }
-    button.primary { border:none; background:#0ea5e9; color:#fff; }
-    button.danger { border:none; background:#ef4444; color:#fff; }
-    button.good { border:none; background:#22c55e; color:#fff; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    audio { width:100%; margin-top:10px; }
-    .box { border:1px solid #eee; border-radius:14px; padding:12px; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .hr { height:1px; background:#eee; margin:12px 0; }
-    details { border:1px solid #eee; border-radius:14px; padding:12px; background:#fff; }
-    summary { cursor:pointer; font-weight:700; }
-    .grid2 { display:grid; gap:10px; grid-template-columns: 1fr; }
-    @media (min-width: 720px){
-      .grid2 { grid-template-columns: 1fr 1fr; }
-    }
-    .kv { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .kv .pill { background:#fff; }
-    .notice { padding:10px 12px; border-radius:12px; border:1px dashed #ddd; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>フリー練習｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --purple: #8e44ad;
+  --purple-light: rgba(142, 68, 173, .08);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(142,68,173,.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-header .icon { font-size: 16px; }
+.card-header .label { font-weight: 700; font-size: 15px; }
+.card-body { padding: 16px 18px; }
+
+.section-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+
+/* Selectors */
+.selector-group { margin-bottom: 14px; }
+.selector-label { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: #fff; color: var(--text);
+  cursor: pointer; transition: all .15s; -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.chip:active { transform: scale(.96); }
+.chip.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+.chip.active-blue { background: var(--blue); color: #fff; border-color: var(--blue); }
+.chip.active-orange { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+.topic-display {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 16px; margin-top: 10px;
+  text-align: center; min-height: 44px;
+  display: flex; align-items: center; justify-content: center;
+}
+.topic-text { font-family: var(--font-serif); font-size: 16px; font-weight: 700; }
+.topic-hint { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+
+/* Buttons */
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: #fff;
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .15s; -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.btn:active { transform: scale(.97); }
+.btn-purple { background: var(--purple); color: #fff; border-color: var(--purple); }
+.btn-blue { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn-green { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-red { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-ghost { background: #fff; }
+
+/* Timer */
+.timer-inline {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; padding: 10px 0; margin: 8px 0;
+}
+.timer-num {
+  font-family: var(--font-serif); font-size: 36px; font-weight: 900;
+  min-width: 80px; text-align: center;
+}
+.timer-num.warning { color: var(--orange); }
+.timer-num.danger { color: var(--accent); }
+.progress-wrap {
+  background: rgba(0,0,0,.06); border-radius: 4px; height: 4px; overflow: hidden; margin-top: 4px;
+}
+.progress-bar { height: 100%; width: 0%; background: var(--green); border-radius: 4px; transition: width .4s; }
+
+/* Recording */
+.rec-status { font-size: 12px; color: var(--text-sub); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.rec-player { width: 100%; margin-top: 8px; border-radius: var(--radius-sm); }
+
+/* AI section */
+.ai-textarea {
+  width: 100%; min-height: 160px; padding: 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); font-family: var(--font-body); font-size: 14px;
+  line-height: 1.7; resize: vertical; background: #fff;
+}
+.ai-textarea:focus { outline: none; border-color: var(--blue); }
+.ai-badges { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+.ai-badge {
+  display: inline-block; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid var(--border); font-size: 12px; font-weight: 600;
+  background: var(--green-light); color: var(--green);
+}
+.ai-result {
+  margin-top: 10px; white-space: pre-wrap; line-height: 1.9;
+  font-size: 14px; color: var(--text);
+  background: var(--bg); border-radius: var(--radius-sm);
+  padding: 14px; border: 1px solid var(--border);
+}
+
+/* Reflection */
+.reflect-grid { display: grid; gap: 10px; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .reflect-grid { grid-template-columns: 1fr 1fr; } }
+.reflect-box textarea {
+  width: 100%; min-height: 80px; padding: 10px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); font-family: var(--font-body); font-size: 13px;
+  line-height: 1.6; resize: vertical;
+}
+.reflect-label { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+
+/* Notice */
+.notice {
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  border: 1px dashed var(--border); font-size: 13px; line-height: 1.7;
+  background: var(--purple-light);
+}
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .timer-num { font-size: 30px; }
+  .chip { padding: 5px 11px; font-size: 12px; }
+}
+</style>
 </head>
-
 <body>
-  <header class="top">
-    <h1>🧠 AI評価（録音つき）</h1>
-    <p class="sub">録音→再生→（任意でメモ/文字起こし）→やさしく総合評価</p>
-    <p><a href="index.html">← ホームへ戻る</a></p>
-  </header>
 
-  <main class="menu">
+<div class="header">
+  <h1>フリー練習</h1>
+  <p class="sub">時間・話法・お題を自由に組み合わせて練習</p>
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
+</div>
 
-    <!-- ✅ 迷わない導線（ミニ手順 + 継続ログ） -->
-    <div class="card" style="display:block;">
-      <div class="title">✅ 今日のやり方（迷ったらこれ）</div>
-      <div class="desc">
-        <div class="notice small">
-          ① まず <b>録音</b> → ② <b>本文にメモ</b> → ③ <b>AI評価</b><br>
-          ※「文字起こし」は上級者向け（任意）。動かなくてもOKです。
+<div class="container">
+
+  <!-- 設定 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">&#9881;</span>
+      <span class="label">練習設定</span>
+    </div>
+    <div class="card-body">
+
+      <div class="selector-group">
+        <div class="selector-label">時間</div>
+        <div class="chip-row" id="timeChips">
+          <span class="chip active" data-val="0">指定なし</span>
+          <span class="chip" data-val="40">40秒</span>
+          <span class="chip" data-val="60">60秒</span>
+          <span class="chip" data-val="80">80秒</span>
+          <span class="chip" data-val="100">100秒</span>
+          <span class="chip" data-val="120">120秒</span>
         </div>
+      </div>
 
-        <div class="hr"></div>
-
-        <div class="kv">
-          <span class="pill">📌 合計練習回数：<b id="statTotal">0</b></span>
-          <span class="pill">🔥 連続日数：<b id="statStreak">0</b></span>
-          <span class="pill">🕒 最終練習：<b id="statLast">--</b></span>
+      <div class="selector-group">
+        <div class="selector-label">話法</div>
+        <div class="chip-row" id="methodChips">
+          <span class="chip active-blue" data-val="">指定なし</span>
+          <span class="chip" data-val="prep">PREP</span>
+          <span class="chip" data-val="area">AREA</span>
+          <span class="chip" data-val="story">ストーリー</span>
         </div>
+      </div>
 
-        <div class="small" style="margin-top:8px;">
-          💡 続けるコツ：<b>「良かった1つ」＋「次は1つ」</b>だけ書けば伸びます。
+      <div class="btn-row" style="margin-top: 10px;">
+        <button class="btn btn-purple" id="topicBtn" type="button">&#127922; お題を出す</button>
+        <button class="btn btn-ghost" id="topicSkipBtn" type="button">&#8634; 別のお題</button>
+      </div>
+
+      <div class="topic-display" id="topicDisplay">
+        <div>
+          <div class="topic-text" id="topicText">設定してお題を出しましょう</div>
+          <div class="topic-hint" id="topicHint"></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- 録音 -->
-    <div class="card" style="display:block;">
-      <div class="title">🎙 録音</div>
-      <div class="desc">
-        <div class="box">
-          <div class="row">
-            <button id="recBtn" class="good" onclick="toggleRecording()">録音開始</button>
-            <button class="danger" onclick="resetRecording()">録音リセット</button>
-            <span id="recStatus" class="mono">待機中</span>
-          </div>
+  <!-- タイマー＋録音 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">&#127908;</span>
+      <span class="label">練習</span>
+    </div>
+    <div class="card-body">
 
-          <audio id="player" controls style="display:none;"></audio>
+      <div id="timerSection" style="display:none;">
+        <div class="timer-inline">
+          <button class="btn btn-green" id="timerStartBtn" type="button">&#9654; スタート</button>
+          <span class="timer-num" id="timerNum">0:00</span>
+          <button class="btn btn-red" id="timerStopBtn" type="button" style="display:none;">&#9209; 停止</button>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
 
-          <div class="small" style="margin-top:10px;">
-            ✅ 録音した音声はこの端末内で再生できます。<br>
-            💡 再生を聴きながら下の本文欄にメモ → AI評価が一番おすすめです。
-          </div>
+      <div id="noTimerNotice" class="notice" style="margin-bottom: 12px;">
+        時間指定なし：自分のペースで自由に話しましょう。録音して振り返るのがおすすめです。
+      </div>
 
-          <div class="hr"></div>
+      <div class="section-label">&#127897; 録音</div>
+      <div class="btn-row">
+        <button class="btn btn-green" id="recBtn" type="button">録音開始</button>
+        <button class="btn btn-ghost" id="recResetBtn" type="button">リセット</button>
+      </div>
+      <div style="text-align:center; margin-top:6px;">
+        <span class="rec-status" id="recStatus">待機中</span>
+      </div>
+      <audio id="recPlayer" controls class="rec-player" style="display:none;"></audio>
+    </div>
+  </div>
 
-          <!-- ✅ 浮かないように「上級（任意）」へ格上げして折りたたみ -->
-          <details>
-            <summary>上級（任意）：セルフ文字起こし（試験）</summary>
-            <div class="small" style="margin-top:10px;">
-              これは<b>任意</b>です。動かない環境も多いので、使えなくても全く問題ありません。<br>
-              目的：自分の「口ぐせ」「言い直し」「ムダ語」を見つけるための練習です。
-            </div>
+  <!-- AI評価 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">&#128221;</span>
+      <span class="label">AI評価</span>
+    </div>
+    <div class="card-body">
+      <textarea class="ai-textarea" id="speechText"
+        placeholder="ここにスピーチを書いてください（録音を聞きながらメモでもOK）"></textarea>
+      <div class="btn-row" style="margin-top: 10px;">
+        <button class="btn btn-blue" id="evalBtn" type="button">AI評価する</button>
+        <button class="btn btn-ghost" id="clearBtn" type="button">クリア</button>
+        <button class="btn btn-ghost" id="templateBtn" type="button">テンプレ挿入</button>
+      </div>
 
-            <div class="row" style="margin-top:10px;">
-              <button id="speechBtn" onclick="toggleSpeechToText()" style="display:none;">📝 文字起こしを開始</button>
-              <span id="sttStatus" class="mono"></span>
-            </div>
+      <div class="ai-badges" id="aiBadges"></div>
+      <div class="ai-result" id="aiResult">ここに評価結果が表示されます。</div>
+    </div>
+  </div>
 
-            <div class="small" style="margin-top:10px;">
-              ⚠️ iPhone Safariでは動かない場合があります（ボタンが出ない/反応しない等）。<br>
-              その場合は「録音→再生→手入力メモ」でOKです。
-            </div>
-          </details>
-
+  <!-- 振り返りノート -->
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">&#128211;</span>
+      <span class="label">振り返りノート</span>
+    </div>
+    <div class="card-body">
+      <div class="reflect-grid">
+        <div class="reflect-box">
+          <div class="reflect-label">&#11088; 良かった点（1つだけ）</div>
+          <textarea id="reflectGood" placeholder="例：結論を最初に言えた"></textarea>
+        </div>
+        <div class="reflect-box">
+          <div class="reflect-label">&#127919; 次に意識すること（1つだけ）</div>
+          <textarea id="reflectNext" placeholder="例：具体例を1つ入れる"></textarea>
         </div>
       </div>
-    </div>
-
-    <!-- 入力 -->
-    <div class="card" style="display:block;">
-      <div class="title">📝 スピーチ本文（評価対象）</div>
-      <div class="desc">
-        <textarea id="speechText" placeholder="ここにスピーチを書いてください（録音を聴きながらメモでもOK）"></textarea>
-
-        <div class="btnRow" style="margin-top:10px;">
-          <button class="primary" onclick="runEvaluation()">AI評価する</button>
-          <button onclick="insertSample()">サンプル挿入</button>
-          <button onclick="clearText()">クリア</button>
-        </div>
-
-        <div class="small" style="margin-top:10px;">
-          ※評価は「減点方式」ではなく、良い点を見つけて伸ばす方式です。<br>
-          ※「結論・理由・例えば」などの単語がそのまま入っていなくても、似た表現ならOKにしています。
-        </div>
+      <div style="font-size: 12px; color: var(--text-sub); margin-top: 8px; line-height: 1.7;">
+        毎回「良かった1つ＋次は1つ」だけでOK。これが一人練習の最短ルートです。
       </div>
     </div>
+  </div>
 
-    <!-- ✅ 振り返りノート（別視点のサポート：ここが“文字起こし”の代替にもなる） -->
-    <div class="card" style="display:block;">
-      <div class="title">📓 振り返りノート（成長が速くなる）</div>
-      <div class="desc">
-        <div class="grid2">
-          <div>
-            <div style="font-weight:700; margin-bottom:6px;">🌟 良かった点（1つだけ）</div>
-            <textarea id="reflectGood" style="min-height:90px;" placeholder="例：結論を最初に言えた / 声がはっきりしていた など"></textarea>
-          </div>
-          <div>
-            <div style="font-weight:700; margin-bottom:6px;">🎯 次に直す点（1つだけ）</div>
-            <textarea id="reflectNext" style="min-height:90px;" placeholder="例：具体例を1つ入れる / 締めを1文にする など"></textarea>
-          </div>
-        </div>
-
-        <div class="btnRow" style="margin-top:10px;">
-          <button onclick="saveReflection()">保存</button>
-          <button onclick="loadReflection()">前回の振り返りを表示</button>
-          <button onclick="clearReflection()">振り返りクリア</button>
-        </div>
-
-        <div class="small" style="margin-top:10px;">
-          💡 コツ：毎回「良かった1つ＋次は1つ」だけでOK。これが一人練習の最短ルートです。
-        </div>
-      </div>
-    </div>
-
-    <!-- 結果 -->
-    <div class="card" style="display:block;">
-      <div class="title">📊 評価結果</div>
-      <div class="desc">
-        <div id="badges"></div>
-        <div id="result" class="resultBox" style="margin-top:10px;">ここに結果が表示されます。</div>
-
-        <div class="btnRow" style="margin-top:10px;">
-          <button onclick="copyResult()">📋 結果をコピー</button>
-          <button onclick="setNextFromAdvice()">🎯 次に直す点へ反映</button>
-        </div>
-
-        <div class="small" style="margin-top:10px;">
-          ✅ おすすめ：結果を見たら「次に直す点」に1行だけ書いて終わり。これで確実に伸びます。
-        </div>
-      </div>
-    </div>
-
-  </main>
+</div>
 
 <script>
-/* =========================================================
-   0) ログ（localStorage）
-   ========================================================= */
-const LS = {
-  total: "hx_ai_total",
-  last: "hx_ai_lastDate",
-  streak: "hx_ai_streak",
-  lastAdvice: "hx_ai_lastAdvice",
-  reflectGood: "hx_ai_reflect_good",
-  reflectNext: "hx_ai_reflect_next"
+/* ======================================================
+   State
+====================================================== */
+var selectedTime = 0;
+var selectedMethod = '';
+var currentTopic = '';
+var currentHint = '';
+var timerInterval = null;
+var timerRunning = false;
+
+function $(id) { return document.getElementById(id); }
+
+/* ======================================================
+   Topics per method
+====================================================== */
+var topicsByMethod = {
+  prep: [
+    { text: '最近買ってよかったもの', hint: 'PREP：結論 \u2192 理由 \u2192 具体例 \u2192 まとめ' },
+    { text: '朝の時間を有効に使うコツ', hint: 'PREP：コツ \u2192 理由 \u2192 自分の実例 \u2192 おすすめ' },
+    { text: '集中力を上げるための工夫', hint: 'PREP：工夫 \u2192 なぜ効果的か \u2192 実体験 \u2192 おすすめ' },
+    { text: '最近観てよかった映画やドラマ', hint: 'PREP：おすすめ \u2192 理由 \u2192 具体シーン \u2192 まとめ' },
+    { text: '忙しい日でもできる気分転換法', hint: 'PREP：方法 \u2192 なぜ効くか \u2192 自分の実例 \u2192 おすすめ' },
+    { text: '人に何かを教えるときのコツ', hint: 'PREP：コツ \u2192 理由 \u2192 うまくいった場面 \u2192 まとめ' },
+    { text: '最近読んでよかった本', hint: 'PREP：おすすめ \u2192 学んだこと \u2192 印象に残った点 \u2192 まとめ' },
+    { text: '健康のために続けていること', hint: 'PREP：何をしているか \u2192 理由 \u2192 続けた結果 \u2192 おすすめ' }
+  ],
+  area: [
+    { text: '後輩にアドバイスするなら', hint: 'AREA：共感 \u2192 理由 \u2192 具体例 \u2192 提案' },
+    { text: '友人の悩みに応えるなら', hint: 'AREA：共感 \u2192 背景 \u2192 自分の経験 \u2192 提案' },
+    { text: '家族に生活習慣の改善を提案するなら', hint: 'AREA：共感 \u2192 理由 \u2192 具体例 \u2192 行動提案' },
+    { text: '同僚にスケジュール変更をお願いするなら', hint: 'AREA：感謝 \u2192 事情 \u2192 具体例 \u2192 お願い' },
+    { text: '上司に改善案を出すなら', hint: 'AREA：感謝 \u2192 理由 \u2192 データ/事例 \u2192 提案' },
+    { text: '意見が合わない人と話すなら', hint: 'AREA：相手の意見を受け止め \u2192 自分の理由 \u2192 例 \u2192 折衷案' },
+    { text: '断りを伝えるなら', hint: 'AREA：感謝 \u2192 事情 \u2192 現状 \u2192 代替案' },
+    { text: 'クレーム対応するなら', hint: 'AREA：謝罪・共感 \u2192 状況説明 \u2192 現状 \u2192 対応策' }
+  ],
+  story: [
+    { text: '最近うれしかったこと', hint: 'ストーリー：感情 \u2192 出来事 \u2192 変化 \u2192 学び \u2192 今' },
+    { text: '失敗から学んだこと', hint: 'ストーリー：当時の感情 \u2192 何が起きたか \u2192 変化 \u2192 気づき \u2192 今' },
+    { text: '誰かの一言に救われた経験', hint: 'ストーリー：状況 \u2192 何を言われたか \u2192 変化 \u2192 学び \u2192 今の自分' },
+    { text: '人生で一番頑張ったこと', hint: 'ストーリー：感情 \u2192 出来事 \u2192 変化 \u2192 学び \u2192 今' },
+    { text: '自分を変えたきっかけ', hint: 'ストーリー：以前の自分 \u2192 きっかけ \u2192 変化 \u2192 学び \u2192 今' },
+    { text: '最近感動したこと', hint: 'ストーリー：感情 \u2192 場面の描写 \u2192 変化 \u2192 なぜ心に残ったか' },
+    { text: '長く続けていることとその理由', hint: 'ストーリー：感情 \u2192 始めたきっかけ \u2192 辛かった時期 \u2192 学び \u2192 今' },
+    { text: '子どもの頃の忘れられない思い出', hint: 'ストーリー：感情 \u2192 出来事 \u2192 当時の気持ち \u2192 今振り返って' }
+  ],
+  free: [
+    { text: '最近ハマっていること', hint: '自由に話しましょう' },
+    { text: '休日の過ごし方', hint: '自由に話しましょう' },
+    { text: '最近食べておいしかったもの', hint: '自由に話しましょう' },
+    { text: '自分の長所と短所', hint: '自由に話しましょう' },
+    { text: '10年後の自分へメッセージ', hint: '自由に話しましょう' },
+    { text: '最近学んだこと', hint: '自由に話しましょう' },
+    { text: '好きな季節とその理由', hint: '自由に話しましょう' },
+    { text: '「ありがとう」を伝えたい人', hint: '自由に話しましょう' },
+    { text: 'フリートーク：何でも自由に', hint: '好きなことを話しましょう' }
+  ]
 };
 
-function todayKey(){
-  // ローカル日付（JST想定）
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
+function pickOne(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+/* ======================================================
+   Chip selectors
+====================================================== */
+function setupChips(containerId, activeClass, onChange) {
+  var container = $(containerId);
+  var chips = container.querySelectorAll('.chip');
+  chips.forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      chips.forEach(function(c) { c.classList.remove('active', 'active-blue', 'active-orange'); });
+      chip.classList.add(activeClass);
+      onChange(chip.getAttribute('data-val'));
+    });
+  });
 }
 
-function formatDate(key){
-  if(!key) return "--";
-  return key;
+setupChips('timeChips', 'active', function(val) {
+  selectedTime = parseInt(val) || 0;
+  updateTimerVisibility();
+});
+
+setupChips('methodChips', 'active-blue', function(val) {
+  selectedMethod = val;
+});
+
+function updateTimerVisibility() {
+  $('timerSection').style.display = selectedTime > 0 ? 'block' : 'none';
+  $('noTimerNotice').style.display = selectedTime > 0 ? 'none' : 'block';
+  if (selectedTime > 0) {
+    $('timerNum').textContent = formatTime(selectedTime);
+    $('timerNum').className = 'timer-num';
+    $('progressBar').style.width = '0%';
+  }
 }
 
-function updateStatsUI(){
-  document.getElementById("statTotal").textContent = Number(localStorage.getItem(LS.total) || 0);
-  document.getElementById("statStreak").textContent = Number(localStorage.getItem(LS.streak) || 0);
-  document.getElementById("statLast").textContent = formatDate(localStorage.getItem(LS.last));
+/* ======================================================
+   Topic generation
+====================================================== */
+$('topicBtn').addEventListener('click', generateTopic);
+$('topicSkipBtn').addEventListener('click', generateTopic);
+
+function generateTopic() {
+  var pool = selectedMethod ? topicsByMethod[selectedMethod] : topicsByMethod.free;
+  var item = pickOne(pool);
+  currentTopic = item.text;
+  currentHint = item.hint;
+  $('topicText').textContent = currentTopic;
+  $('topicHint').textContent = currentHint;
 }
 
-function bumpPracticeCount(){
-  const total = Number(localStorage.getItem(LS.total) || 0) + 1;
-  localStorage.setItem(LS.total, String(total));
-
-  const today = todayKey();
-  const last = localStorage.getItem(LS.last);
-
-  // streak計算（ざっくり：前回が昨日なら+1、それ以外は1）
-  const streakNow = (() => {
-    if(!last) return 1;
-    // lastKey -> Date
-    const [ly,lm,ld] = last.split("-").map(Number);
-    const lastDate = new Date(ly, lm-1, ld);
-    const now = new Date();
-    const diffDays = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - new Date(lastDate.getFullYear(),lastDate.getMonth(),lastDate.getDate())) / 86400000);
-    if(diffDays === 0) return Number(localStorage.getItem(LS.streak) || 1); // 同日
-    if(diffDays === 1) return Number(localStorage.getItem(LS.streak) || 0) + 1; // 連続
-    return 1; // リセット
-  })();
-
-  localStorage.setItem(LS.last, today);
-  localStorage.setItem(LS.streak, String(streakNow));
-  updateStatsUI();
+/* ======================================================
+   Timer
+====================================================== */
+function formatTime(sec) {
+  var m = Math.floor(sec / 60);
+  var s = sec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
 }
 
-updateStatsUI();
+$('timerStartBtn').addEventListener('click', function() {
+  if (timerRunning) return;
+  timerRunning = true;
+  var remaining = selectedTime;
+  var total = selectedTime;
+  $('timerStartBtn').style.display = 'none';
+  $('timerStopBtn').style.display = '';
 
-/* =========================================================
-   ① 録音（MediaRecorder）
-   ========================================================= */
-let mediaRecorder = null;
-let recordedChunks = [];
-let recordedBlobUrl = null;
+  timerInterval = setInterval(function() {
+    remaining--;
+    var pct = ((total - remaining) / total) * 100;
+    $('progressBar').style.width = pct + '%';
 
-async function toggleRecording(){
-  const btn = document.getElementById("recBtn");
-  const status = document.getElementById("recStatus");
-  const player = document.getElementById("player");
+    var cls = 'timer-num';
+    if (remaining <= 10) cls += ' danger';
+    else if (remaining <= Math.floor(total * 0.2)) cls += ' warning';
 
-  if(mediaRecorder && mediaRecorder.state === "recording"){
+    $('timerNum').textContent = formatTime(remaining);
+    $('timerNum').className = cls;
+
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      $('timerStartBtn').style.display = '';
+      $('timerStopBtn').style.display = 'none';
+      $('timerNum').textContent = formatTime(selectedTime);
+      $('timerNum').className = 'timer-num';
+      $('progressBar').style.width = '100%';
+    }
+  }, 1000);
+});
+
+$('timerStopBtn').addEventListener('click', function() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  $('timerStartBtn').style.display = '';
+  $('timerStopBtn').style.display = 'none';
+  $('timerNum').textContent = formatTime(selectedTime);
+  $('timerNum').className = 'timer-num';
+  $('progressBar').style.width = '0%';
+});
+
+/* ======================================================
+   Recording
+====================================================== */
+var mediaRecorder = null;
+var recordedChunks = [];
+var recordedBlobUrl = null;
+
+$('recBtn').addEventListener('click', function() {
+  var btn = $('recBtn');
+  var status = $('recStatus');
+  var player = $('recPlayer');
+
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
     mediaRecorder.stop();
-    btn.textContent = "録音開始";
-    status.textContent = "停止しました（音声生成中…）";
+    btn.textContent = '録音開始';
+    btn.className = 'btn btn-green';
+    status.textContent = '処理中...';
     return;
   }
 
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
     recordedChunks = [];
     mediaRecorder = new MediaRecorder(stream);
-
-    mediaRecorder.ondataavailable = (e) => {
-      if(e.data && e.data.size > 0) recordedChunks.push(e.data);
+    mediaRecorder.ondataavailable = function(e) {
+      if (e.data && e.data.size > 0) recordedChunks.push(e.data);
     };
-
-    mediaRecorder.onstop = () => {
-      stream.getTracks().forEach(t => t.stop());
-
-      const blob = new Blob(recordedChunks, { type: "audio/webm" });
-      if(recordedBlobUrl) URL.revokeObjectURL(recordedBlobUrl);
+    mediaRecorder.onstop = function() {
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      var blob = new Blob(recordedChunks, { type: 'audio/webm' });
+      if (recordedBlobUrl) URL.revokeObjectURL(recordedBlobUrl);
       recordedBlobUrl = URL.createObjectURL(blob);
-
       player.src = recordedBlobUrl;
-      player.style.display = "block";
-      status.textContent = "録音データ準備OK（再生できます）";
+      player.style.display = 'block';
+      status.textContent = '録音OK（再生できます）';
     };
-
     mediaRecorder.start();
-    btn.textContent = "録音停止";
-    status.textContent = "録音中…";
-  }catch(err){
-    status.textContent = "録音できませんでした（マイク許可を確認してください）";
-    alert("録音に失敗しました。iPhoneの設定でSafariのマイク許可を確認してください。");
-  }
-}
-
-function resetRecording(){
-  const status = document.getElementById("recStatus");
-  const player = document.getElementById("player");
-
-  if(mediaRecorder && mediaRecorder.state === "recording"){
-    mediaRecorder.stop();
-  }
-  recordedChunks = [];
-  if(recordedBlobUrl) URL.revokeObjectURL(recordedBlobUrl);
-  recordedBlobUrl = null;
-
-  player.pause();
-  player.removeAttribute("src");
-  player.style.display = "none";
-  status.textContent = "待機中";
-}
-
-/* =========================================================
-   ②（任意）音声→文字（Web Speech API）
-   ========================================================= */
-let recognition = null;
-let sttRunning = false;
-
-function canUseSpeechRecognition(){
-  return (window.SpeechRecognition || window.webkitSpeechRecognition);
-}
-
-function setupSpeechButton(){
-  const sttBtn = document.getElementById("speechBtn");
-  const sttStatus = document.getElementById("sttStatus");
-
-  if(canUseSpeechRecognition()){
-    sttBtn.style.display = "inline-block";
-    sttStatus.textContent = "対応ブラウザです（任意で使えます）";
-  }else{
-    sttBtn.style.display = "none";
-    sttStatus.textContent = "この環境では非対応の可能性があります（問題ありません）";
-  }
-}
-setupSpeechButton();
-
-function toggleSpeechToText(){
-  const STT = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const sttStatus = document.getElementById("sttStatus");
-  const sttBtn = document.getElementById("speechBtn");
-  const textarea = document.getElementById("speechText");
-
-  if(!STT){
-    alert("このブラウザは音声の文字起こしに対応していない可能性があります。");
-    return;
-  }
-
-  if(sttRunning){
-    recognition.stop();
-    return;
-  }
-
-  recognition = new STT();
-  recognition.lang = "ja-JP";
-  recognition.interimResults = true;
-  recognition.continuous = true;
-
-  let finalText = "";
-
-  recognition.onstart = () => {
-    sttRunning = true;
-    sttBtn.textContent = "🛑 文字起こし停止";
-    sttStatus.textContent = "文字起こし中…（話してOK）";
-  };
-
-  recognition.onerror = (e) => {
-    sttStatus.textContent = "エラー：" + (e.error || "不明");
-  };
-
-  recognition.onend = () => {
-    sttRunning = false;
-    sttBtn.textContent = "📝 文字起こしを開始";
-    sttStatus.textContent = "停止しました（任意機能）";
-  };
-
-  recognition.onresult = (event) => {
-    let interim = "";
-    for(let i = event.resultIndex; i < event.results.length; i++){
-      const transcript = event.results[i][0].transcript;
-      if(event.results[i].isFinal){
-        finalText += transcript + "\n";
-      } else {
-        interim += transcript;
-      }
-    }
-    textarea.value = (finalText + interim).trim();
-  };
-
-  recognition.start();
-}
-
-/* =========================================================
-   ③ 総合評価
-   ========================================================= */
-function gentleEvaluate(text){
-  const raw = (text || "").trim();
-  const t = raw.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
-
-  if(t.length < 10){
-    return {
-      score: 60,
-      badges: ["入力が短め"],
-      message:
-`🌟 総合評価：60点
-
-短いながらも、話そうとする姿勢がとても良いです。
-
-もう1〜2文だけ足して、
-「何を伝えたいか（結論）」か「一番印象に残ったこと」を入れると、
-ぐっと伝わりやすくなります😊`
-    };
-  }
-
-  let score = 60;
-  const goodPoints = [];
-  const badges = [];
-  const advice = [];
-
-  const conclusion = ["結論","要するに","つまり","一言でいうと","私の考えは","僕の考えは","私は","僕は","大事なのは","重要なのは","ポイントは","結局","一番言いたいのは"];
-  const reason = ["なぜなら","理由","背景","というのも","なぜかというと","だからこそ","なので","から","ため","があって"];
-  const example = ["例えば","たとえば","実際に","この前","以前","先日","具体的に","体験として","たとえると","こんなことがあって","のとき"];
-  const summary = ["まとめると","結論として","最後に","だから","つまり","なので","というわけで","要は","今後は","次は","これから"];
-
-  if(conclusion.some(w => t.includes(w))){
-    score += 10; goodPoints.push("テーマ（主張）がはっきりしていました"); badges.push("テーマ明確");
-  }
-  if(reason.some(w => t.includes(w))){
-    score += 10; goodPoints.push("理由や背景が伝わって納得しやすかったです"); badges.push("納得感");
-  }
-  if(example.some(w => t.includes(w))){
-    score += 10; goodPoints.push("具体例があり、イメージしやすかったです"); badges.push("具体性");
-  }
-  if(summary.some(w => t.includes(w))){
-    score += 10; goodPoints.push("最後の締め・まとめが良く、余韻が残りました"); badges.push("締めが良い");
-  }
-
-  if(t.length > 120){
-    score += 5; goodPoints.push("内容をしっかり考えて話しているのが伝わりました"); badges.push("内容充実");
-  }
-
-  const emotionWords = ["嬉しい","楽しい","悔しい","悲しい","怖い","感動","驚いた","ワクワク","モヤモヤ","腹が立った","ほっとした"];
-  if(emotionWords.some(w => t.includes(w))){
-    score += 5; goodPoints.push("感情が入っていて、聞き手の心に届きやすい話し方でした"); badges.push("感情が伝わる");
-  }
-
-  const listenerWords = ["あなた","みなさん","皆さん","相手","聞く人","伝えたい","おすすめ","共有"];
-  if(listenerWords.some(w => t.includes(w))){
-    score += 5; goodPoints.push("聞き手を意識した言葉選びができていました"); badges.push("聞き手目線");
-  }
-
-  const hasConclusion = conclusion.some(w => t.includes(w));
-  const hasReason = reason.some(w => t.includes(w));
-  const hasExample = example.some(w => t.includes(w));
-  const hasSummary = summary.some(w => t.includes(w));
-
-  if(!hasExample){
-    advice.push("具体例を「1つだけ」入れると、さらにグッと伝わります（例：その時の場面／出来事）");
-  } else if(!hasSummary){
-    advice.push("最後に一言だけ「まとめ」を置くと、聞き手の記憶に残りやすくなります");
-  } else if(!hasReason){
-    advice.push("理由を一言足すと説得力が増します（例：なぜそう感じたか）");
-  } else if(!hasConclusion){
-    advice.push("冒頭か最後に「一番伝えたい結論」を一言置くと、さらに分かりやすくなります");
-  }
-
-  const praise = goodPoints.length
-    ? goodPoints[Math.floor(Math.random() * goodPoints.length)]
-    : "前向きに話そうとしている姿勢がとても良いです";
-
-  const improve = advice.length ? advice[0] : "今の調子で続けていきましょう";
-  score = Math.min(score, 100);
-
-  const finalBadges = badges.length ? badges : ["前向き"];
-
-  return {
-    score,
-    badges: finalBadges,
-    adviceOne: improve,
-    message:
-`🌟 総合評価：${score}点
-
-とても良いスピーチでした。
-
-特に「${praise}」点が素晴らしいです。
-
-💡 さらに良くするなら：
-${improve}
-
-これからも自信を持って話して大丈夫です😊`
-  };
-}
-
-/* =========================================================
-   UI
-   ========================================================= */
-function runEvaluation(){
-  const text = document.getElementById("speechText").value;
-  const res = gentleEvaluate(text);
-
-  const badgesEl = document.getElementById("badges");
-  badgesEl.innerHTML = "";
-  (res.badges || []).forEach(b => {
-    const span = document.createElement("span");
-    span.className = "pill";
-    span.textContent = b;
-    badgesEl.appendChild(span);
+    btn.textContent = '録音停止';
+    btn.className = 'btn btn-red';
+    status.textContent = '録音中...';
+  }).catch(function() {
+    status.textContent = 'マイク許可を確認してください';
   });
+});
 
-  document.getElementById("result").textContent = res.message;
+$('recResetBtn').addEventListener('click', function() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+  recordedChunks = [];
+  if (recordedBlobUrl) URL.revokeObjectURL(recordedBlobUrl);
+  recordedBlobUrl = null;
+  var player = $('recPlayer');
+  player.pause(); player.removeAttribute('src'); player.style.display = 'none';
+  $('recStatus').textContent = '待機中';
+  $('recBtn').textContent = '録音開始';
+  $('recBtn').className = 'btn btn-green';
+});
 
-  // ✅ 練習ログ更新
-  bumpPracticeCount();
+/* ======================================================
+   AI Evaluation - self-affirmation focused
+====================================================== */
+// Encouragement phrases (large pool for variety)
+var encouragePool = [
+  '話す練習を続けているだけで、確実に成長しています。',
+  '「伝えたい」と思う気持ちがある人は、必ず上手くなります。',
+  '今日の練習が、明日の自信につながっています。',
+  '完璧じゃなくていい。話そうとした自分を褒めてあげてください。',
+  '声に出すたびに、あなたの言葉は磨かれています。',
+  '一人で練習できる人は、本番でも強いです。',
+  '「もっと良くしたい」と思えること自体が、大きな才能です。',
+  '話し方は筋トレと同じ。続けた分だけ、必ず力になります。',
+  '今日も練習できた自分を、まず認めてあげてください。',
+  '聞き手は完璧な話より、気持ちのこもった話に心を動かされます。'
+];
 
-  // ✅ 「次に直す点」候補として保存（ボタンで反映もできる）
-  if(res.adviceOne){
-    localStorage.setItem(LS.lastAdvice, res.adviceOne);
-  }
-}
+var methodLabels = { prep: 'PREP', area: 'AREA', story: 'ストーリー' };
 
-function clearText(){
-  document.getElementById("speechText").value = "";
-  document.getElementById("badges").innerHTML = "";
-  document.getElementById("result").textContent = "ここに結果が表示されます。";
-}
+function evaluate() {
+  var raw = ($('speechText').value || '').trim();
+  var t = raw.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  var badgesEl = $('aiBadges');
+  var resultEl = $('aiResult');
+  badgesEl.innerHTML = '';
 
-function insertSample(){
-  document.getElementById("speechText").value =
-`最近うれしかったことを話します。
-この前、仕事で新人さんが「説明がわかりやすいです」と言ってくれました。
-というのも、私は最初に相手の状況を聞いてから説明するようにしているからです。
-例えば、手順を一気に言うのではなく、今の不安を一つずつ解消する形にしました。
-なので、これからも相手目線で伝えることを大事にしたいです。`;
-  runEvaluation();
-}
-
-/* =========================================================
-   振り返りノート
-   ========================================================= */
-function saveReflection(){
-  localStorage.setItem(LS.reflectGood, (document.getElementById("reflectGood").value || "").trim());
-  localStorage.setItem(LS.reflectNext, (document.getElementById("reflectNext").value || "").trim());
-  alert("保存しました😊");
-}
-
-function loadReflection(){
-  document.getElementById("reflectGood").value = localStorage.getItem(LS.reflectGood) || "";
-  document.getElementById("reflectNext").value = localStorage.getItem(LS.reflectNext) || "";
-  alert("前回の振り返りを読み込みました😊");
-}
-
-function clearReflection(){
-  document.getElementById("reflectGood").value = "";
-  document.getElementById("reflectNext").value = "";
-}
-
-function setNextFromAdvice(){
-  const adv = localStorage.getItem(LS.lastAdvice);
-  if(!adv){
-    alert("まずAI評価を実行してください😊");
+  if (t.length < 10) {
+    addBadge(badgesEl, '入力が短め');
+    resultEl.textContent =
+      '\u{1F31F} 総合評価：60点\n\n' +
+      '練習しようと思って画面を開いたこと、それだけで前進です。\n\n' +
+      'まずは1〜2文でOK。\n' +
+      '「何が言いたいか」を一言書くところから始めましょう。\n\n' +
+      pickOne(encouragePool);
     return;
   }
-  const next = document.getElementById("reflectNext");
-  next.value = adv;
-  next.focus();
-  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-}
 
-/* =========================================================
-   結果コピー
-   ========================================================= */
-async function copyResult(){
-  const txt = document.getElementById("result").textContent || "";
-  try{
-    await navigator.clipboard.writeText(txt);
-    alert("コピーしました😊");
-  }catch(e){
-    // クリップボードが使えない環境向け
-    prompt("コピーできない場合は、ここから手動でコピーしてください👇", txt);
+  var score = 45;
+  var goodPoints = [];
+  var badges = [];
+  var adviceList = [];
+
+  // Structure check
+  var conclusion = ['結論','要するに','つまり','一言でいうと','私の考えは','大事なのは','ポイントは','と思います','と考えます','おすすめは','紹介したい','伝えたいのは'];
+  var reason = ['なぜなら','理由','というのも','だからこそ','きっかけ','があって','からです','ためです','背景','良いところは','魅力は'];
+  var example = ['例えば','たとえば','実際に','この前','以前','先日','具体的に','体験','場面','エピソード','のとき','思い出','当時','その時'];
+  var summary = ['まとめると','最後に','というわけで','だからこそ','おすすめです','ぜひ','改めて','振り返ると','大事にしたい','意識したい','これから','今後は','今は'];
+  var empathy = ['ですよね','お疲れ','ありがとう','分かります','お気持ち','お察し','お困り','大変'];
+  var emotion = ['嬉しい','嬉しかった','楽しい','楽しかった','悔しい','悔しかった','悲しい','怖い','怖かった','感動','驚いた','泣いた','笑った','ワクワク','ほっとした','辛い','辛かった','苦しい','焦った','不安'];
+  var listener = ['あなた','みなさん','皆さん','伝えたい','共有','ぜひ','試してみて','おすすめ','もしよければ'];
+
+  var hasConclusion = conclusion.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasReason = reason.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasExample = example.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasSummary = summary.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasEmpathy = empathy.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasEmotion = emotion.some(function(w) { return t.indexOf(w) >= 0; });
+  var hasListener = listener.some(function(w) { return t.indexOf(w) >= 0; });
+
+  // Length estimate
+  var cleanText = t.replace(/\s/g, '').replace(/[、。,.!?！？]/g, '');
+  var estSec = Math.round(cleanText.length / 6);
+
+  // Structure multiplier based on target time
+  var structMul = 1.0;
+  if (selectedTime > 0) {
+    var ratio = estSec / selectedTime;
+    if (ratio < 0.4) structMul = 0.4;
+    else if (ratio < 0.6) structMul = 0.6;
+    else if (ratio < 0.75) structMul = 0.8;
+  } else {
+    // Free talk: penalize only if extremely short
+    if (estSec < 10) structMul = 0.5;
+    else if (estSec < 15) structMul = 0.7;
   }
+
+  // Method-specific praise
+  var conclusionPraise, reasonPraise, examplePraise, summaryPraise;
+
+  if (selectedMethod === 'area') {
+    conclusionPraise = [
+      '相手の立場に立った語りかけができています',
+      '自分の考えを押し付けず、丁寧に伝えられています',
+      '主張がありながらも柔らかさのある話し方です'
+    ];
+    reasonPraise = [
+      '理由が「仕組み」や「安全」の視点で語られていて、説得力があります',
+      '「なぜそうするのか」が伝わり、相手が納得しやすい構成です',
+      '背景をしっかり共有することで、信頼感が生まれています'
+    ];
+    examplePraise = [
+      '具体的な場面があることで、相手が「自分ごと」として受け取れます',
+      '実例が効果的で、話にリアリティが出ています',
+      'エピソードの選び方が上手で、相手の共感を引き出しやすいです'
+    ];
+    summaryPraise = [
+      '行動提案が具体的で、相手が「次に何をすればいいか」がわかります',
+      '最後の一言が前向きで、相手を自然に動かす力があります',
+      '締めの提案が丁寧で、関係を壊さない話し方になっています'
+    ];
+  } else if (selectedMethod === 'story') {
+    conclusionPraise = [
+      '伝えたいテーマが明確で、聞き手が話に入り込みやすいです',
+      '冒頭から「何の話か」が伝わり、引き込まれる構成です',
+      '自分の気持ちを言い切る強さがあり、共感を呼びます'
+    ];
+    reasonPraise = [
+      '背景の描写が丁寧で、聞き手がその場にいるように感じられます',
+      '「なぜそう感じたか」が語られていて、話に深みが出ています',
+      'きっかけや経緯が自然に語られていて、聞き手がついていきやすいです'
+    ];
+    examplePraise = [
+      '体験の描写がリアルで、聞き手の心に映像が浮かびます',
+      'エピソードの選び方が絶妙で、テーマの本質が自然に伝わります',
+      '具体的な場面があることで、話に「体温」が感じられます'
+    ];
+    summaryPraise = [
+      '学びや気づきで締めることで、聞き手の心に余韻が残ります',
+      '「今の自分」とつなげた締めが素晴らしく、話が着地しています',
+      '最後のメッセージに聞き手への思いやりが感じられます'
+    ];
+  } else {
+    // PREP or free
+    conclusionPraise = [
+      '何を伝えたいかが明確で、聞き手が迷いません',
+      '結論がしっかりしていて、話の軸がブレていません',
+      '冒頭から「伝えたいこと」がストレートに伝わります'
+    ];
+    reasonPraise = [
+      '理由があることで、話に説得力が生まれています',
+      '「なぜそう思うか」が伝わり、納得感のある構成です',
+      '理由の選び方が上手で、聞き手が共感しやすいです'
+    ];
+    examplePraise = [
+      '具体的なエピソードがあり、場面が目に浮かびます',
+      '実体験を交えることで、話にリアリティが出ています',
+      '具体例が効果的で、聞き手が「なるほど」と思える内容です'
+    ];
+    summaryPraise = [
+      '締めの一言がきれいで、話全体の印象がまとまっています',
+      '最後のまとめが自然で、聞き手の記憶に残る構成です',
+      '終わり方が前向きで、聞いていて気持ちが良い話です'
+    ];
+  }
+
+  if (hasConclusion) { score += Math.round(10 * structMul); goodPoints.push(pickOne(conclusionPraise)); badges.push('テーマ明確'); }
+  if (hasReason) { score += Math.round(10 * structMul); goodPoints.push(pickOne(reasonPraise)); badges.push('納得感'); }
+  if (hasExample) { score += Math.round(10 * structMul); goodPoints.push(pickOne(examplePraise)); badges.push('具体性'); }
+  if (hasSummary) { score += Math.round(8 * structMul); goodPoints.push(pickOne(summaryPraise)); badges.push('締めが良い'); }
+
+  // AREA-specific: empathy bonus
+  if (selectedMethod === 'area' && hasEmpathy) {
+    score += Math.round(5 * structMul);
+    goodPoints.push('共感の言葉から入ることで、相手の心を開く話し方になっています');
+    badges.push('共感力');
+  }
+
+  // Length
+  if (t.length > 300) { score += 4; badges.push('内容充実'); }
+  else if (t.length > 150) { score += 2; }
+
+  // Emotion
+  if (hasEmotion) {
+    score += 4;
+    goodPoints.push('感情が素直に表現されていて、聞き手の心に届きます');
+    badges.push('感情が伝わる');
+  }
+
+  // Listener
+  if (hasListener) {
+    score += 3;
+    goodPoints.push('聞き手への呼びかけがあり、「伝える」意識を持てています');
+    badges.push('聞き手目線');
+  }
+
+  // Length check comment
+  var lengthComment = '';
+  if (selectedTime > 0) {
+    var targetSec = selectedTime;
+    if (estSec < targetSec * 0.5) {
+      badges.push('短め');
+      lengthComment =
+        '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 ' + targetSec + '秒）\u2192 かなり短めです\n' +
+        '時間が長い分、点数はシビアになります。\n' +
+        'エピソードや背景をもう少し丁寧に語ると自然に伸びます。';
+      adviceList.push('目標時間に近づけるには、「そのとき何を感じたか」を1〜2文足すと自然に伸びます');
+    } else if (estSec < targetSec * 0.75) {
+      badges.push('短め');
+      lengthComment =
+        '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 ' + targetSec + '秒）\u2192 少し短めです\n' +
+        'もう少し肉付けすると、ちょうど良い長さになります。';
+    } else if (estSec > targetSec * 1.25) {
+      badges.push('長め');
+      lengthComment =
+        '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 ' + targetSec + '秒）\u2192 少し長めです\n' +
+        '具体例を1つに絞ると、すっきり収まります。';
+    } else {
+      badges.push('長さOK');
+      score += 4;
+      lengthComment = '\u23F1 長さチェック：推定 ' + estSec + '秒（目標 ' + targetSec + '秒）\u2192 ちょうど良い長さです \u2705';
+    }
+  } else {
+    // Free: very short only
+    if (estSec < 8) {
+      badges.push('短め');
+      lengthComment = '\u23F1 推定 ' + estSec + '秒：もう1〜2文足すと、さらに伝わりやすくなります。';
+    }
+  }
+
+  // Advice
+  if (!hasConclusion) adviceList.push('冒頭に「今日伝えたいのは〇〇です」と一言置くと、聞き手が話の方向をつかめます');
+  if (!hasExample) adviceList.push('「例えば〜」と具体的な場面を1つ添えると、話がぐっとリアルになります');
+  if (!hasReason) adviceList.push('「なぜなら〜」と理由を一言加えると、主張に説得力が生まれます');
+  if (!hasSummary) adviceList.push('最後に一言まとめを置くと、話がきれいに着地します');
+  if (selectedMethod === 'area' && !hasEmpathy) {
+    adviceList.push('AREAの最初の「A」= 共感から入ると、相手の心がぐっと開きます');
+  }
+
+  score = Math.min(score, 100);
+  if (badges.length === 0) badges.push('チャレンジ');
+
+  // Build result
+  var praiseLines = '';
+  var showCount = Math.min(goodPoints.length, 3);
+  if (showCount > 0) {
+    for (var i = 0; i < showCount; i++) {
+      praiseLines += '\u2714 ' + goodPoints[i] + '\n';
+    }
+  } else {
+    praiseLines = '\u2714 自分の言葉で話そうとする姿勢が、何より素晴らしいです\n';
+  }
+
+  var improveLines = '';
+  var shownAdvice = adviceList.slice(0, 2);
+  if (shownAdvice.length > 0) {
+    for (var j = 0; j < shownAdvice.length; j++) {
+      improveLines += '\u2022 ' + shownAdvice[j] + '\n';
+    }
+  } else {
+    improveLines = '構成がしっかりできています。この調子で続けましょう！\n';
+  }
+
+  // Overall (length-aware)
+  var overall = '';
+  var lengthRatio = selectedTime > 0 ? estSec / selectedTime : 1;
+  if (selectedTime > 0 && lengthRatio < 0.5) {
+    if (score >= 70) overall = '構成がしっかりしています。ここに肉付けすれば、素晴らしいスピーチになります。';
+    else overall = 'まずは骨組みを作れています。ここから少しずつ広げていきましょう。';
+  } else {
+    if (score >= 90) overall = '素晴らしいスピーチです！構成も内容も申し分ありません。';
+    else if (score >= 80) overall = 'とても良いスピーチです。しっかり伝わる内容になっています。';
+    else if (score >= 70) overall = '良い内容です。あと一工夫で、さらに伝わりやすくなります。';
+    else overall = '話そうとする姿勢が素晴らしいです。一歩ずつ、自分のペースで磨いていきましょう。';
+  }
+
+  // Method label
+  var methodNote = '';
+  if (selectedMethod && methodLabels[selectedMethod]) {
+    methodNote = '（' + methodLabels[selectedMethod] + '話法で評価）\n';
+  }
+
+  badges.forEach(function(b) { addBadge(badgesEl, b); });
+
+  resultEl.textContent =
+    '\u{1F31F} 総合評価：' + score + '点 ' + methodNote + '\n' +
+    overall + '\n\n' +
+    '【良かった点】\n' +
+    praiseLines +
+    (lengthComment ? '\n' + lengthComment + '\n' : '') + '\n' +
+    '【もっと良くするには】\n' +
+    improveLines + '\n' +
+    pickOne(encouragePool);
 }
 
-/* 初期：前回の振り返りを軽く復元（任意） */
-(function init(){
-  // 何も入っていない時だけ、前回分を薄く残しておく（邪魔なら消してOK）
-  const g = localStorage.getItem(LS.reflectGood) || "";
-  const n = localStorage.getItem(LS.reflectNext) || "";
-  if(g) document.getElementById("reflectGood").value = g;
-  if(n) document.getElementById("reflectNext").value = n;
-})();
-</script>
+function addBadge(container, text) {
+  var span = document.createElement('span');
+  span.className = 'ai-badge';
+  span.textContent = text;
+  container.appendChild(span);
+}
 
+/* ======================================================
+   Template insert (method-aware)
+====================================================== */
+$('templateBtn').addEventListener('click', function() {
+  var tpl = '';
+  if (selectedMethod === 'prep') {
+    tpl = '（例）結論から言います。〇〇がおすすめです。\n' +
+      'なぜなら、△△という理由があるからです。\n' +
+      '実際に□□の場面で、それを実感しました。\n' +
+      'だから〇〇を、ぜひ試してみてほしいです。';
+  } else if (selectedMethod === 'area') {
+    tpl = '（例）〇〇ですよね。お気持ちはよく分かります。\n' +
+      '実は△△という理由があって...\n' +
+      '以前□□のケースでは、こうしたことで改善しました。\n' +
+      'なので、まず◇◇から試してみませんか？';
+  } else if (selectedMethod === 'story') {
+    tpl = '（例）正直、そのとき私は〇〇でした。\n' +
+      'きっかけは△△という出来事でした。\n' +
+      'そこから□□が変わりました。\n' +
+      '学んだのは「◇◇が大事」ということです。\n' +
+      'だから今は〇〇を意識しています。';
+  } else {
+    tpl = '（例）最近うれしかったことを話します。\n' +
+      'この前、友人が「話がわかりやすい」と言ってくれました。\n' +
+      'というのも、最初に結論を伝えるようにしているからです。\n' +
+      '例えば、要点を一言で言ってから詳しく説明する形にしています。\n' +
+      'これからも相手目線で伝えることを大切にしたいです。';
+  }
+  $('speechText').value = tpl;
+  evaluate();
+});
+
+$('evalBtn').addEventListener('click', evaluate);
+$('clearBtn').addEventListener('click', function() {
+  $('speechText').value = '';
+  $('aiBadges').innerHTML = '';
+  $('aiResult').textContent = 'ここに評価結果が表示されます。';
+});
+
+</script>
 </body>
 </html>
