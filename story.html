@@ -1,198 +1,508 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>感情ストーリー話法（詳細版）</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>感情ストーリー話法｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 60% 0%, rgba(230,126,34,.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-body { padding: 16px 18px; }
+.section-title {
+  font-family: var(--font-serif); font-size: 16px; font-weight: 700;
+  padding: 14px 18px 10px; display: flex; align-items: center; gap: 8px;
+}
+
+/* Flow (5 steps) */
+.flow {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  margin: 10px 0; padding: 10px 14px;
+  background: var(--orange-light); border-radius: var(--radius-sm);
+}
+.flow-step {
+  font-size: 13px; font-weight: 700; padding: 4px 9px;
+  border-radius: 8px; background: #fff; border: 1px solid var(--border);
+}
+.flow-arrow { color: var(--text-sub); font-size: 11px; opacity: .5; }
+
+/* Step cards */
+.step-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px;
+}
+.step-card:last-child { margin-bottom: 0; }
+.step-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 900; color: #fff; flex-shrink: 0;
+  background: var(--orange);
+}
+.step-title { font-weight: 700; font-size: 14px; }
+.step-purpose { font-size: 12px; color: var(--text-sub); }
+.step-tip { font-size: 12px; color: var(--orange); margin-top: 4px; }
+
+/* Template */
+.template-box {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  font-size: 13px; line-height: 1.9; margin-bottom: 10px;
+}
+.template-box:last-child { margin-bottom: 0; }
+.template-label { font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 4px; }
+.s-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: var(--orange); color: #fff; padding: 1px 6px;
+  border-radius: 4px; margin-right: 4px; vertical-align: middle;
+}
+
+/* Emotion chips */
+.emotion-grid {
+  display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0;
+}
+.emotion-chip {
+  font-size: 12px; font-weight: 600; padding: 4px 10px;
+  border-radius: 999px; background: var(--orange-light);
+  color: var(--orange); border: 1px solid rgba(230,126,34,.15);
+}
+
+/* Tips list */
+.tips-list { margin: 8px 0; }
+.tips-item {
+  display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.6;
+}
+.tips-item:last-child { margin-bottom: 0; }
+.tips-num {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff; background: var(--orange);
+}
+
+/* Scene examples */
+.scene-box {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 10px; overflow: hidden;
+}
+.scene-box:last-child { margin-bottom: 0; }
+.scene-label {
+  font-size: 12px; font-weight: 700; padding: 8px 12px;
+  background: var(--orange-light); color: var(--orange);
+  border-bottom: 1px solid var(--border);
+}
+.scene-body { padding: 10px 12px; font-size: 13px; line-height: 1.9; }
+
+/* Tables */
+.ref-table { width: 100%; border-collapse: collapse; margin: 6px 0; }
+.ref-table th {
+  text-align: left; font-size: 12px; font-weight: 700;
+  padding: 8px 10px; background: var(--bg); border-bottom: 1px solid var(--border);
+  color: var(--text-sub);
+}
+.ref-table td {
+  padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.ref-table tr:last-child td { border-bottom: none; }
+
+/* Fail/fix */
+.fail-fix { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+.fail-fix:last-child { margin-bottom: 0; }
+.fail-badge {
+  flex-shrink: 0; font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px;
+}
+.fail-badge.fail { background: var(--accent-light); color: var(--accent); }
+.fail-text { font-size: 13px; line-height: 1.6; }
+
+/* Combo */
+.combo-box {
+  background: var(--blue-light); border: 1px solid rgba(41,128,185,.15);
+  border-radius: var(--radius-sm); padding: 14px;
+}
+
+/* Quote */
+.quote-box { text-align: center; padding: 20px 16px; }
+.quote-text {
+  font-family: var(--font-serif); font-size: 18px; font-weight: 700; line-height: 1.8;
+}
+.quote-sub { font-size: 13px; color: var(--text-sub); margin-top: 8px; }
+
+/* Links */
+.link-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.link-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  text-decoration: none; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: #fff; color: var(--text);
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: all .15s;
+}
+.link-btn:active { transform: scale(.97); }
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .flow { gap: 3px; padding: 8px 10px; }
+  .flow-step { font-size: 11px; padding: 3px 7px; }
+  .header h1 { font-size: 20px; }
+  .fail-fix { flex-direction: column; gap: 2px; }
+}
+</style>
+</head>
 <body>
 
-<header class="top">
-  <h1>📙 感情ストーリー話法（詳細版）</h1>
+<div class="header">
+  <h1>感情ストーリー話法</h1>
   <p class="sub">人の心に残る「体験談」の話し方</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
-</header>
-
-<main class="menu">
-
-<div class="card" style="display:block;">
-
-<pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.9;">
-
-━━━━━━━━━━━━━━━━━━
-【感情ストーリー話法とは？】
-━━━━━━━━━━━━━━━━━━
-
-「論理」よりも「心」に届く話し方。
-体験談・スピーチ・自己紹介で、
-“共感”と“記憶”に残すのが目的。
-
-基本構造はこれ：
-
-① 感情（その時どう感じたか）
-② 出来事（何が起きたか）
-③ 変化（どう変わったか）
-④ 学び（何を得たか）
-⑤ 今（今どうしてるか / 伝えたいこと）
-
-
-━━━━━━━━━━━━━━━━━━
-【どんな時に使う？（使い分け）】
-━━━━━━━━━━━━━━━━━━
-
-◎ 感情ストーリーが向く場面
-・体験談スピーチ
-・自己紹介（印象を残したい）
-・信頼づくり（人間関係）
-・励まし、共感、応援
-・「なぜそれをやっているのか」を伝える時
-
-△ PREPが向く場面
-・報告、説明、結論を急ぐ場面
-
-△ AREAが向く場面
-・揉めそうな時、説得・交渉
-
-
-━━━━━━━━━━━━━━━━━━
-【基本テンプレ（短文：40秒）】
-━━━━━━━━━━━━━━━━━━
-
-① 感情：正直〇〇でした。
-② 出来事：その時△△が起きて…
-③ 変化：そこで□□になりました。
-④ 学び：気づいたのは◇◇です。
-⑤ 今：だから今は〇〇しています。
-
-
-━━━━━━━━━━━━━━━━━━
-【基本テンプレ（丁寧：2分）】
-━━━━━━━━━━━━━━━━━━
-
-① 感情
-正直、〇〇でつらかった（怖かった／悔しかった）です。
-
-② 出来事
-原因は△△で、□□という出来事が起きました。
-
-③ 変化
-その結果、私は〇〇に気づき、行動が変わりました。
-
-④ 学び
-学んだのは「◇◇が大事」ということです。
-
-⑤ 今
-今は〇〇を意識していて、同じ状況の人には△△を伝えたいです。
-
-
-━━━━━━━━━━━━━━━━━━
-【話が刺さるコツ】
-━━━━━━━━━━━━━━━━━━
-
-① 感情を“先に”言う（共感の入口）
-② 出来事は短く（説明しすぎない）
-③ 変化を入れる（ビフォー→アフター）
-④ 学びは一言にする（欲張らない）
-⑤ 最後は“相手の得”で終える（何が役に立つか）
-
-
-━━━━━━━━━━━━━━━━━━
-【よく使う感情ワード集】
-━━━━━━━━━━━━━━━━━━
-
-・悔しかった / 情けなかった
-・怖かった / 不安だった
-・嬉しかった / 救われた
-・腹が立った / 焦った
-・ほっとした / 安心した
-・申し訳なかった / 反省した
-
-
-━━━━━━━━━━━━━━━━━━
-【失敗しやすいポイント】
-━━━━━━━━━━━━━━━━━━
-
-× 状況説明が長すぎる
-→ ○ 感情→出来事（短め）へ
-
-× 教訓が多すぎる
-→ ○ 学びは1つに絞る
-
-× オチがない
-→ ○ “今どうしてるか”で締める
-
-
-━━━━━━━━━━━━━━━━━━
-【シーン別 例文（すぐ使える）】
-━━━━━━━━━━━━━━━━━━
-
-■ 仕事（成長ストーリー）
-① 感情：正直、最初はすごく不安でした。
-② 出来事：現場で想定外のことが起きて焦って…
-③ 変化：でも一つずつ確認する大切さに気づきました。
-④ 学び：学んだのは「焦るほど手順に戻る」です。
-⑤ 今：今は不安な時ほど深呼吸して確認から入っています。
-
-■ 家庭・人間関係
-① 感情：すごく悲しかったです。
-② 出来事：気持ちが伝わらないまま話が進んで…
-③ 変化：そこで、先に相手の気持ちを受け止めると変わると知りました。
-④ 学び：学んだのは「共感が先」。
-⑤ 今：だから今は、まず“そう感じるよね”から言うようにしています。
-
-■ スピーチ（励まし）
-① 感情：一度、全部投げ出したくなったことがあります。
-② 出来事：頑張っても結果が出なくて…
-③ 変化：でも続けたら、ある日少しずつ変わりました。
-④ 学び：気づいたのは「成果は遅れて来る」こと。
-⑤ 今：だから、もし今つらい人がいたら“今日だけ続けよう”と言いたいです。
-
-
-━━━━━━━━━━━━━━━━━━
-【時間別：話し方の配分】
-━━━━━━━━━━━━━━━━━━
-
-■ 40秒
-感情10秒 → 出来事10秒 → 変化10秒 → 学び5秒 → 今5秒
-
-■ 80秒
-感情15秒 → 出来事15秒 → 変化25秒 → 学び15秒 → 今10秒
-
-■ 2分
-感情20秒 → 出来事20秒 → 変化40秒 → 学び20秒 → 今20秒
-
-
-━━━━━━━━━━━━━━━━━━
-【PREPとの合体（最強）】
-━━━━━━━━━━━━━━━━━━
-
-ストーリーで共感 → PREPで整理
-
-例：
-（ストーリーで共感）
-→ 結論：だから〇〇が大事です
-→ 理由：なぜなら…
-→ 例：具体例…
-→ まとめ：だから…
-
-
-━━━━━━━━━━━━━━━━━━
-【まとめ】
-━━━━━━━━━━━━━━━━━━
-
-感情ストーリー話法は、
-「あなたの経験」を「相手の力」に変える話し方。
-
-感情 → 出来事 → 変化 → 学び → 今
-この順で話すと、心に残ります。
-
-</pre>
-
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
 </div>
 
-</main>
+<div class="container">
+
+  <!-- 感情ストーリー話法とは -->
+  <div class="card">
+    <div class="section-title">&#128218; 感情ストーリー話法とは？</div>
+    <div class="card-body">
+      <div style="font-size: 14px; line-height: 1.8; margin-bottom: 10px;">
+        「論理」よりも「心」に届く話し方です。体験談・スピーチ・自己紹介で、共感と記憶に残すのが目的。
+      </div>
+      <div class="flow">
+        <span class="flow-step">1 感情</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">2 出来事</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">3 変化</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">4 学び</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">5 今</span>
+      </div>
+      <div style="font-size: 12px; color: var(--text-sub); margin-top: 6px;">
+        &#9675; 体験談スピーチ、自己紹介、信頼づくり、励まし・共感・応援<br>
+        &#9651; 報告・説明には PREP、揉めそうな時は AREA が向いています
+      </div>
+    </div>
+  </div>
+
+  <!-- 5ステップ -->
+  <div class="card">
+    <div class="section-title">&#128297; 5つのステップ</div>
+    <div class="card-body">
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-num">1</span>
+          <div>
+            <div class="step-title">感情（その時どう感じたか）</div>
+            <div class="step-purpose">共感の入口をつくる</div>
+          </div>
+        </div>
+        <div class="step-tip">&#9733; 感情を「先に」言う。ここが共感のカギ。</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-num">2</span>
+          <div>
+            <div class="step-title">出来事（何が起きたか）</div>
+            <div class="step-purpose">状況を伝える</div>
+          </div>
+        </div>
+        <div class="step-tip">&#9733; 短くてOK。説明しすぎないのがコツ。</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-num">3</span>
+          <div>
+            <div class="step-title">変化（どう変わったか）</div>
+            <div class="step-purpose">ビフォー &#8594; アフターを見せる</div>
+          </div>
+        </div>
+        <div class="step-tip">&#9733; 変化があると「物語」になる。聞き手が引き込まれるポイント。</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-num">4</span>
+          <div>
+            <div class="step-title">学び（何を得たか）</div>
+            <div class="step-purpose">体験を価値に変える</div>
+          </div>
+        </div>
+        <div class="step-tip">&#9733; 学びは一言にする。欲張らない。</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-num">5</span>
+          <div>
+            <div class="step-title">今（今どうしているか / 伝えたいこと）</div>
+            <div class="step-purpose">相手へのメッセージで締める</div>
+          </div>
+        </div>
+        <div class="step-tip">&#9733; 最後は「相手の得」で終える。何が役に立つかを意識。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 話が刺さるコツ -->
+  <div class="card">
+    <div class="section-title">&#128161; 話が刺さる5つのコツ</div>
+    <div class="card-body">
+      <div class="tips-list">
+        <div class="tips-item">
+          <span class="tips-num">1</span>
+          <div>感情を「先に」言う（共感の入口になる）</div>
+        </div>
+        <div class="tips-item">
+          <span class="tips-num">2</span>
+          <div>出来事は短く（説明しすぎない）</div>
+        </div>
+        <div class="tips-item">
+          <span class="tips-num">3</span>
+          <div>変化を入れる（ビフォー &#8594; アフター）</div>
+        </div>
+        <div class="tips-item">
+          <span class="tips-num">4</span>
+          <div>学びは一言にする（欲張らない）</div>
+        </div>
+        <div class="tips-item">
+          <span class="tips-num">5</span>
+          <div>最後は「相手の得」で終える（何が役に立つか）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 感情ワード集 -->
+  <div class="card">
+    <div class="section-title">&#128172; よく使う感情ワード集</div>
+    <div class="card-body">
+      <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 6px;">スピーチの冒頭で使うと、聞き手の心をつかめます</div>
+      <div class="emotion-grid">
+        <span class="emotion-chip">悔しかった</span>
+        <span class="emotion-chip">情けなかった</span>
+        <span class="emotion-chip">怖かった</span>
+        <span class="emotion-chip">不安だった</span>
+        <span class="emotion-chip">嬉しかった</span>
+        <span class="emotion-chip">救われた</span>
+        <span class="emotion-chip">腹が立った</span>
+        <span class="emotion-chip">焦った</span>
+        <span class="emotion-chip">ほっとした</span>
+        <span class="emotion-chip">安心した</span>
+        <span class="emotion-chip">申し訳なかった</span>
+        <span class="emotion-chip">反省した</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- テンプレ -->
+  <div class="card">
+    <div class="section-title">&#128196; 基本テンプレ</div>
+    <div class="card-body">
+      <div class="template-box">
+        <div class="template-label">短文バージョン（40秒向き）</div>
+        <s-tag class="s-tag">感情</s-tag> 正直〇〇でした。<br>
+        <s-tag class="s-tag">出来事</s-tag> その時△△が起きて...<br>
+        <s-tag class="s-tag">変化</s-tag> そこで□□になりました。<br>
+        <s-tag class="s-tag">学び</s-tag> 気づいたのは&#9671;&#9671;です。<br>
+        <s-tag class="s-tag">今</s-tag> だから今は〇〇しています。
+      </div>
+      <div class="template-box">
+        <div class="template-label">丁寧バージョン（2分向き）</div>
+        <s-tag class="s-tag">感情</s-tag> 正直、〇〇でつらかった（怖かった / 悔しかった）です。<br>
+        <s-tag class="s-tag">出来事</s-tag> 原因は△△で、□□という出来事が起きました。<br>
+        <s-tag class="s-tag">変化</s-tag> その結果、私は〇〇に気づき、行動が変わりました。<br>
+        <s-tag class="s-tag">学び</s-tag> 学んだのは「&#9671;&#9671;が大事」ということです。<br>
+        <s-tag class="s-tag">今</s-tag> 今は〇〇を意識していて、同じ状況の人には△△を伝えたいです。
+      </div>
+    </div>
+  </div>
+
+  <!-- シーン別例文 -->
+  <div class="card">
+    <div class="section-title">&#127908; シーン別・即使える例文</div>
+    <div class="card-body">
+
+      <div class="scene-box">
+        <div class="scene-label">&#128188; 仕事（成長ストーリー）</div>
+        <div class="scene-body">
+          <span class="s-tag">感情</span> 正直、最初はすごく不安でした。<br>
+          <span class="s-tag">出来事</span> 現場で想定外のことが起きて焦って...<br>
+          <span class="s-tag">変化</span> でも一つずつ確認する大切さに気づきました。<br>
+          <span class="s-tag">学び</span> 学んだのは「焦るほど手順に戻る」です。<br>
+          <span class="s-tag">今</span> 今は不安な時ほど深呼吸して確認から入っています。
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#127968; 家庭・人間関係</div>
+        <div class="scene-body">
+          <span class="s-tag">感情</span> すごく悲しかったです。<br>
+          <span class="s-tag">出来事</span> 気持ちが伝わらないまま話が進んで...<br>
+          <span class="s-tag">変化</span> そこで、先に相手の気持ちを受け止めると変わると知りました。<br>
+          <span class="s-tag">学び</span> 学んだのは「共感が先」。<br>
+          <span class="s-tag">今</span> だから今は、まず「そう感じるよね」から言うようにしています。
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#127908; スピーチ（励まし）</div>
+        <div class="scene-body">
+          <span class="s-tag">感情</span> 一度、全部投げ出したくなったことがあります。<br>
+          <span class="s-tag">出来事</span> 頑張っても結果が出なくて...<br>
+          <span class="s-tag">変化</span> でも続けたら、ある日少しずつ変わりました。<br>
+          <span class="s-tag">学び</span> 気づいたのは「成果は遅れて来る」こと。<br>
+          <span class="s-tag">今</span> だから、もし今つらい人がいたら「今日だけ続けよう」と言いたいです。
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- よくある失敗 -->
+  <div class="card">
+    <div class="section-title">&#9888; よくある失敗と対策</div>
+    <div class="card-body">
+      <div class="fail-fix">
+        <span class="fail-badge fail">状況説明が長すぎる</span>
+        <div class="fail-text">&#8594; 感情 &#8594; 出来事（短め）の順で。状況は2〜3文でOK。</div>
+      </div>
+      <div class="fail-fix">
+        <span class="fail-badge fail">教訓が多すぎる</span>
+        <div class="fail-text">&#8594; 学びは1つに絞る。複数あると印象がぼやける。</div>
+      </div>
+      <div class="fail-fix">
+        <span class="fail-badge fail">オチがない</span>
+        <div class="fail-text">&#8594; 「今どうしてるか」で締める。現在とつなげると着地する。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 時間別配分 -->
+  <div class="card">
+    <div class="section-title">&#9201; 時間別ストーリー配分</div>
+    <div class="card-body">
+      <table class="ref-table">
+        <tr><th>時間</th><th>感情</th><th>出来事</th><th>変化</th><th>学び</th><th>今</th></tr>
+        <tr><td>40秒</td><td>10秒</td><td>10秒</td><td>10秒</td><td>5秒</td><td>5秒</td></tr>
+        <tr><td>80秒</td><td>15秒</td><td>15秒</td><td>25秒</td><td>15秒</td><td>10秒</td></tr>
+        <tr><td>2分</td><td>20秒</td><td>20秒</td><td>40秒</td><td>20秒</td><td>20秒</td></tr>
+      </table>
+      <div style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">
+        「変化」に一番時間をかけると、話に引力が生まれます
+      </div>
+      <div class="link-row">
+        <a href="40sec.html" class="link-btn">&#9201; 40秒で練習</a>
+        <a href="80sec.html" class="link-btn">&#9201; 80秒で練習</a>
+        <a href="2min.html" class="link-btn">&#9201; 2分で練習</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREPとの合体 -->
+  <div class="card">
+    <div class="section-title">&#128260; PREPとの合体パターン</div>
+    <div class="card-body">
+      <div class="combo-box">
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">ストーリーで共感 &#8594; PREPで整理</div>
+        <div style="font-size: 13px; line-height: 1.9;">
+          「（ストーリーで体験を語る）」<br>
+          &#8595;<br>
+          「だから〇〇が大事だと思います。（P）<br>
+          　なぜなら△△だからです。（R）<br>
+          　例えば□□では...（E）<br>
+          　だから〇〇を意識してみてください。（P）」
+        </div>
+        <div style="font-size: 12px; color: var(--text-sub); margin-top: 8px;">
+          感情で心をつかみ、論理で納得させる。80秒〜2分スピーチに最適な組み合わせです。
+        </div>
+      </div>
+      <div class="link-row">
+        <a href="prep.html" class="link-btn">&#128226; PREP話法を見る</a>
+        <a href="area.html" class="link-btn">&#128227; AREA話法を見る</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="card">
+    <div class="card-body">
+      <div class="quote-box">
+        <div class="quote-text">
+          感情ストーリー話法は<br>
+          「あなたの経験」を<br>
+          「相手の力」に変える話し方
+        </div>
+        <div class="quote-sub">一人話し方GYM</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 </body>
 </html>
