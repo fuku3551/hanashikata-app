@@ -1,163 +1,464 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>話法使い分けガイド</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>話法ガイド｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --purple: #8e44ad;
+  --purple-light: rgba(142, 68, 173, .08);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, rgba(142,68,173,.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+/* Card */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-header .num {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
+.card-header .tag {
+  font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+  margin-left: auto; flex-shrink: 0;
+}
+.card-body { padding: 16px 18px; }
+
+/* Color themes per method */
+.theme-area .num { background: var(--accent); }
+.theme-area .tag { background: var(--accent-light); color: var(--accent); }
+.theme-prep .num { background: var(--blue); }
+.theme-prep .tag { background: var(--blue-light); color: var(--blue); }
+.theme-story .num { background: var(--orange); }
+.theme-story .tag { background: var(--orange-light); color: var(--orange); }
+.theme-problem .num { background: var(--green); }
+.theme-problem .tag { background: var(--green-light); color: var(--green); }
+.theme-hook .num { background: var(--purple); }
+.theme-hook .tag { background: var(--purple-light); color: var(--purple); }
+
+/* Flow arrows */
+.flow {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  margin: 10px 0; padding: 10px 14px;
+  background: var(--bg); border-radius: var(--radius-sm);
+}
+.flow-step {
+  font-size: 14px; font-weight: 700; padding: 4px 10px;
+  border-radius: 8px; background: #fff; border: 1px solid var(--border);
+}
+.flow-arrow { color: var(--text-sub); font-size: 12px; opacity: .5; }
+
+/* Info rows */
+.info-row { margin-bottom: 8px; }
+.info-label {
+  font-size: 11px; font-weight: 700; color: var(--text-sub);
+  letter-spacing: .05em; margin-bottom: 2px;
+}
+.info-text { font-size: 14px; line-height: 1.7; }
+
+/* Quick ref table */
+.ref-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+.ref-table th {
+  text-align: left; font-size: 12px; font-weight: 700;
+  padding: 8px 10px; background: var(--bg); border-bottom: 1px solid var(--border);
+  color: var(--text-sub);
+}
+.ref-table td {
+  padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border);
+}
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px;
+}
+.ref-badge.area { background: var(--accent-light); color: var(--accent); }
+.ref-badge.prep { background: var(--blue-light); color: var(--blue); }
+.ref-badge.story { background: var(--orange-light); color: var(--orange); }
+.ref-badge.problem { background: var(--green-light); color: var(--green); }
+.ref-badge.hook { background: var(--purple-light); color: var(--purple); }
+
+/* Section title */
+.section-title {
+  font-family: var(--font-serif); font-size: 16px; font-weight: 700;
+  padding: 14px 18px 10px; display: flex; align-items: center; gap: 8px;
+}
+
+/* Tips */
+.tips {
+  background: var(--accent-light); border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.tips-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.tips-text { font-size: 13px; line-height: 1.8; color: var(--text-sub); }
+
+/* Practice box */
+.practice-box {
+  background: var(--green-light); border: 1px solid rgba(39,174,96,.2);
+  border-radius: var(--radius-sm); padding: 14px;
+}
+.practice-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+.practice-steps { font-size: 13px; line-height: 2; }
+.practice-step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%; background: var(--green);
+  color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px;
+}
+
+/* Quote */
+.quote-box {
+  text-align: center; padding: 20px 16px; margin-top: 8px;
+}
+.quote-text {
+  font-family: var(--font-serif); font-size: 18px; font-weight: 700;
+  line-height: 1.8;
+}
+.quote-sub {
+  font-size: 13px; color: var(--text-sub); margin-top: 8px;
+}
+
+/* Link buttons */
+.link-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+}
+.link-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  text-decoration: none; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: #fff; color: var(--text);
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: all .15s;
+}
+.link-btn:active { transform: scale(.97); }
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .flow { gap: 3px; padding: 8px 10px; }
+  .flow-step { font-size: 12px; padding: 3px 8px; }
+  .header h1 { font-size: 20px; }
+}
+</style>
+</head>
 <body>
 
-<header class="top">
-  <h1>📘 話法使い分けガイド</h1>
+<div class="header">
+  <h1>話法使い分けガイド</h1>
   <p class="sub">シーン別・最適な話し方まとめ</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
-</header>
-
-<main class="menu">
-
-<div class="card" style="display:block;">
-
-<pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.9;">
-
-
-━━━━━━━━━━━━━━━━━━
-【まず覚える順番】
-━━━━━━━━━━━━━━━━━━
-
-① AREA（信頼）
-② PREP（説明）
-③ 感情型（共感）
-④ 問題解決型（提案）
-⑤ 雑談型（印象）
-
-→ 使用頻度の高い順です。
-
-
-━━━━━━━━━━━━━━━━━━
-① AREA話法（最優先）
-━━━━━━━━━━━━━━━━━━
-
-▶ 使う場面
-・相談、注意、説得、交渉
-・家族、部下、利用者対応
-
-▶ 型
-共感 → 理由 → 例 → 行動
-
-▶ ポイント
-否定せずに人を動かす基本型
-
-
-━━━━━━━━━━━━━━━━━━
-② PREP法（説明の王道）
-━━━━━━━━━━━━━━━━━━
-
-▶ 使う場面
-・報告、会議、プレゼン
-・おすすめ紹介
-
-▶ 型
-結論 → 理由 → 例 → まとめ
-
-▶ ポイント
-短時間で伝える最強型
-
-
-━━━━━━━━━━━━━━━━━━
-③ 感情ストーリー型
-━━━━━━━━━━━━━━━━━━
-
-▶ 使う場面
-・体験談、スピーチ
-・信頼づくり
-
-▶ 型
-感情 → 出来事 → 気づき
-
-▶ ポイント
-心に残る話になる
-
-
-━━━━━━━━━━━━━━━━━━
-④ 問題解決型
-━━━━━━━━━━━━━━━━━━
-
-▶ 使う場面
-・改善提案、改革
-・計画説明
-
-▶ 型
-問題 → 危機 → 解決 → 未来
-
-▶ ポイント
-論理で動かす型
-
-
-━━━━━━━━━━━━━━━━━━
-⑤ 雑談フック型
-━━━━━━━━━━━━━━━━━━
-
-▶ 使う場面
-・初対面、雑談
-・緊張緩和
-
-▶ 型
-フック → 展開 → オチ
-
-▶ ポイント
-空気を作る型
-
-
-━━━━━━━━━━━━━━━━━━
-迷った時の即決表
-━━━━━━━━━━━━━━━━━━
-
-揉めそう → AREA
-説明 → PREP
-想い → 感情型
-提案 → 問題型
-雑談 → フック
-
-
-━━━━━━━━━━━━━━━━━━
-スピーチ時間別おすすめ
-━━━━━━━━━━━━━━━━━━
-
-40秒 → PREP
-80秒 → PREP＋感情
-2分 → AREA＋PREP
-
-
-━━━━━━━━━━━━━━━━━━
-福田式・毎日3分練習
-━━━━━━━━━━━━━━━━━━
-
-① 今日の出来事を1つ選ぶ
-② AREAで構成
-③ 40秒で話す
-④ PREPで言い直す
-
-→ 継続で無敵になります
-
-
-━━━━━━━━━━━━━━━━━━
-まとめ
-━━━━━━━━━━━━━━━━━━
-
-話法は
-「才能」ではなく「技術」
-
-使い分けできれば
-誰でも伝わる人になれます。
-
-
-</pre>
-
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
 </div>
 
-</main>
+<div class="container">
+
+  <!-- 学ぶ順番 -->
+  <div class="card">
+    <div class="section-title">&#128218; まず覚える順番</div>
+    <div class="card-body">
+      <table class="ref-table">
+        <tr><th>順番</th><th>話法</th><th>ひと言で</th></tr>
+        <tr><td>1</td><td><span class="ref-badge area">AREA</span></td><td>否定せずに人を動かす</td></tr>
+        <tr><td>2</td><td><span class="ref-badge prep">PREP</span></td><td>短時間で伝える最強型</td></tr>
+        <tr><td>3</td><td><span class="ref-badge story">感情型</span></td><td>心に残る話になる</td></tr>
+        <tr><td>4</td><td><span class="ref-badge problem">問題解決型</span></td><td>論理で動かす型</td></tr>
+        <tr><td>5</td><td><span class="ref-badge hook">雑談型</span></td><td>空気を作る型</td></tr>
+      </table>
+      <div style="font-size: 12px; color: var(--text-sub); margin-top: 6px; text-align: center;">
+        使用頻度の高い順です
+      </div>
+    </div>
+  </div>
+
+  <!-- ① AREA -->
+  <div class="card">
+    <div class="card-header theme-area">
+      <span class="num">1</span>
+      <span class="label">AREA話法</span>
+      <span class="tag">最優先</span>
+    </div>
+    <div class="card-body">
+      <div class="flow">
+        <span class="flow-step">共感</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">理由</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">例</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">行動</span>
+      </div>
+      <div class="info-row">
+        <div class="info-label">使う場面</div>
+        <div class="info-text">相談、注意、説得、交渉、家族・部下・利用者対応</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">ポイント</div>
+        <div class="info-text">否定せずに人を動かす基本型。まず相手の気持ちに寄り添ってから伝える。</div>
+      </div>
+      <div class="link-row">
+        <a href="area.html" class="link-btn">&#128227; AREA話法を練習する</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② PREP -->
+  <div class="card">
+    <div class="card-header theme-prep">
+      <span class="num">2</span>
+      <span class="label">PREP法</span>
+      <span class="tag">説明の王道</span>
+    </div>
+    <div class="card-body">
+      <div class="flow">
+        <span class="flow-step">結論</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">理由</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">例</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">まとめ</span>
+      </div>
+      <div class="info-row">
+        <div class="info-label">使う場面</div>
+        <div class="info-text">報告、会議、プレゼン、おすすめ紹介</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">ポイント</div>
+        <div class="info-text">まず結論を言い切る。それだけで伝わりやすさが激変する。</div>
+      </div>
+      <div class="link-row">
+        <a href="prep.html" class="link-btn">&#128226; PREP話法を練習する</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 感情ストーリー -->
+  <div class="card">
+    <div class="card-header theme-story">
+      <span class="num">3</span>
+      <span class="label">感情ストーリー型</span>
+      <span class="tag">共感</span>
+    </div>
+    <div class="card-body">
+      <div class="flow">
+        <span class="flow-step">感情</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">出来事</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">気づき</span>
+      </div>
+      <div class="info-row">
+        <div class="info-label">使う場面</div>
+        <div class="info-text">体験談、スピーチ、信頼づくり</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">ポイント</div>
+        <div class="info-text">感情から入ると聞き手の心がつかめる。事実より「どう感じたか」を先に。</div>
+      </div>
+      <div class="link-row">
+        <a href="story.html" class="link-btn">&#128217; 感情ストーリーを練習する</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 問題解決型 -->
+  <div class="card">
+    <div class="card-header theme-problem">
+      <span class="num">4</span>
+      <span class="label">問題解決型</span>
+      <span class="tag">提案</span>
+    </div>
+    <div class="card-body">
+      <div class="flow">
+        <span class="flow-step">問題</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">危機</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">解決</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">未来</span>
+      </div>
+      <div class="info-row">
+        <div class="info-label">使う場面</div>
+        <div class="info-text">改善提案、改革、計画説明</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">ポイント</div>
+        <div class="info-text">「このまま放置するとどうなるか」で危機感を共有してから解決策を出す。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 雑談フック型 -->
+  <div class="card">
+    <div class="card-header theme-hook">
+      <span class="num">5</span>
+      <span class="label">雑談フック型</span>
+      <span class="tag">印象</span>
+    </div>
+    <div class="card-body">
+      <div class="flow">
+        <span class="flow-step">フック</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">展開</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">オチ</span>
+      </div>
+      <div class="info-row">
+        <div class="info-label">使う場面</div>
+        <div class="info-text">初対面、雑談、緊張緩和</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">ポイント</div>
+        <div class="info-text">最初の一言で「お？」と思わせる。完璧な話より「空気が和む」ことが大事。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 迷った時の即決表 -->
+  <div class="card">
+    <div class="section-title">&#9889; 迷った時の即決表</div>
+    <div class="card-body">
+      <table class="ref-table">
+        <tr><th>こんな時</th><th>使う話法</th></tr>
+        <tr><td>揉めそう・説得したい</td><td><span class="ref-badge area">AREA</span></td></tr>
+        <tr><td>報告・説明・紹介</td><td><span class="ref-badge prep">PREP</span></td></tr>
+        <tr><td>想いを伝えたい</td><td><span class="ref-badge story">感情型</span></td></tr>
+        <tr><td>改善・提案したい</td><td><span class="ref-badge problem">問題解決型</span></td></tr>
+        <tr><td>場を和ませたい</td><td><span class="ref-badge hook">雑談型</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- スピーチ時間別 -->
+  <div class="card">
+    <div class="section-title">&#9201; スピーチ時間別おすすめ</div>
+    <div class="card-body">
+      <table class="ref-table">
+        <tr><th>時間</th><th>おすすめ</th><th>理由</th></tr>
+        <tr><td>40秒</td><td><span class="ref-badge prep">PREP</span></td><td>短時間で結論が伝わる</td></tr>
+        <tr><td>80秒</td><td><span class="ref-badge prep">PREP</span> + <span class="ref-badge story">感情型</span></td><td>構成＋エピソードで厚みが出る</td></tr>
+        <tr><td>2分</td><td><span class="ref-badge area">AREA</span> + <span class="ref-badge prep">PREP</span></td><td>深い内容を丁寧に伝えられる</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 毎日3分練習 -->
+  <div class="card">
+    <div class="section-title">&#128170; 毎日3分練習</div>
+    <div class="card-body">
+      <div class="practice-box">
+        <div class="practice-title">声トレ3分ルーティン</div>
+        <div class="practice-steps">
+          <span class="practice-step-num">1</span>今日の出来事を1つ選ぶ<br>
+          <span class="practice-step-num">2</span>AREAで構成する<br>
+          <span class="practice-step-num">3</span>40秒で話す<br>
+          <span class="practice-step-num">4</span>PREPで言い直す
+        </div>
+      </div>
+
+      <div style="margin-top: 14px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
+        <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">&#128161; 参考例：「昼に食べたラーメンがおいしかった」</div>
+
+        <div style="font-size: 12px; color: var(--text-sub); font-weight: 700; margin-top: 10px;">AREA（共感 &#9654; 理由 &#9654; 例 &#9654; 行動）</div>
+        <div style="font-size: 13px; line-height: 1.8; margin-top: 4px; padding: 8px 10px; background: var(--accent-light); border-radius: 8px;">
+          「おいしいラーメン屋って見つけるの大変ですよね。<br>
+          でも今日行った店は、スープの深みが段違いでした。<br>
+          特に煮干し系のダシが効いていて、最後の一滴まで飲めました。<br>
+          もし近くに来たら、ぜひ一度試してみてほしいです。」
+        </div>
+
+        <div style="font-size: 12px; color: var(--text-sub); font-weight: 700; margin-top: 12px;">PREP（結論 &#9654; 理由 &#9654; 例 &#9654; まとめ）</div>
+        <div style="font-size: 13px; line-height: 1.8; margin-top: 4px; padding: 8px 10px; background: var(--blue-light); border-radius: 8px;">
+          「今日のランチのラーメンが最高でした。<br>
+          理由は、スープと麺のバランスがとにかく良かったからです。<br>
+          煮干しダシに中太麺が絡んで、一口目から感動しました。<br>
+          迷ったらここ、と自信を持っておすすめできるお店です。」
+        </div>
+
+        <div style="font-size: 12px; color: var(--text-sub); margin-top: 10px; line-height: 1.7;">
+          同じ出来事でも話法を変えるだけで印象が変わります。<br>
+          この「言い直し」が、話し方の引き出しを増やす一番の近道です。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="card">
+    <div class="card-body">
+      <div class="quote-box">
+        <div class="quote-text">
+          話法は「才能」ではなく「技術」<br>
+          使い分けできれば<br>
+          誰でも伝わる人になれます
+        </div>
+        <div class="quote-sub">一人話し方GYM</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 </body>
 </html>
