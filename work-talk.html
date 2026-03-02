@@ -1,217 +1,453 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>仕事用トーク術（実戦版）</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>仕事用トーク術｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --brown: #6d4c2e;
+  --brown-light: rgba(109, 76, 46, .08);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(109,76,46,.2) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-body { padding: 16px 18px; }
+.section-title {
+  font-family: var(--font-serif); font-size: 16px; font-weight: 700;
+  padding: 14px 18px 10px; display: flex; align-items: center; gap: 8px;
+}
+
+/* Scene card */
+.scene-card {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 12px; overflow: hidden;
+}
+.scene-card:last-child { margin-bottom: 0; }
+.scene-header {
+  padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--border); background: var(--bg);
+}
+.scene-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 900; color: #fff; flex-shrink: 0;
+  background: var(--brown);
+}
+.scene-title { font-weight: 700; font-size: 14px; }
+.scene-method {
+  margin-left: auto; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; flex-shrink: 0;
+}
+.method-area { background: var(--accent-light); color: var(--accent); }
+.method-prep { background: var(--blue-light); color: var(--blue); }
+.method-mix { background: var(--orange-light); color: var(--orange); }
+.scene-body { padding: 12px 14px; font-size: 13px; line-height: 1.9; }
+.tag-a {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: var(--accent); color: #fff; padding: 1px 6px;
+  border-radius: 4px; margin-right: 3px; vertical-align: middle;
+}
+.tag-p {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: var(--blue); color: #fff; padding: 1px 6px;
+  border-radius: 4px; margin-right: 3px; vertical-align: middle;
+}
+.tag-r {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: var(--green); color: #fff; padding: 1px 6px;
+  border-radius: 4px; margin-right: 3px; vertical-align: middle;
+}
+.tag-e {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: var(--orange); color: #fff; padding: 1px 6px;
+  border-radius: 4px; margin-right: 3px; vertical-align: middle;
+}
+
+/* Reword table */
+.reword-table { width: 100%; border-collapse: collapse; }
+.reword-table td {
+  padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.reword-table tr:last-child td { border-bottom: none; }
+.rw-bad { color: var(--accent); font-weight: 600; }
+.rw-good { color: var(--green); font-weight: 600; }
+
+/* Don't list */
+.dont-item {
+  display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;
+}
+.dont-item:last-child { margin-bottom: 0; }
+.dont-num {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; background: var(--accent);
+}
+.dont-text { font-size: 13px; line-height: 1.6; }
+
+/* Practice box */
+.practice-box {
+  background: var(--green-light); border: 1px solid rgba(39,174,96,.2);
+  border-radius: var(--radius-sm); padding: 14px;
+}
+.practice-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+.practice-steps { font-size: 13px; line-height: 2; }
+.practice-step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%; background: var(--green);
+  color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px;
+}
+
+/* Quote */
+.quote-box { text-align: center; padding: 20px 16px; }
+.quote-text {
+  font-family: var(--font-serif); font-size: 18px; font-weight: 700; line-height: 1.8;
+}
+.quote-sub { font-size: 13px; color: var(--text-sub); margin-top: 8px; }
+
+/* Links */
+.link-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.link-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  text-decoration: none; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: #fff; color: var(--text);
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: all .15s;
+}
+.link-btn:active { transform: scale(.97); }
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .scene-body { padding: 10px 12px; }
+  .header h1 { font-size: 20px; }
+  .dont-item { flex-direction: column; gap: 2px; }
+}
+</style>
+</head>
 <body>
 
-<header class="top">
-  <h1>📕 仕事用トーク術（実戦版）</h1>
+<div class="header">
+  <h1>仕事用トーク術</h1>
   <p class="sub">交渉・調整・報告・依頼・クレーム対応の型</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
-</header>
-
-<main class="menu">
-
-<div class="card" style="display:block;">
-
-<pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.9;">
-
-
-━━━━━━━━━━━━━━━━━━
-【このページの目的】
-━━━━━━━━━━━━━━━━━━
-
-・仕事で「揉めずに通す」
-・信頼を積み上げる
-・無駄なストレスを減らす
-
-ための実戦用トーク集。
-
-
-━━━━━━━━━━━━━━━━━━
-【基本はAREA＋PREP】
-━━━━━━━━━━━━━━━━━━
-
-① AREAで関係を守る
-② PREPで内容を通す
-
-この順が最強。
-
-
-━━━━━━━━━━━━━━━━━━
-【① 報告・連絡・相談（ホウレンソウ）】
-━━━━━━━━━━━━━━━━━━
-
-型（PREP）
-
-P：結論 → R：理由 → E：事実 → P：対応
-
-例：
-結論：〇〇の件、対応完了しました。
-理由：△△の理由で…
-事実：□□の状況でした。
-対応：今後は◇◇で進めます。
-
-
-━━━━━━━━━━━━━━━━━━
-【② 依頼・お願いを通す】
-━━━━━━━━━━━━━━━━━━
-
-型（AREA）
-
-A：いつもありがとうございます。
-R：〇〇の理由で調整が必要で…
-E：以前もこの方法で助かりました。
-A：今回は◇◇でお願いできますか？
-
-
-━━━━━━━━━━━━━━━━━━
-【③ 反対・異論を出す】
-━━━━━━━━━━━━━━━━━━
-
-型（AREA＋PREP）
-
-A：ご意見ありがとうございます。
-P：私は〇〇案が良いと思います。
-R：理由は△△です。
-E：実際□□でした。
-P：なので〇〇案で進めたいです。
-
-
-━━━━━━━━━━━━━━━━━━
-【④ クレーム・苦情対応】
-━━━━━━━━━━━━━━━━━━
-
-型（AREA）
-
-A：ご不便をおかけし申し訳ありません。
-R：状況を確認したところ…
-E：現在〇〇の状態です。
-A：◇◇までに対応いたします。
-
-
-━━━━━━━━━━━━━━━━━━
-【⑤ ミス・トラブル報告】
-━━━━━━━━━━━━━━━━━━
-
-型（PREP＋AREA）
-
-P：〇〇のミスがありました。
-A：ご迷惑をおかけし申し訳ありません。
-R：原因は△△です。
-E：□□の工程で発生しました。
-P：再発防止として◇◇します。
-
-
-━━━━━━━━━━━━━━━━━━
-【⑥ スケジュール・条件交渉】
-━━━━━━━━━━━━━━━━━━
-
-型（AREA）
-
-A：ご調整ありがとうございます。
-R：現在△△の事情があり…
-E：このままだと□□が難しく…
-A：◇日以降に変更可能でしょうか。
-
-
-━━━━━━━━━━━━━━━━━━
-【⑦ 会議・打ち合わせ発言】
-━━━━━━━━━━━━━━━━━━
-
-型（PREP）
-
-結論→理由→例→まとめ
-
-短く・明確に。
-
-
-━━━━━━━━━━━━━━━━━━
-【⑧ NOを伝える（断り方）】
-━━━━━━━━━━━━━━━━━━
-
-型（AREA）
-
-A：お声がけありがとうございます。
-R：現状△△の制約があり…
-E：現在□□が重なっていて…
-A：今回は見送らせてください。
-
-
-━━━━━━━━━━━━━━━━━━
-【⑨ 部下・後輩指導】
-━━━━━━━━━━━━━━━━━━
-
-型（AREA＋具体）
-
-A：よく頑張っているね。
-R：さらに良くするために…
-E：この部分が惜しい。
-A：次はここを意識しよう。
-
-
-━━━━━━━━━━━━━━━━━━
-【⑩ 上司への提案】
-━━━━━━━━━━━━━━━━━━
-
-型（PREP＋AREA）
-
-A：お時間ありがとうございます。
-P：〇〇案を提案します。
-R：理由は△△です。
-E：□□の実績があります。
-P：ご検討お願いします。
-
-
-━━━━━━━━━━━━━━━━━━
-【言い換え集（仕事用）】
-━━━━━━━━━━━━━━━━━━
-
-× 無理です → ○ 現状難しいです
-× 知りません → ○ 確認します
-× 忙しい → ○ 〇時以降対応可能
-× できてません → ○ 対応中です
-
-
-━━━━━━━━━━━━━━━━━━
-【やってはいけない3つ】
-━━━━━━━━━━━━━━━━━━
-
-① 感情で返す
-② 言い訳から入る
-③ 結論を濁す
-
-
-━━━━━━━━━━━━━━━━━━
-【毎日3分トレーニング】
-━━━━━━━━━━━━━━━━━━
-
-① 今日の会話を1つ思い出す
-② 型に当てはめる
-③ 声に出す
-
-→ 現場対応力が上がる。
-
-
-━━━━━━━━━━━━━━━━━━
-【まとめ】
-━━━━━━━━━━━━━━━━━━
-
-仕事の会話は
-「才能」ではなく「設計」。
-
-型を持つ人が強い。
-
-</pre>
-
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
 </div>
 
-</main>
+<div class="container">
+
+  <!-- 目的 -->
+  <div class="card">
+    <div class="section-title">&#128218; このページの目的</div>
+    <div class="card-body">
+      <div style="font-size: 14px; line-height: 1.8;">
+        仕事で「揉めずに通す」「信頼を積み上げる」「無駄なストレスを減らす」ための実戦用トーク集です。基本はAREAで関係を守り、PREPで内容を通す。この順番が最強です。
+      </div>
+      <div class="link-row" style="margin-top: 10px;">
+        <a href="area.html" class="link-btn">&#128227; AREA話法を見る</a>
+        <a href="prep.html" class="link-btn">&#128226; PREP話法を見る</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10シーン -->
+  <div class="card">
+    <div class="section-title">&#128188; 10の仕事シーン別トーク</div>
+    <div class="card-body">
+
+      <!-- ① 報連相 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">1</span>
+          <span class="scene-title">報告・連絡・相談</span>
+          <span class="scene-method method-prep">PREP</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-p">P</span> 〇〇の件、対応完了しました。<br>
+          <span class="tag-r">R</span> △△の理由で...<br>
+          <span class="tag-e">E</span> □□の状況でした。<br>
+          <span class="tag-p">P</span> 今後は&#9671;&#9671;で進めます。
+        </div>
+      </div>
+
+      <!-- ② 依頼 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">2</span>
+          <span class="scene-title">依頼・お願いを通す</span>
+          <span class="scene-method method-area">AREA</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-a">A</span> いつもありがとうございます。<br>
+          <span class="tag-r">R</span> 〇〇の理由で調整が必要で...<br>
+          <span class="tag-e">E</span> 以前もこの方法で助かりました。<br>
+          <span class="tag-a">A</span> 今回は&#9671;&#9671;でお願いできますか？
+        </div>
+      </div>
+
+      <!-- ③ 反対・異論 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">3</span>
+          <span class="scene-title">反対・異論を出す</span>
+          <span class="scene-method method-mix">AREA+PREP</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-a">A</span> ご意見ありがとうございます。<br>
+          <span class="tag-p">P</span> 私は〇〇案が良いと思います。<br>
+          <span class="tag-r">R</span> 理由は△△です。<br>
+          <span class="tag-e">E</span> 実際□□でした。<br>
+          <span class="tag-p">P</span> なので〇〇案で進めたいです。
+        </div>
+      </div>
+
+      <!-- ④ クレーム対応 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">4</span>
+          <span class="scene-title">クレーム・苦情対応</span>
+          <span class="scene-method method-area">AREA</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-a">A</span> ご不便をおかけし申し訳ありません。<br>
+          <span class="tag-r">R</span> 状況を確認したところ...<br>
+          <span class="tag-e">E</span> 現在〇〇の状態です。<br>
+          <span class="tag-a">A</span> &#9671;&#9671;までに対応いたします。
+        </div>
+      </div>
+
+      <!-- ⑤ ミス報告 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">5</span>
+          <span class="scene-title">ミス・トラブル報告</span>
+          <span class="scene-method method-mix">PREP+AREA</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-p">P</span> 〇〇のミスがありました。<br>
+          <span class="tag-a">A</span> ご迷惑をおかけし申し訳ありません。<br>
+          <span class="tag-r">R</span> 原因は△△です。<br>
+          <span class="tag-e">E</span> □□の工程で発生しました。<br>
+          <span class="tag-p">P</span> 再発防止として&#9671;&#9671;します。
+        </div>
+      </div>
+
+      <!-- ⑥ 交渉 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">6</span>
+          <span class="scene-title">スケジュール・条件交渉</span>
+          <span class="scene-method method-area">AREA</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-a">A</span> ご調整ありがとうございます。<br>
+          <span class="tag-r">R</span> 現在△△の事情があり...<br>
+          <span class="tag-e">E</span> このままだと□□が難しく...<br>
+          <span class="tag-a">A</span> &#9671;日以降に変更可能でしょうか。
+        </div>
+      </div>
+
+      <!-- ⑦ 会議発言 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">7</span>
+          <span class="scene-title">会議・打ち合わせ発言</span>
+          <span class="scene-method method-prep">PREP</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-p">P</span> 〇〇だと考えます。<br>
+          <span class="tag-r">R</span> 理由は△△です。<br>
+          <span class="tag-e">E</span> 例えば□□のケースでは...<br>
+          <span class="tag-p">P</span> よって〇〇が良いと思います。<br>
+          <div style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">短く・明確に。発言は30秒以内を意識。</div>
+        </div>
+      </div>
+
+      <!-- ⑧ 断り -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">8</span>
+          <span class="scene-title">NOを伝える（断り方）</span>
+          <span class="scene-method method-area">AREA</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-a">A</span> お声がけありがとうございます。<br>
+          <span class="tag-r">R</span> 現状△△の制約があり...<br>
+          <span class="tag-e">E</span> 現在□□が重なっていて...<br>
+          <span class="tag-a">A</span> 今回は見送らせてください。
+        </div>
+      </div>
+
+      <!-- ⑨ 指導 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">9</span>
+          <span class="scene-title">部下・後輩指導</span>
+          <span class="scene-method method-area">AREA</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-a">A</span> よく頑張っているね。<br>
+          <span class="tag-r">R</span> さらに良くするために...<br>
+          <span class="tag-e">E</span> この部分が惜しい。<br>
+          <span class="tag-a">A</span> 次はここを意識しよう。
+        </div>
+      </div>
+
+      <!-- ⑩ 提案 -->
+      <div class="scene-card">
+        <div class="scene-header">
+          <span class="scene-num">10</span>
+          <span class="scene-title">上司への提案</span>
+          <span class="scene-method method-mix">AREA+PREP</span>
+        </div>
+        <div class="scene-body">
+          <span class="tag-a">A</span> お時間ありがとうございます。<br>
+          <span class="tag-p">P</span> 〇〇案を提案します。<br>
+          <span class="tag-r">R</span> 理由は△△です。<br>
+          <span class="tag-e">E</span> □□の実績があります。<br>
+          <span class="tag-p">P</span> ご検討お願いします。
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 言い換え集 -->
+  <div class="card">
+    <div class="section-title">&#128260; 言い換え集（仕事用）</div>
+    <div class="card-body">
+      <table class="reword-table">
+        <tr>
+          <td><span class="rw-bad">&#10005; 無理です</span></td>
+          <td><span class="rw-good">&#9675; 現状難しいです</span></td>
+        </tr>
+        <tr>
+          <td><span class="rw-bad">&#10005; 知りません</span></td>
+          <td><span class="rw-good">&#9675; 確認します</span></td>
+        </tr>
+        <tr>
+          <td><span class="rw-bad">&#10005; 忙しい</span></td>
+          <td><span class="rw-good">&#9675; 〇時以降対応可能です</span></td>
+        </tr>
+        <tr>
+          <td><span class="rw-bad">&#10005; できてません</span></td>
+          <td><span class="rw-good">&#9675; 対応中です</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- やってはいけない3つ -->
+  <div class="card">
+    <div class="section-title">&#9888; やってはいけない3つ</div>
+    <div class="card-body">
+      <div class="dont-item">
+        <span class="dont-num">1</span>
+        <div class="dont-text"><strong>感情で返す</strong> &#8594; まず共感（A）で受け止めてから、理由（R）で冷静に伝える。</div>
+      </div>
+      <div class="dont-item">
+        <span class="dont-num">2</span>
+        <div class="dont-text"><strong>言い訳から入る</strong> &#8594; 結論（P）を先に言う。事情は後から添える。</div>
+      </div>
+      <div class="dont-item">
+        <span class="dont-num">3</span>
+        <div class="dont-text"><strong>結論を濁す</strong> &#8594; 「〇〇です」と言い切る。曖昧さは信頼を削る。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 毎日3分 -->
+  <div class="card">
+    <div class="section-title">&#128170; 毎日3分トレーニング</div>
+    <div class="card-body">
+      <div class="practice-box">
+        <div class="practice-title">現場力アップ・3分ルーティン</div>
+        <div class="practice-steps">
+          <span class="practice-step-num">1</span>今日の会話を1つ思い出す<br>
+          <span class="practice-step-num">2</span>上の10パターンから型を選ぶ<br>
+          <span class="practice-step-num">3</span>型に当てはめて声に出す
+        </div>
+        <div style="font-size: 12px; color: var(--text-sub); margin-top: 10px;">
+          毎日やるだけで、とっさの場面でも型が出てくるようになります
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="card">
+    <div class="card-body">
+      <div class="quote-box">
+        <div class="quote-text">
+          仕事の会話は<br>
+          「才能」ではなく「設計」<br>
+          型を持つ人が強い
+        </div>
+        <div class="quote-sub">一人話し方GYM</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 </body>
 </html>
