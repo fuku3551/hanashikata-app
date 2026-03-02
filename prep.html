@@ -1,222 +1,471 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PREP話法（詳細版）</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREP話法｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 0%, rgba(41,128,185,.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-header .icon { font-size: 16px; }
+.card-header .label { font-weight: 700; font-size: 15px; letter-spacing: .03em; }
+.card-body { padding: 16px 18px; }
+
+.section-title {
+  font-family: var(--font-serif); font-size: 16px; font-weight: 700;
+  padding: 14px 18px 10px; display: flex; align-items: center; gap: 8px;
+}
+
+/* Step cards */
+.step-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px;
+}
+.step-card:last-child { margin-bottom: 0; }
+.step-head {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.step-letter {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900; color: #fff; flex-shrink: 0;
+  background: var(--blue);
+}
+.step-title { font-weight: 700; font-size: 15px; }
+.step-purpose { font-size: 12px; color: var(--text-sub); }
+.step-content { font-size: 13px; line-height: 1.8; }
+.step-phrases {
+  background: #fff; border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 12px; margin: 6px 0; font-size: 13px; line-height: 1.8;
+}
+.step-tip { font-size: 12px; color: var(--blue); margin-top: 4px; }
+
+/* Flow */
+.flow {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  margin: 10px 0; padding: 10px 14px;
+  background: var(--blue-light); border-radius: var(--radius-sm);
+}
+.flow-step {
+  font-size: 14px; font-weight: 700; padding: 4px 10px;
+  border-radius: 8px; background: #fff; border: 1px solid var(--border);
+}
+.flow-arrow { color: var(--text-sub); font-size: 12px; opacity: .5; }
+
+/* Tables */
+.ref-table { width: 100%; border-collapse: collapse; margin: 6px 0; }
+.ref-table th {
+  text-align: left; font-size: 12px; font-weight: 700;
+  padding: 8px 10px; background: var(--bg); border-bottom: 1px solid var(--border);
+  color: var(--text-sub);
+}
+.ref-table td {
+  padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.ref-table tr:last-child td { border-bottom: none; }
+
+/* Scene examples */
+.scene-box {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 10px; overflow: hidden;
+}
+.scene-box:last-child { margin-bottom: 0; }
+.scene-label {
+  font-size: 12px; font-weight: 700; padding: 8px 12px;
+  background: var(--blue-light); color: var(--blue);
+  border-bottom: 1px solid var(--border);
+}
+.scene-body {
+  padding: 10px 12px; font-size: 13px; line-height: 1.9;
+}
+.scene-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: var(--blue); color: #fff; padding: 1px 6px;
+  border-radius: 4px; margin-right: 4px; vertical-align: middle;
+}
+
+/* Fail/fix */
+.fail-fix {
+  display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start;
+}
+.fail-fix:last-child { margin-bottom: 0; }
+.fail-badge {
+  flex-shrink: 0; font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px;
+}
+.fail-badge.fail { background: var(--accent-light); color: var(--accent); }
+.fail-badge.fix { background: var(--green-light); color: var(--green); }
+.fail-text { font-size: 13px; line-height: 1.6; }
+
+/* Combo box */
+.combo-box {
+  background: var(--orange-light); border: 1px solid rgba(230,126,34,.15);
+  border-radius: var(--radius-sm); padding: 14px;
+}
+
+/* Quote */
+.quote-box { text-align: center; padding: 20px 16px; }
+.quote-text {
+  font-family: var(--font-serif); font-size: 18px; font-weight: 700; line-height: 1.8;
+}
+.quote-sub { font-size: 13px; color: var(--text-sub); margin-top: 8px; }
+
+/* Template box */
+.template-box {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  font-size: 13px; line-height: 1.9; margin-bottom: 10px;
+}
+.template-box:last-child { margin-bottom: 0; }
+.template-label {
+  font-size: 11px; font-weight: 700; color: var(--text-sub);
+  margin-bottom: 4px;
+}
+
+/* Link */
+.link-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.link-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  text-decoration: none; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: #fff; color: var(--text);
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: all .15s;
+}
+.link-btn:active { transform: scale(.97); }
+.link-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .flow { gap: 3px; padding: 8px 10px; }
+  .flow-step { font-size: 12px; padding: 3px 8px; }
+  .header h1 { font-size: 20px; }
+  .fail-fix { flex-direction: column; gap: 2px; }
+}
+</style>
+</head>
 <body>
 
-<header class="top">
-  <h1>📢 PREP話法（詳細版）</h1>
-  <p class="sub">短時間で「結論→納得→記憶」に残す話し方</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
-</header>
-
-<main class="menu">
-
-<div class="card" style="display:block;">
-
-<pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.9;">
-
-
-━━━━━━━━━━━━━━━━━━
-【PREP話法とは？】
-━━━━━━━━━━━━━━━━━━
-
-PREPは、
-「短く・正確に・伝わる」ための最強構造。
-
-P：Point（結論）
-R：Reason（理由）
-E：Example（具体例）
-P：Point（再結論）
-
-説明・報告・プレゼン・推薦に最適。
-
-
-━━━━━━━━━━━━━━━━━━
-【どんな時に使う？（使い分け）】
-━━━━━━━━━━━━━━━━━━
-
-◎ PREPが向く場面
-・会議、報告、連絡
-・プレゼン、発表
-・おすすめ紹介
-・業務説明
-・短時間スピーチ
-
-△ AREAが向く場面
-・感情ケア、説得、注意
-
-
-━━━━━━━━━━━━━━━━━━
-① P：Point（結論）
-━━━━━━━━━━━━━━━━━━
-
-目的：最初に「何を言いたいか」を示す
-
-型
-・結論から言います
-・一番伝えたいのは〇〇です
-・私の意見は△△です
-
-コツ
-・最初の5秒が勝負
-・結論は1つだけ
-
-
-━━━━━━━━━━━━━━━━━━
-② R：Reason（理由）
-━━━━━━━━━━━━━━━━━━
-
-目的：なぜそう言えるのかを説明
-
-型
-・なぜなら〇〇だからです
-・理由は主に2つあります
-
-コツ
-・理由は1〜2個まで
-・相手目線で選ぶ
-
-
-━━━━━━━━━━━━━━━━━━
-③ E：Example（具体例）
-━━━━━━━━━━━━━━━━━━
-
-目的：納得感と記憶定着
-
-型
-・例えば〜の時に…
-・実際に〇〇では…
-
-コツ
-・数字／体験／比較が効く
-・長くしすぎない
-
-
-━━━━━━━━━━━━━━━━━━
-④ P：Point（再結論）
-━━━━━━━━━━━━━━━━━━
-
-目的：印象に残して終わる
-
-型
-・だから〇〇が大切です
-・以上から△△をおすすめします
-
-コツ
-・最初と同じ結論で締める
-
-
-━━━━━━━━━━━━━━━━━━
-【基本テンプレ（短文）】
-━━━━━━━━━━━━━━━━━━
-
-結論：〇〇がおすすめです。
-理由：なぜなら△△だからです。
-例：例えば□□の時に…
-再結論：だから〇〇が最適です。
-
-
-━━━━━━━━━━━━━━━━━━
-【基本テンプレ（丁寧）】
-━━━━━━━━━━━━━━━━━━
-
-結論からお伝えします。〇〇が最善です。
-理由は主に△△と□□です。
-例えば、□□の場面では〇〇でした。
-以上より、〇〇をおすすめします。
-
-
-━━━━━━━━━━━━━━━━━━
-【シーン別・即使える例文】
-━━━━━━━━━━━━━━━━━━
-
-■ 介護（申し送り・報告）
-結論：本日は体位調整を優先すべきです。
-理由：SpO2が低下傾向にあるためです。
-例：先週も同様の数値で改善しました。
-再結論：まず体位調整を実施します。
-
-■ 職場（改善提案）
-結論：夜勤間隔を1日空けたいです。
-理由：集中力低下のリスクがあるためです。
-例：先月、判断ミスが起きかけました。
-再結論：安全面からも必要だと考えます。
-
-■ おすすめ紹介（80秒）
-結論：この本は必読です。
-理由：実践性が高いからです。
-例：私もすぐ行動が変わりました。
-再結論：ぜひ読んでみてください。
-
-■ スピーチ（40秒）
-結論：継続が一番大切です。
-理由：成果は後から来るからです。
-例：私も半年後に変化しました。
-再結論：今日から続けましょう。
-
-
-━━━━━━━━━━━━━━━━━━
-【よくある失敗と対策】
-━━━━━━━━━━━━━━━━━━
-
-失敗①：結論が遅い
-→ 最初に言い切る
-
-失敗②：理由が多すぎる
-→ 2個までに絞る
-
-失敗③：例が抽象的
-→ 数字・体験を入れる
-
-失敗④：締めが弱い
-→ 最初と同じ結論で終える
-
-
-━━━━━━━━━━━━━━━━━━
-【時間別：PREP活用】
-━━━━━━━━━━━━━━━━━━
-
-■ 30〜40秒
-P10秒 → R10秒 → E10秒 → P10秒
-
-■ 80秒
-P15秒 → R20秒 → E30秒 → P15秒
-
-■ 2分
-P20秒 → R30秒 → E50秒 → P20秒
-
-
-━━━━━━━━━━━━━━━━━━
-【AREAとの併用パターン】
-━━━━━━━━━━━━━━━━━━
-
-① AREAで共感
-② PREPで整理
-
-例：
-A：大変ですよね
-→ P：結論は〇〇です
-→ R/E/Pで説明
-
-
-━━━━━━━━━━━━━━━━━━
-【まとめ】
-━━━━━━━━━━━━━━━━━━
-
-PREPは「速く・正確に・伝える」技術。
-迷ったらまず結論から。
-
-</pre>
-
+<div class="header">
+  <h1>PREP話法</h1>
+  <p class="sub">短時間で「結論 &#8594; 納得 &#8594; 記憶」に残す話し方</p>
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
 </div>
 
-</main>
+<div class="container">
+
+  <!-- PREP話法とは -->
+  <div class="card">
+    <div class="section-title">&#128218; PREP話法とは？</div>
+    <div class="card-body">
+      <div style="font-size: 14px; line-height: 1.8; margin-bottom: 10px;">
+        「短く・正確に・伝わる」ための最強構造です。説明・報告・プレゼン・おすすめ紹介に最適。
+      </div>
+      <div class="flow">
+        <span class="flow-step">P 結論</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">R 理由</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">E 具体例</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">P 再結論</span>
+      </div>
+      <div style="font-size: 12px; color: var(--text-sub); margin-top: 6px;">
+        &#9675; 会議、報告、連絡、プレゼン、おすすめ紹介、短時間スピーチ<br>
+        &#9651; 感情ケア・説得・注意には AREA が向いています
+      </div>
+    </div>
+  </div>
+
+  <!-- 4ステップ -->
+  <div class="card">
+    <div class="section-title">&#128297; 4つのステップ</div>
+    <div class="card-body">
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-letter">P</span>
+          <div>
+            <div class="step-title">Point（結論）</div>
+            <div class="step-purpose">最初に「何を言いたいか」を示す</div>
+          </div>
+        </div>
+        <div class="step-phrases">
+          「結論から言います。〇〇です。」<br>
+          「一番伝えたいのは〇〇です。」
+        </div>
+        <div class="step-tip">&#9733; 最初の5秒が勝負。結論は1つだけに絞る。</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-letter">R</span>
+          <div>
+            <div class="step-title">Reason（理由）</div>
+            <div class="step-purpose">なぜそう言えるのかを説明</div>
+          </div>
+        </div>
+        <div class="step-phrases">
+          「なぜなら〇〇だからです。」<br>
+          「理由は主に2つあります。」
+        </div>
+        <div class="step-tip">&#9733; 理由は1〜2個まで。相手目線で選ぶ。</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-letter">E</span>
+          <div>
+            <div class="step-title">Example（具体例）</div>
+            <div class="step-purpose">納得感と記憶定着を狙う</div>
+          </div>
+        </div>
+        <div class="step-phrases">
+          「例えば〜の時に...」<br>
+          「実際に〇〇では...」
+        </div>
+        <div class="step-tip">&#9733; 数字・体験・比較が効く。長くしすぎない。</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-letter">P</span>
+          <div>
+            <div class="step-title">Point（再結論）</div>
+            <div class="step-purpose">印象に残して終わる</div>
+          </div>
+        </div>
+        <div class="step-phrases">
+          「だから〇〇が大切です。」<br>
+          「以上から△△をおすすめします。」
+        </div>
+        <div class="step-tip">&#9733; 最初と同じ結論で締める。ブレないことが信頼に。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- テンプレ -->
+  <div class="card">
+    <div class="section-title">&#128196; 基本テンプレ</div>
+    <div class="card-body">
+      <div class="template-box">
+        <div class="template-label">短文バージョン</div>
+        <span class="scene-tag">P</span> 〇〇がおすすめです。<br>
+        <span class="scene-tag">R</span> なぜなら△△だからです。<br>
+        <span class="scene-tag">E</span> 例えば□□の時に...<br>
+        <span class="scene-tag">P</span> だから〇〇が最適です。
+      </div>
+      <div class="template-box">
+        <div class="template-label">丁寧バージョン</div>
+        <span class="scene-tag">P</span> 結論からお伝えします。〇〇が最善です。<br>
+        <span class="scene-tag">R</span> 理由は主に△△と□□です。<br>
+        <span class="scene-tag">E</span> 例えば、□□の場面では〇〇でした。<br>
+        <span class="scene-tag">P</span> 以上より、〇〇をおすすめします。
+      </div>
+    </div>
+  </div>
+
+  <!-- シーン別例文 -->
+  <div class="card">
+    <div class="section-title">&#128172; シーン別・即使える例文</div>
+    <div class="card-body">
+
+      <div class="scene-box">
+        <div class="scene-label">&#129658; 介護（申し送り・報告）</div>
+        <div class="scene-body">
+          <span class="scene-tag">P</span> 本日は体位調整を優先すべきです。<br>
+          <span class="scene-tag">R</span> SpO2が低下傾向にあるためです。<br>
+          <span class="scene-tag">E</span> 先週も同様の数値で、調整後に改善しました。<br>
+          <span class="scene-tag">P</span> まず体位調整を実施します。
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#128188; 職場（改善提案）</div>
+        <div class="scene-body">
+          <span class="scene-tag">P</span> 夜勤間隔を1日空けたいです。<br>
+          <span class="scene-tag">R</span> 集中力低下のリスクがあるためです。<br>
+          <span class="scene-tag">E</span> 先月、判断ミスが起きかけました。<br>
+          <span class="scene-tag">P</span> 安全面からも必要だと考えます。
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#128218; おすすめ紹介（80秒向き）</div>
+        <div class="scene-body">
+          <span class="scene-tag">P</span> この本はぜひ読んでほしいです。<br>
+          <span class="scene-tag">R</span> 実践性が高く、すぐ活かせるからです。<br>
+          <span class="scene-tag">E</span> 私も読んだ翌日から行動が変わりました。<br>
+          <span class="scene-tag">P</span> 迷ったらまずこの一冊をおすすめします。
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#127908; スピーチ（40秒向き）</div>
+        <div class="scene-body">
+          <span class="scene-tag">P</span> 継続が一番大切です。<br>
+          <span class="scene-tag">R</span> 成果は後からついてくるからです。<br>
+          <span class="scene-tag">E</span> 私も半年続けて初めて変化を実感しました。<br>
+          <span class="scene-tag">P</span> 今日から一歩ずつ、続けていきましょう。
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- よくある失敗と対策 -->
+  <div class="card">
+    <div class="section-title">&#9888; よくある失敗と対策</div>
+    <div class="card-body">
+      <div class="fail-fix">
+        <span class="fail-badge fail">失敗</span>
+        <span class="fail-badge fix">対策</span>
+      </div>
+
+      <div class="fail-fix">
+        <span class="fail-badge fail">結論が遅い</span>
+        <div class="fail-text">&#8594; 最初に言い切る。「結論から言います」で始める。</div>
+      </div>
+      <div class="fail-fix">
+        <span class="fail-badge fail">理由が多すぎる</span>
+        <div class="fail-text">&#8594; 2個までに絞る。多いと聞き手が混乱する。</div>
+      </div>
+      <div class="fail-fix">
+        <span class="fail-badge fail">例が抽象的</span>
+        <div class="fail-text">&#8594; 数字・体験・比較を入れる。「実際に〜」が効く。</div>
+      </div>
+      <div class="fail-fix">
+        <span class="fail-badge fail">締めが弱い</span>
+        <div class="fail-text">&#8594; 最初と同じ結論で終える。ブレないことが信頼に。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 時間別配分 -->
+  <div class="card">
+    <div class="section-title">&#9201; 時間別PREP配分</div>
+    <div class="card-body">
+      <table class="ref-table">
+        <tr><th>時間</th><th>P</th><th>R</th><th>E</th><th>P</th></tr>
+        <tr><td>40秒</td><td>10秒</td><td>10秒</td><td>10秒</td><td>10秒</td></tr>
+        <tr><td>80秒</td><td>15秒</td><td>20秒</td><td>30秒</td><td>15秒</td></tr>
+        <tr><td>2分</td><td>20秒</td><td>30秒</td><td>50秒</td><td>20秒</td></tr>
+      </table>
+      <div class="link-row">
+        <a href="40sec.html" class="link-btn">&#9201; 40秒で練習</a>
+        <a href="80sec.html" class="link-btn">&#9201; 80秒で練習</a>
+        <a href="2min.html" class="link-btn">&#9201; 2分で練習</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AREAとの併用 -->
+  <div class="card">
+    <div class="section-title">&#128260; AREAとの併用パターン</div>
+    <div class="card-body">
+      <div class="combo-box">
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">まずAREAで共感 &#8594; PREPで整理</div>
+        <div style="font-size: 13px; line-height: 1.9;">
+          「大変ですよね（共感）」<br>
+          &#8595;<br>
+          「結論から言うと、〇〇がおすすめです。<br>
+          　なぜなら△△だからです。<br>
+          　例えば□□では...。<br>
+          　だから〇〇をおすすめします。」
+        </div>
+        <div style="font-size: 12px; color: var(--text-sub); margin-top: 8px;">
+          相手の気持ちに寄り添ってから論理的に伝える、最強の組み合わせです。
+        </div>
+      </div>
+      <div class="link-row">
+        <a href="area.html" class="link-btn">&#128227; AREA話法を見る</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="card">
+    <div class="card-body">
+      <div class="quote-box">
+        <div class="quote-text">
+          PREPは<br>
+          「速く・正確に・伝える」技術<br>
+          迷ったらまず結論から
+        </div>
+        <div class="quote-sub">一人話し方GYM</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 </body>
 </html>
