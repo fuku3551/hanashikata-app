@@ -1,261 +1,561 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AREA話法（詳細版）</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AREA話法｜一人話し方GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --bg: #f5f0e8;
+  --bg-card: #fffdf7;
+  --text: #2c2520;
+  --text-sub: #7a6e62;
+  --accent: #c0392b;
+  --accent-light: rgba(192, 57, 43, .08);
+  --blue: #2980b9;
+  --blue-light: rgba(41, 128, 185, .1);
+  --green: #27ae60;
+  --green-light: rgba(39, 174, 96, .1);
+  --orange: #e67e22;
+  --orange-light: rgba(230, 126, 34, .1);
+  --border: rgba(44, 37, 32, .1);
+  --shadow: 0 2px 12px rgba(44, 37, 32, .06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, #2c2520 0%, #4a3728 100%);
+  color: #fff; padding: 20px 20px 18px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, rgba(192,57,43,.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 700;
+  letter-spacing: .08em; position: relative;
+}
+.header .sub { font-size: 12px; opacity: .65; margin-top: 4px; position: relative; }
+.header .back-link {
+  display: inline-block; margin-top: 8px; color: rgba(255,255,255,.7);
+  text-decoration: none; font-size: 13px; position: relative; z-index: 10;
+  padding: 6px 12px; -webkit-tap-highlight-color: rgba(255,255,255,.15);
+  touch-action: manipulation;
+}
+.header .back-link:hover { color: #fff; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 16px; overflow: hidden;
+}
+.card-body { padding: 16px 18px; }
+.section-title {
+  font-family: var(--font-serif); font-size: 16px; font-weight: 700;
+  padding: 14px 18px 10px; display: flex; align-items: center; gap: 8px;
+}
+
+/* Flow */
+.flow {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  margin: 10px 0; padding: 10px 14px;
+  background: var(--accent-light); border-radius: var(--radius-sm);
+}
+.flow-step {
+  font-size: 14px; font-weight: 700; padding: 4px 10px;
+  border-radius: 8px; background: #fff; border: 1px solid var(--border);
+}
+.flow-arrow { color: var(--text-sub); font-size: 12px; opacity: .5; }
+
+/* Step cards */
+.step-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px;
+}
+.step-card:last-child { margin-bottom: 0; }
+.step-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.step-letter {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900; color: #fff; flex-shrink: 0;
+  background: var(--accent);
+}
+.step-title { font-weight: 700; font-size: 15px; }
+.step-purpose { font-size: 12px; color: var(--text-sub); }
+.step-tip { font-size: 12px; color: var(--accent); margin-top: 6px; }
+
+/* Phrase level groups */
+.phrase-group { margin: 6px 0; }
+.phrase-label {
+  font-size: 11px; font-weight: 700; color: var(--text-sub);
+  margin-bottom: 2px;
+}
+.phrase-box {
+  background: #fff; border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; line-height: 1.8; margin-bottom: 6px;
+}
+.phrase-ng {
+  background: var(--accent-light); border-color: rgba(192,57,43,.15);
+}
+.ng-label {
+  font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 2px;
+}
+
+/* Tables */
+.ref-table { width: 100%; border-collapse: collapse; margin: 6px 0; }
+.ref-table th {
+  text-align: left; font-size: 12px; font-weight: 700;
+  padding: 8px 10px; background: var(--bg); border-bottom: 1px solid var(--border);
+  color: var(--text-sub);
+}
+.ref-table td {
+  padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.ref-table tr:last-child td { border-bottom: none; }
+
+/* Reword table */
+.reword-table { width: 100%; border-collapse: collapse; }
+.reword-table td {
+  padding: 8px 10px; font-size: 13px; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.reword-table tr:last-child td { border-bottom: none; }
+.rw-bad { color: var(--accent); font-weight: 600; }
+.rw-good { color: var(--green); font-weight: 600; }
+
+/* Scene examples */
+.scene-box {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 10px; overflow: hidden;
+}
+.scene-box:last-child { margin-bottom: 0; }
+.scene-label {
+  font-size: 12px; font-weight: 700; padding: 8px 12px;
+  background: var(--accent-light); color: var(--accent);
+  border-bottom: 1px solid var(--border);
+}
+.scene-body { padding: 10px 12px; font-size: 13px; line-height: 1.9; }
+.scene-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: var(--accent); color: #fff; padding: 1px 6px;
+  border-radius: 4px; margin-right: 4px; vertical-align: middle;
+}
+
+/* Template */
+.template-box {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  font-size: 13px; line-height: 1.9; margin-bottom: 10px;
+}
+.template-box:last-child { margin-bottom: 0; }
+.template-label { font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 4px; }
+
+/* Fail/fix */
+.fail-fix { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+.fail-fix:last-child { margin-bottom: 0; }
+.fail-badge {
+  flex-shrink: 0; font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px;
+}
+.fail-badge.fail { background: var(--accent-light); color: var(--accent); }
+.fail-badge.fix { background: var(--green-light); color: var(--green); }
+.fail-text { font-size: 13px; line-height: 1.6; }
+
+/* Combo */
+.combo-box {
+  background: var(--blue-light); border: 1px solid rgba(41,128,185,.15);
+  border-radius: var(--radius-sm); padding: 14px;
+}
+
+/* Quote */
+.quote-box { text-align: center; padding: 20px 16px; }
+.quote-text {
+  font-family: var(--font-serif); font-size: 18px; font-weight: 700; line-height: 1.8;
+}
+.quote-sub { font-size: 13px; color: var(--text-sub); margin-top: 8px; }
+
+/* Links */
+.link-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.link-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  text-decoration: none; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: #fff; color: var(--text);
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: all .15s;
+}
+.link-btn:active { transform: scale(.97); }
+
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  .card-body { padding: 12px 14px; }
+  .flow { gap: 3px; padding: 8px 10px; }
+  .flow-step { font-size: 12px; padding: 3px 8px; }
+  .header h1 { font-size: 20px; }
+  .fail-fix { flex-direction: column; gap: 2px; }
+}
+</style>
+</head>
 <body>
 
-<header class="top">
-  <h1>🗣 AREA話法（詳細版）</h1>
-  <p class="sub">相手を否定せずに「理解→納得→行動」へ導く</p>
-  <p><a href="index.html">← ホームへ戻る</a></p>
-</header>
-
-<main class="menu">
-
-<div class="card" style="display:block;">
-
-<pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.9;">
-
-━━━━━━━━━━━━━━━━━━
-【AREA話法とは？】
-━━━━━━━━━━━━━━━━━━
-
-AREA（エリア）話法は、
-相手を否定せずに、自然に理解・納得・行動へ導く話し方。
-
-A：Agree（共感・肯定）
-R：Reason（理由・背景）
-E：Example（具体例）
-A：Action（行動提案）
-
-ポイントは「論破」ではなく「合意形成」。
-対人関係（家族、職場、利用者、交渉）で最強。
-
-
-━━━━━━━━━━━━━━━━━━
-【どんな時にAREAが最適？（使い分け）】
-━━━━━━━━━━━━━━━━━━
-
-◎ AREAが向く場面
-・相手が不安/怒り/抵抗感がある
-・注意やお願いをしたい（角が立ちやすい）
-・協力してほしい / 納得してもらいたい
-・対人トラブルを避けたい
-・「関係を壊さずに話を通したい」
-
-△ PREPの方が向く場面
-・報告、説明、プレゼン（情報を早く伝える）
-
-※揉めそうならまずAREA → その後PREPで整理、が最強。
-
-
-━━━━━━━━━━━━━━━━━━
-① A：Agree（共感・肯定）
-━━━━━━━━━━━━━━━━━━
-
-目的：相手の心を守る（防御反応を下げる）
-
-よく使う共感フレーズ（強さ別）
-【やわらかい】
-・大変でしたね
-・そう感じますよね
-・不安になりますよね
-
-【丁寧】
-・お疲れさまです
-・いつもありがとうございます
-・お気持ちお察しします
-
-【事実受け止め】
-・状況は理解しました
-・お困りなんですね
-
-NG（火に油）
-× でも／しかし（共感を壊す）
-× それは違う（否定）
-× なんでできないの？（責め）
-
-
-━━━━━━━━━━━━━━━━━━
-② R：Reason（理由・背景）
-━━━━━━━━━━━━━━━━━━
-
-目的：納得の土台を作る（感情→理屈へ橋をかける）
-
-型
-・実は〜という理由があって…
-・背景として〜があるんです
-・安全面/ルール/目的として〜で…
-
-コツ
-・「あなたが悪い」ではなく「仕組み・目的・安全」を理由にする
-・短く、1〜2個まで（長いと反発される）
-
-
-━━━━━━━━━━━━━━━━━━
-③ E：Example（具体例）
-━━━━━━━━━━━━━━━━━━
-
-目的：イメージ化して腹落ちさせる
-
-例の出し方（強い順）
-・自分の体験（実感がある）
-・過去の事例（再現性）
-・数字/頻度（客観性）
-
-型
-・例えば〜の時に…
-・以前〜というケースがあって…
-・実際に〜すると〜になりやすいです
-
-コツ
-・具体例は「短く・一個」でOK
-・相手の状況に近い例だと一気に伝わる
-
-
-━━━━━━━━━━━━━━━━━━
-④ A：Action（行動提案）
-━━━━━━━━━━━━━━━━━━
-
-目的：相手が動ける「次の一歩」を渡す
-
-提案の強さ（場面で選ぶ）
-【超やわらかい】
-・一度試してみませんか？
-・〜という方法もあります
-
-【普通】
-・次はこうしてみましょう
-・この形で進めたいです
-
-【交渉・線引き】
-・この範囲なら対応できます
-・ここまでは可能／ここからは難しいです
-
-コツ
-・「命令」より「選択肢」を混ぜると通りやすい
-・提案は具体的に（いつ・どこで・何を）
-
-
-━━━━━━━━━━━━━━━━━━
-【AREA基本テンプレ（短文）】
-━━━━━━━━━━━━━━━━━━
-
-A：〇〇ですよね。お疲れさまです。
-R：実は△△の理由があって…
-E：例えば□□の時に…
-A：なので、◇◇で進めてみませんか？
-
-
-━━━━━━━━━━━━━━━━━━
-【AREAテンプレ（長文：丁寧）】
-━━━━━━━━━━━━━━━━━━
-
-A：ご不安なお気持ち、よく分かります。お疲れさまです。
-R：安全面と状況確認のために、まず△△を優先したい理由があります。
-E：以前、□□のケースでは△△を先に行ったことで落ち着きました。
-A：まずは◇◇を一緒にやってみて、その後で次の手順に進めましょう。
-
-
-━━━━━━━━━━━━━━━━━━
-【シーン別：すぐ使える例文】
-━━━━━━━━━━━━━━━━━━
-
-■ 介護（利用者さん/ご家族への説明）
-A：不安になりますよね。ご心配ありがとうございます。
-R：呼吸を安定させるために、まず体位と痰の状態を確認します。
-E：以前も同じようにSpO2が下がった時、体位調整で戻りました。
-A：まずはこの手順で対応しますね。5分後にもう一度数値を確認しましょう。
-
-■ 介護（お願い・協力を引き出す）
-A：いつも協力してくださって助かっています。
-R：安全のため、ここは必ず声かけしてから動きたいです。
-E：急に動くと転倒につながることがあるので…
-A：動く前に一言「今から動きますね」をお願いします。
-
-■ 職場（上司・同僚に調整依頼）
-A：忙しい中ありがとうございます。相談させてください。
-R：今のままだと夜勤が連続になり、体調面のリスクが出そうで…
-E：先月も連続後に集中力が落ちかけた場面がありました。
-A：1日だけ間隔を空ける形に調整できないか相談したいです。
-
-■ 家庭（揉めずに話を進めたい）
-A：いつも子どものこと考えてくれてありがとう。
-R：最近すれ違いが増えて、誤解が起きやすいと感じていて…
-E：昨日も意図が違うまま話が進んでしまったよね。
-A：10分だけでも落ち着いて話す時間を作れないかな？
-
-■ 交渉（線引きを丁寧に伝える）
-A：ご事情は理解しました。お困りですよね。
-R：ただ、こちらにも守るべきルールと負担の限界があります。
-E：前回も同様の対応をした際、長期的に継続が難しくなりました。
-A：できる範囲は◇◇までです。代わりに□□案で進めませんか？
-
-
-━━━━━━━━━━━━━━━━━━
-【話が通りやすくなる“言い換え”】
-━━━━━━━━━━━━━━━━━━
-
-× できません → ○ 今は難しいです / 別案なら可能です
-× 間違ってます → ○ 認識の違いがありそうです
-× それは無理 → ○ その方法だとリスクがあります
-× ちゃんとして → ○ こうすると安全です / こうしてくれると助かります
-
-
-━━━━━━━━━━━━━━━━━━
-【よくある失敗と対策】
-━━━━━━━━━━━━━━━━━━
-
-失敗①：共感が短すぎる
-→ 対策：Aは最低1文（相手の感情を言語化）
-
-失敗②：理由が長い
-→ 対策：Rは1〜2個、短文にする
-
-失敗③：例が抽象的
-→ 対策：Eは「いつ/どこで/何が」を入れる
-
-失敗④：行動が曖昧
-→ 対策：A（Action）は「次の一歩」を具体化
-
-
-━━━━━━━━━━━━━━━━━━
-【時間別：スピーチへの落とし込み】
-━━━━━━━━━━━━━━━━━━
-
-■ 40秒（超短縮AREA）
-A 10秒：共感
-R 10秒：理由
-E 10秒：例
-A 10秒：提案（まとめ）
-
-■ 80秒（ちょうど良い）
-A 15秒 → R 20秒 → E 30秒 → A 15秒
-
-■ 2分（説得力MAX）
-A 20秒 → R 30秒 → E 50秒 → A 20秒
-（Eで具体例を少し詳しくできる）
-
-
-━━━━━━━━━━━━━━━━━━
-【まとめ】
-━━━━━━━━━━━━━━━━━━
-
-AREAは「うまく話す」より「信頼される話し方」を作る技術。
-迷ったらまず共感（A）→ 理由（R）→ 例（E）→ 提案（A）。
-
-揉めそうな場面ほど、AREAが最強。
-
-</pre>
-
+<div class="header">
+  <h1>AREA話法</h1>
+  <p class="sub">否定せずに「理解 &#8594; 納得 &#8594; 行動」へ導く</p>
+  <a href="index.html" class="back-link">&#8592; ホームへ戻る</a>
 </div>
 
-</main>
+<div class="container">
+
+  <!-- AREA話法とは -->
+  <div class="card">
+    <div class="section-title">&#128218; AREA話法とは？</div>
+    <div class="card-body">
+      <div style="font-size: 14px; line-height: 1.8; margin-bottom: 10px;">
+        相手を否定せずに、自然に理解・納得・行動へ導く話し方です。「論破」ではなく「合意形成」がポイント。対人関係で最強の型です。
+      </div>
+      <div class="flow">
+        <span class="flow-step">A 共感</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">R 理由</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">E 具体例</span>
+        <span class="flow-arrow">&#9654;</span>
+        <span class="flow-step">A 行動提案</span>
+      </div>
+      <div style="font-size: 12px; color: var(--text-sub); margin-top: 6px;">
+        &#9675; 相談、注意、説得、交渉、家族・部下・利用者対応<br>
+        &#9651; 報告・説明・プレゼンには PREP が向いています
+      </div>
+      <div style="font-size: 12px; color: var(--accent); margin-top: 4px;">
+        &#9733; 揉めそうならまずAREA &#8594; その後PREPで整理、が最強の組み合わせ
+      </div>
+    </div>
+  </div>
+
+  <!-- 4ステップ -->
+  <div class="card">
+    <div class="section-title">&#128297; 4つのステップ</div>
+    <div class="card-body">
+
+      <!-- A: Agree -->
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-letter">A</span>
+          <div>
+            <div class="step-title">Agree（共感・肯定）</div>
+            <div class="step-purpose">相手の心を守る（防御反応を下げる）</div>
+          </div>
+        </div>
+        <div class="phrase-group">
+          <div class="phrase-label">やわらかい</div>
+          <div class="phrase-box">
+            大変でしたね / そう感じますよね / 不安になりますよね
+          </div>
+        </div>
+        <div class="phrase-group">
+          <div class="phrase-label">丁寧</div>
+          <div class="phrase-box">
+            お疲れさまです / いつもありがとうございます / お気持ちお察しします
+          </div>
+        </div>
+        <div class="phrase-group">
+          <div class="phrase-label">事実受け止め</div>
+          <div class="phrase-box">
+            状況は理解しました / お困りなんですね
+          </div>
+        </div>
+        <div class="phrase-group">
+          <div class="ng-label">NG（火に油）</div>
+          <div class="phrase-box phrase-ng">
+            &#10005; でも / しかし（共感を壊す）<br>
+            &#10005; それは違う（否定）<br>
+            &#10005; なんでできないの？（責め）
+          </div>
+        </div>
+      </div>
+
+      <!-- R: Reason -->
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-letter">R</span>
+          <div>
+            <div class="step-title">Reason（理由・背景）</div>
+            <div class="step-purpose">納得の土台を作る（感情 &#8594; 理屈へ橋をかける）</div>
+          </div>
+        </div>
+        <div class="phrase-box">
+          「実は〜という理由があって...」<br>
+          「背景として〜があるんです」<br>
+          「安全面 / ルール / 目的として〜で...」
+        </div>
+        <div class="step-tip">&#9733; 「あなたが悪い」ではなく「仕組み・目的・安全」を理由にする。1〜2個まで。</div>
+      </div>
+
+      <!-- E: Example -->
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-letter">E</span>
+          <div>
+            <div class="step-title">Example（具体例）</div>
+            <div class="step-purpose">イメージ化して腹落ちさせる</div>
+          </div>
+        </div>
+        <div class="phrase-group">
+          <div class="phrase-label">例の出し方（効果が高い順）</div>
+          <div class="phrase-box">
+            1. 自分の体験（実感がある）<br>
+            2. 過去の事例（再現性）<br>
+            3. 数字 / 頻度（客観性）
+          </div>
+        </div>
+        <div class="phrase-box">
+          「例えば〜の時に...」<br>
+          「以前〜というケースがあって...」<br>
+          「実際に〜すると〜になりやすいです」
+        </div>
+        <div class="step-tip">&#9733; 具体例は「短く・1個」でOK。相手の状況に近い例だと一気に伝わる。</div>
+      </div>
+
+      <!-- A: Action -->
+      <div class="step-card">
+        <div class="step-head">
+          <span class="step-letter">A</span>
+          <div>
+            <div class="step-title">Action（行動提案）</div>
+            <div class="step-purpose">相手が動ける「次の一歩」を渡す</div>
+          </div>
+        </div>
+        <div class="phrase-group">
+          <div class="phrase-label">超やわらかい</div>
+          <div class="phrase-box">
+            一度試してみませんか？ / 〜という方法もあります
+          </div>
+        </div>
+        <div class="phrase-group">
+          <div class="phrase-label">普通</div>
+          <div class="phrase-box">
+            次はこうしてみましょう / この形で進めたいです
+          </div>
+        </div>
+        <div class="phrase-group">
+          <div class="phrase-label">交渉・線引き</div>
+          <div class="phrase-box">
+            この範囲なら対応できます / ここまでは可能、ここからは難しいです
+          </div>
+        </div>
+        <div class="step-tip">&#9733; 「命令」より「選択肢」を混ぜると通りやすい。提案は具体的に（いつ・どこで・何を）。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- テンプレ -->
+  <div class="card">
+    <div class="section-title">&#128196; 基本テンプレ</div>
+    <div class="card-body">
+      <div class="template-box">
+        <div class="template-label">短文バージョン</div>
+        <span class="scene-tag">A</span> 〇〇ですよね。お疲れさまです。<br>
+        <span class="scene-tag">R</span> 実は△△の理由があって...<br>
+        <span class="scene-tag">E</span> 例えば□□の時に...<br>
+        <span class="scene-tag">A</span> なので、&#9671;&#9671;で進めてみませんか？
+      </div>
+      <div class="template-box">
+        <div class="template-label">丁寧バージョン</div>
+        <span class="scene-tag">A</span> ご不安なお気持ち、よく分かります。お疲れさまです。<br>
+        <span class="scene-tag">R</span> 安全面と状況確認のために、まず△△を優先したい理由があります。<br>
+        <span class="scene-tag">E</span> 以前、□□のケースでは△△を先に行ったことで落ち着きました。<br>
+        <span class="scene-tag">A</span> まずは&#9671;&#9671;を一緒にやってみて、その後で次の手順に進めましょう。
+      </div>
+    </div>
+  </div>
+
+  <!-- シーン別例文 -->
+  <div class="card">
+    <div class="section-title">&#128172; シーン別・即使える例文</div>
+    <div class="card-body">
+
+      <div class="scene-box">
+        <div class="scene-label">&#128188; 職場（お願い・協力を引き出す）</div>
+        <div class="scene-body">
+          <span class="scene-tag">A</span> いつも対応してくださって助かっています。<br>
+          <span class="scene-tag">R</span> ミスを防ぐために、確認してから進めたいんです。<br>
+          <span class="scene-tag">E</span> 前に確認なしで進めて、手戻りが発生したことがあって...<br>
+          <span class="scene-tag">A</span> 次から一声かけてから動く形でお願いできますか？
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#128188; 職場（上司・同僚に調整依頼）</div>
+        <div class="scene-body">
+          <span class="scene-tag">A</span> 忙しい中ありがとうございます。相談させてください。<br>
+          <span class="scene-tag">R</span> 今のスケジュールだと休みが取れず、パフォーマンスが落ちそうで...<br>
+          <span class="scene-tag">E</span> 先月も疲労でミスが出かけた場面がありました。<br>
+          <span class="scene-tag">A</span> 1日だけ調整できないか相談したいです。
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#128188; 職場（上司・同僚に調整依頼）</div>
+        <div class="scene-body">
+          <span class="scene-tag">A</span> 忙しい中ありがとうございます。相談させてください。<br>
+          <span class="scene-tag">R</span> 今のままだと夜勤が連続になり、体調面のリスクが出そうで...<br>
+          <span class="scene-tag">E</span> 先月も連続後に集中力が落ちかけた場面がありました。<br>
+          <span class="scene-tag">A</span> 1日だけ間隔を空ける形に調整できないか相談したいです。
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#127968; 家庭（揉めずに話を進めたい）</div>
+        <div class="scene-body">
+          <span class="scene-tag">A</span> いつも子どものこと考えてくれてありがとう。<br>
+          <span class="scene-tag">R</span> 最近すれ違いが増えて、誤解が起きやすいと感じていて...<br>
+          <span class="scene-tag">E</span> 昨日も意図が違うまま話が進んでしまったよね。<br>
+          <span class="scene-tag">A</span> 10分だけでも落ち着いて話す時間を作れないかな？
+        </div>
+      </div>
+
+      <div class="scene-box">
+        <div class="scene-label">&#9878; 交渉（線引きを丁寧に伝える）</div>
+        <div class="scene-body">
+          <span class="scene-tag">A</span> ご事情は理解しました。お困りですよね。<br>
+          <span class="scene-tag">R</span> ただ、こちらにも守るべきルールと負担の限界があります。<br>
+          <span class="scene-tag">E</span> 前回も同様の対応をした際、長期的に継続が難しくなりました。<br>
+          <span class="scene-tag">A</span> できる範囲は&#9671;&#9671;までです。代わりに□□案で進めませんか？
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 言い換え表 -->
+  <div class="card">
+    <div class="section-title">&#128260; 通りやすくなる言い換え</div>
+    <div class="card-body">
+      <table class="reword-table">
+        <tr>
+          <td><span class="rw-bad">&#10005; できません</span></td>
+          <td><span class="rw-good">&#9675; 今は難しいです / 別案なら可能です</span></td>
+        </tr>
+        <tr>
+          <td><span class="rw-bad">&#10005; 間違ってます</span></td>
+          <td><span class="rw-good">&#9675; 認識の違いがありそうです</span></td>
+        </tr>
+        <tr>
+          <td><span class="rw-bad">&#10005; それは無理</span></td>
+          <td><span class="rw-good">&#9675; その方法だとリスクがあります</span></td>
+        </tr>
+        <tr>
+          <td><span class="rw-bad">&#10005; ちゃんとして</span></td>
+          <td><span class="rw-good">&#9675; こうすると安全です / こうしてくれると助かります</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- よくある失敗と対策 -->
+  <div class="card">
+    <div class="section-title">&#9888; よくある失敗と対策</div>
+    <div class="card-body">
+      <div class="fail-fix">
+        <span class="fail-badge fail">共感が短すぎる</span>
+        <div class="fail-text">&#8594; Aは最低1文。相手の感情を言葉にする。</div>
+      </div>
+      <div class="fail-fix">
+        <span class="fail-badge fail">理由が長い</span>
+        <div class="fail-text">&#8594; Rは1〜2個、短文にする。長いと反発される。</div>
+      </div>
+      <div class="fail-fix">
+        <span class="fail-badge fail">例が抽象的</span>
+        <div class="fail-text">&#8594; Eは「いつ / どこで / 何が」を入れる。</div>
+      </div>
+      <div class="fail-fix">
+        <span class="fail-badge fail">行動が曖昧</span>
+        <div class="fail-text">&#8594; A（Action）は「次の一歩」を具体化。いつ・何をするか。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 時間別配分 -->
+  <div class="card">
+    <div class="section-title">&#9201; 時間別AREA配分</div>
+    <div class="card-body">
+      <table class="ref-table">
+        <tr><th>時間</th><th>A 共感</th><th>R 理由</th><th>E 具体例</th><th>A 提案</th></tr>
+        <tr><td>40秒</td><td>10秒</td><td>10秒</td><td>10秒</td><td>10秒</td></tr>
+        <tr><td>80秒</td><td>15秒</td><td>20秒</td><td>30秒</td><td>15秒</td></tr>
+        <tr><td>2分</td><td>20秒</td><td>30秒</td><td>50秒</td><td>20秒</td></tr>
+      </table>
+      <div style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">
+        2分ではEの具体例を少し詳しく語れるのが強み
+      </div>
+      <div class="link-row">
+        <a href="40sec.html" class="link-btn">&#9201; 40秒で練習</a>
+        <a href="80sec.html" class="link-btn">&#9201; 80秒で練習</a>
+        <a href="2min.html" class="link-btn">&#9201; 2分で練習</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREPとの併用 -->
+  <div class="card">
+    <div class="section-title">&#128260; PREPとの併用パターン</div>
+    <div class="card-body">
+      <div class="combo-box">
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">揉めそうならまずAREA &#8594; PREPで整理</div>
+        <div style="font-size: 13px; line-height: 1.9;">
+          「大変ですよね（共感）」<br>
+          &#8595;<br>
+          「結論から言うと、〇〇がおすすめです。<br>
+          　なぜなら△△だからです。<br>
+          　例えば□□では...。<br>
+          　だから〇〇をおすすめします。」
+        </div>
+        <div style="font-size: 12px; color: var(--text-sub); margin-top: 8px;">
+          相手の感情をまず受け止めてから、論理的に伝える最強の組み合わせです。
+        </div>
+      </div>
+      <div class="link-row">
+        <a href="prep.html" class="link-btn">&#128226; PREP話法を見る</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="card">
+    <div class="card-body">
+      <div class="quote-box">
+        <div class="quote-text">
+          AREAは「うまく話す」より<br>
+          「信頼される話し方」を作る技術<br>
+          揉めそうな場面ほどAREAが最強
+        </div>
+        <div class="quote-sub">一人話し方GYM</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 </body>
 </html>
